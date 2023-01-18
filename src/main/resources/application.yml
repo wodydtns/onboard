@@ -1,11 +1,11 @@
 spring:
  datasource:
-  url: jdbc:oracle:thin:@onboard_high?TNS_ADMIN=./src/main/resources/Wallet_ONBOARD
+  
   #url: jdbc:oracle:thin:@onboard_medium?TNS_ADMIN=[전자지갑주소]
   username: APTC_USER
   password: Onboard!side7
   driver-class-name:  oracle.jdbc.OracleDriver
-  
+  # hikari library load 시 사용자를 찾지 못함 
   #hikari:
     #connection-timeout: 3000
     #validation-timeout: 3000
