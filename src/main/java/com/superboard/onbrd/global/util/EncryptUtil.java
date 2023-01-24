@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import com.superboard.onbrd.global.entity.RSA;
 
-
 @Component
 public class EncryptUtil {
 
@@ -30,21 +29,20 @@ public class EncryptUtil {
 		encryptedStr = sb.toString();
 		return encryptedStr;
 	}
-	
+
 	public RSA createRSAEncrypt() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
 		keyGenerator.initialize(2048);
 		KeyPair keyPair = keyGenerator.genKeyPair();
-		KeyFactory keyFactory =KeyFactory.getInstance("RSA");
-		
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
 		PublicKey publicKey = keyPair.getPublic();
 		PrivateKey privateKey = keyPair.getPrivate();
-		
+
 		RSAPublicKeySpec publicSpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
 		String publicKeyModulus = publicSpec.getModulus().toString(16);
 		String publicKeyExponent = publicSpec.getPublicExponent().toString(16);
-		RSA rsa = new RSA(privateKey,publicKeyModulus,publicKeyExponent);
+		RSA rsa = new RSA(privateKey, publicKeyModulus, publicKeyExponent);
 		return rsa;
 	}
-
 }
