@@ -55,9 +55,9 @@ dependencies {
     implementation("com.oracle.database.ha:simplefan")
 
 	
-	  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	  runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
 
     //querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
