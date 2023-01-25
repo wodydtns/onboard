@@ -1,40 +1,40 @@
 spring:
- datasource:
-  url: jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-seoul-1.oraclecloud.com))(connect_data=(service_name=gd32c7b5c8d9fe1_onboard_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
-  #url: jdbc:oracle:thin:@onboard_medium?TNS_ADMIN=[전자지갑주소]
-  username: ADMIN
-  password: Onboard!side7
-  driver-class-name:  oracle.jdbc.OracleDriver
-  
-  #hikari:
-    #connection-timeout: 3000
-    #validation-timeout: 3000
-    #schema: self 
-    #maximum-pool-size: 20
-    #idle-timeout: 200000
+  datasource:
+    url: jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-seoul-1.oraclecloud.com))(connect_data=(service_name=gd32c7b5c8d9fe1_onboard_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+    #url: jdbc:oracle:thin:@onboard_medium?TNS_ADMIN=[전자지갑주소]
+    username: ADMIN
+    password: Onboard!side7
+    driver-class-name: oracle.jdbc.OracleDriver
+
+      #hikari:
+      #connection-timeout: 3000
+      #validation-timeout: 3000
+      #schema: self
+      #maximum-pool-size: 20
+      #idle-timeout: 200000
     #max-lifetime: 240000
     #pool-name: oraPool
-   
- jpa:
-  hibernate:
-   ddl-auto: none
-  properties:
-   hibernate:
-    format_sql:true
-   database-platform: org.hibernate.dialect.Oracle12cDialect
-    
- mvc:
-    static-path-pattern: /static/**   
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql:true
+      database-platform: org.hibernate.dialect.Oracle12cDialect
+
+  mvc:
+    static-path-pattern: /static/**
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
-      
+
 logging:
   level:
     root: info
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
-  access-token-expiration-minutes: ${ACCESS_TOKEN_EXPIRATION_MINUTES}
-  refresh-token-expiration-minutes: ${REFRESH_TOKEN_EXPIRATION_MINUTES}
+  secret-key: 38cc3f3e0de60904e11130540bec75dbb449fc9a6abd3b2784fa0074103f3cf4c7a25e4123863147805aea23e2f6faebce424d07900effaeeaa5e30b1c238fd1
+  access-token-expiration-minutes: 30
+  refresh-token-expiration-minutes: 30240
 
 server:
   port: 8080
