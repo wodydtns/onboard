@@ -24,7 +24,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport{
                 .useDefaultResponseMessages(true)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sample.swagger.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.superboard.onbrd"))
                 .paths(PathSelectors.any())
                 .build();
     }
