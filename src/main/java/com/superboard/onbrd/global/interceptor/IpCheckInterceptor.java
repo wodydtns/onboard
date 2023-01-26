@@ -21,7 +21,6 @@ public class IpCheckInterceptor implements HandlerInterceptor{
 		
 		boolean isAccessable = false;
 		String visitIp = request.getRemoteAddr();
-		System.out.println(visitIp);
 		for (String whiteIp : WhiteIpList) {
 			if(visitIp.equals(whiteIp)) {
 				return true;
@@ -31,8 +30,4 @@ public class IpCheckInterceptor implements HandlerInterceptor{
 		return isAccessable;
 	
 	}
-	
-	
-
-
 }
