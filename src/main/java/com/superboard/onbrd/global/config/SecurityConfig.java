@@ -1,5 +1,7 @@
 package com.superboard.onbrd.global.config;
 
+import java.security.SecureRandom;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -43,6 +45,9 @@ public class SecurityConfig {
 			.mvcMatchers(HttpMethod.GET,
 				"/api/*/members/nickname-check", "/api/*/members/mail-check").permitAll()
 			.mvcMatchers(HttpMethod.POST, "/api/*/auth/sign-in").permitAll()
+			.mvcMatchers(HttpMethod.POST,
+				"/api/*/auth/code", "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
+			.mvcMatchers(HttpMethod.PATCH, "/api/*/member/password").permitAll()
 			.mvcMatchers("/api/**").authenticated();
 
 		return http.build();
@@ -51,5 +56,10 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+
+	@Bean
+	public SecureRandom secureRandom() {
+		return new SecureRandom();
 	}
 }

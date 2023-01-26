@@ -3,21 +3,19 @@ package com.superboard.onbrd.global.config;
 import java.util.Properties;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-@Configuration
+// @Configuration
 public class MailConfig {
 
 	@Bean
-	public JavaMailSender MailService() {
+	public JavaMailSender javaMailSender() {
 		JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
 		javaMailSender.setHost("smtp.naver.com");
 		javaMailSender.setUsername("wodydtns");
 		javaMailSender.setPassword("flsdl$Qkqn8");
-		javaMailSender.setDefaultEncoding("UTF-8");
 		javaMailSender.setPort(465);
 
 		javaMailSender.setJavaMailProperties(getMailProperties());

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
+import com.superboard.onbrd.auth.dto.AuthCodeSendingRequest;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResponse;
@@ -23,11 +25,13 @@ import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.auth.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AuthController {
 	private final AuthService authService;
 
@@ -68,15 +72,35 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/code")
+	public ResponseEntity<Void> sendAuthCodeMail(@RequestBody AuthCodeSendingRequest request) {
+		authService.sendAuthCodeMail(request);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/code-resending")
+	public ResponseEntity<Void> resendAuthCodeMail(@RequestBody AuthCodeSendingRequest request) {
+		authService.resendAuthCodeMail(request);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/code-check")
+	public ResponseEntity<Void> checkAuthCode(@RequestBody AuthCodeCheckRequest request) {
+		authService.checkAuthCode(request);
+
+		return ResponseEntity.ok().build();
+	}
+
 	private void setTokensToHeader(HttpServletResponse response, String accessToken, String refreshToken) {
 		response.setHeader(AUTH_HEADER, TOKEN_TYPE + " " + accessToken);
 		response.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
 	}
 
 	private String getAccessTokenFromHeader(HttpServletRequest request) {
-		final int beginIndex = 7;
 
-		return request.getHeader(AUTH_HEADER).substring(beginIndex);
+		return request.getHeader(AUTH_HEADER).substring(AUTH_HEADER_BEGIN_INDEX);
 	}
 
 	private String getRefreshTokenFromHeader(HttpServletRequest request) {

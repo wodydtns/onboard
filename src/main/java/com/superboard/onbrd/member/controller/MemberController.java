@@ -48,6 +48,15 @@ public class MemberController {
 		return ResponseEntity.ok(email);
 	}
 
+	@PatchMapping("/{memberId}/info")
+	public ResponseEntity<Long> updateMemberInfo(
+		@PathVariable Long memberId, @RequestBody MemberUpdateRequest request) {
+		request.setMemberId(memberId);
+		Member updated = memberService.updateMember(request);
+
+		return ResponseEntity.ok(updated.getId());
+	}
+
 	@PatchMapping("/{memberId}/nickname")
 	public ResponseEntity<Long> updateNickname(
 		@PathVariable Long memberId, @RequestBody MemberUpdateRequest request) {
@@ -80,5 +89,12 @@ public class MemberController {
 		Member member = memberService.findVerifiedOneById(memberId);
 
 		return ResponseEntity.ok(member.getLevel());
+	}
+
+	@PatchMapping("/{memberId}/withdrawal")
+	public ResponseEntity<MemberLevel> withdraw(@PathVariable Long memberId) {
+		memberService.withDraw(memberId);
+
+		return ResponseEntity.ok().build();
 	}
 }

@@ -55,7 +55,7 @@ dependencies {
     //implementation("com.oracle.database.ha:ons")
     //implementation("com.oracle.database.ha:simplefan")
 
-	
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     runtimeOnly 'com.h2database:h2'
@@ -71,10 +71,15 @@ dependencies {
 
     /* Spring boot mail 설정*/
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+    implementation("com.google.guava:guava:31.1-jre")
 }
 
 bootWar {
-	archiveName("onboard.war")
+    archiveName("onboard.war")
 }
 
 test {

@@ -67,6 +67,10 @@ public class Member extends BaseEntity {
 		this.profileCharacter = profileCharacter;
 	}
 
+	public void withdraw() {
+		this.status = WITHDRAWN;
+	}
+
 	private Member(String email, String password, String nickname, String profileCharacter) {
 		this.email = email;
 		this.password = password;

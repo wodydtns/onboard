@@ -21,7 +21,7 @@ public class GlobalExceptionAdvice {
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-		log.error("RuntimeException occurs: {}", e.getCause());
+		e.printStackTrace();
 
 		return ResponseEntity.status(INTERNAL_SERVER_ERROR.getStatus())
 			.body(INTERNAL_SERVER_ERROR.getMessage());

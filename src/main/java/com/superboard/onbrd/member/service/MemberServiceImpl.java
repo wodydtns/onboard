@@ -89,6 +89,13 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	@Transactional
+	public void withDraw(Long id) {
+		Member member = findVerifiedOneById(id);
+		member.withdraw();
+	}
+
 	private boolean isEmailExists(String email) {
 		return memberRepository.findByEmail(email).isPresent();
 	}

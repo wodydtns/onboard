@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Auth Code</title>
+</head>
+<body>
+<div style='margin:100px; font-family:Tahoma'>
+    <p>다음 코드를 입력하여 진행하세요.</p>
+    <br>
+    <div align='center'
+         style='border:1px solid black; margin: 4px; width: 50%; font-family:Tahoma; background-color: #CBD5E1'>
+        <br>
+        <div style='font-size:130%'><strong><span th:text="${code}"> {auth-code} </span></strong>
+        </div>
+        <br>
+    </div>
+
+    <br>
+    <b> 위 코드는 <span th:text="${expiration}">{expiration}</span>에 만료됩니다.</b>
+
+    <br>
+    <br>
+
+    <div> 감사합니다.</div>
+    <div> Onbrd 팀</div>
+
+</div>
+</body>
+</html>
