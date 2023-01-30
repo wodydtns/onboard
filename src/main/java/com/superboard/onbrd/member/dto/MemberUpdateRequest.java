@@ -1,5 +1,7 @@
 package com.superboard.onbrd.member.dto;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import lombok.Getter;
@@ -15,4 +17,5 @@ public class MemberUpdateRequest {
 	private String password;
 	private String nickname;
 	private String profileCharacter;
+	private List<Long> tagIds;
 }

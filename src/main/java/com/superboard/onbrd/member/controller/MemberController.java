@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.member.dto.FavoriteTagResetRequest;
 import com.superboard.onbrd.member.dto.MemberUpdateRequest;
 import com.superboard.onbrd.member.dto.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.tag.service.FavoriteTagService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class MemberController {
 	private final MemberService memberService;
+	private final FavoriteTagService favoriteTagService;
 
 	@PostMapping("/sign-up")
 	public ResponseEntity<Long> signUp(@RequestBody SignUpRequest request) {
 		Member created = memberService.signUp(request);
+		favoriteTagService.createdFavoriteTags(created, request.getTagIds());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(created.getId());
 	}
@@ -55,6 +59,14 @@ public class MemberController {
 		Member updated = memberService.updateMember(request);
 
 		return ResponseEntity.ok(updated.getId());
+	}
+
+	@PatchMapping("/{memberId}/favorite-tags")
+	public ResponseEntity<Void> resetFavoriteTags(
+		@PathVariable Long memberId, @RequestBody FavoriteTagResetRequest request) {
+		favoriteTagService.resetFavoriteTags(memberId, request.getTagIds());
+
+		return ResponseEntity.ok(null);
 	}
 
 	@PatchMapping("/{memberId}/nickname")

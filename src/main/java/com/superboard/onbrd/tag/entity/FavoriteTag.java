@@ -28,4 +28,12 @@ public class FavoriteTag extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
+
+	public static FavoriteTag of(Member member, Tag tag) {
+		FavoriteTag favoriteTag = new FavoriteTag();
+		favoriteTag.member = member;
+		favoriteTag.tag = tag;
+
+		return favoriteTag;
+	}
 }
