@@ -8,4 +8,6 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 @Repository
 public interface BoardgameRepository extends JpaRepository<Boardgame, Long> {
 	
+	
+	
 }
