@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 
 @Repository
-public interface BoardgameRepository extends JpaRepository<Boardgame, Long> {
-	
+public interface BoardgameRepository extends JpaRepository<Boardgame, Long>, CustomBoardGameRepository {
 }

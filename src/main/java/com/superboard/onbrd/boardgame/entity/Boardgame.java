@@ -6,8 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.superboard.onbrd.global.entity.BaseEntity;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +22,8 @@ public class Boardgame {
 	@Column(nullable = false)
 	private String description;
 	@Column(nullable = false)
+	private String image;
+	@Column(nullable = false)
 	private String playerCount;
 	@Column(nullable = false)
 	private String playtime;
@@ -31,4 +31,6 @@ public class Boardgame {
 	private String age;
 	@Column(nullable = false)
 	private String difficulty;
+	@Column(nullable = false)
+	private long favoriteCount;
 }
