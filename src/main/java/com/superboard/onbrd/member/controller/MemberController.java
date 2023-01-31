@@ -33,7 +33,9 @@ public class MemberController {
 	@PostMapping("/sign-up")
 	public ResponseEntity<Long> signUp(@RequestBody SignUpRequest request) {
 		Member created = memberService.signUp(request);
-		favoriteTagService.createdFavoriteTags(created, request.getTagIds());
+		if (request.getTagIds() != null) {
+			favoriteTagService.createdFavoriteTags(created, request.getTagIds());
+		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(created.getId());
 	}

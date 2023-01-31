@@ -7,5 +7,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthCodeSendingRequest {
 	private String email;
-	private String clientKey;
 }
