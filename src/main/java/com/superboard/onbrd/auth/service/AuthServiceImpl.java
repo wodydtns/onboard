@@ -140,6 +140,6 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private String getClientKey(String email, LocalDateTime requestTime) {
-		return passwordEncoder.encode(email + requestTime.toString());
+		return String.valueOf((email + requestTime).hashCode());
 	}
 }
