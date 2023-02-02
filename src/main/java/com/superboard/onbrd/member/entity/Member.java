@@ -30,8 +30,6 @@ public class Member extends BaseEntity {
 	private Long id;
 	@Column(nullable = false, updatable = false)
 	private String email;
-	@Column
-	private String password;
 	@Column(nullable = false)
 	private String nickname;
 	@Column
@@ -47,16 +45,14 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MemberRole role = ROLE_USER;
+	@Column(nullable = false)
+	private Boolean passwordChangeDueExtended = false;
 	@Column
 	private LocalDateTime lastVisit;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
-			request.getEmail(), request.getPassword(), request.getNickname(), request.getProfileCharacter());
-	}
-
-	public void resetPassword(String encodedPassword) {
-		this.password = encodedPassword;
+			request.getEmail(), request.getNickname(), request.getProfileCharacter());
 	}
 
 	public void updateNickname(String nickname) {
@@ -67,13 +63,16 @@ public class Member extends BaseEntity {
 		this.profileCharacter = profileCharacter;
 	}
 
+	public void extendChangeDue() {
+		this.passwordChangeDueExtended = true;
+	}
+
 	public void withdraw() {
 		this.status = WITHDRAWN;
 	}
 
-	private Member(String email, String password, String nickname, String profileCharacter) {
+	private Member(String email, String nickname, String profileCharacter) {
 		this.email = email;
-		this.password = password;
 		this.nickname = nickname;
 		this.profileCharacter = profileCharacter;
 	}

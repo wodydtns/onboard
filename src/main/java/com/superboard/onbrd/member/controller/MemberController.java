@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.member.dto.FavoriteTagResetRequest;
 import com.superboard.onbrd.member.dto.MemberUpdateRequest;
+import com.superboard.onbrd.member.dto.PasswordChangeRequest;
 import com.superboard.onbrd.member.dto.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
@@ -71,31 +72,13 @@ public class MemberController {
 		return ResponseEntity.ok(null);
 	}
 
-	@PatchMapping("/{memberId}/nickname")
-	public ResponseEntity<Long> updateNickname(
-		@PathVariable Long memberId, @RequestBody MemberUpdateRequest request) {
-		request.setMemberId(memberId);
-		Member updated = memberService.updateMember(request);
-
-		return ResponseEntity.ok(updated.getId());
-	}
-
-	@PatchMapping("/{memberId}/profile-character")
-	public ResponseEntity<Long> updateProfileCharacter(
-		@PathVariable Long memberId, @RequestBody MemberUpdateRequest request) {
-		request.setMemberId(memberId);
-		Member updated = memberService.updateMember(request);
-
-		return ResponseEntity.ok(updated.getId());
-	}
-
 	@PatchMapping("/{memberId}/password")
-	public ResponseEntity<Long> resetPassword(
-		@PathVariable Long memberId, @RequestBody MemberUpdateRequest request) {
+	public ResponseEntity<Void> changePassword(
+		@PathVariable Long memberId, @RequestBody PasswordChangeRequest request) {
 		request.setMemberId(memberId);
-		Member updated = memberService.updateMember(request);
+		memberService.changePassword(request);
 
-		return ResponseEntity.ok(updated.getId());
+		return ResponseEntity.ok(null);
 	}
 
 	@GetMapping("/{memberId}/level")

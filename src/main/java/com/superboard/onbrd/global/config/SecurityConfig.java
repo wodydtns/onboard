@@ -47,7 +47,7 @@ public class SecurityConfig {
 			.mvcMatchers(HttpMethod.POST, "/api/*/auth/sign-in").permitAll()
 			.mvcMatchers(HttpMethod.GET, "/api/*/auth/code").permitAll()
 			.mvcMatchers(HttpMethod.POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
-			.mvcMatchers(HttpMethod.PATCH, "/api/*/member/password").permitAll()
+			.mvcMatchers(HttpMethod.PATCH, "/api/*/passwords").permitAll()
 			.mvcMatchers("/api/**").authenticated();
 
 		return http.build();

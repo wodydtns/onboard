@@ -12,29 +12,30 @@ import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.repository.TokenRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.dto.MemberUpdateRequest;
+import com.superboard.onbrd.member.dto.PasswordChangeRequest;
 import com.superboard.onbrd.member.dto.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
+	private final PasswordService passwordService;
 	private final PasswordEncoder passwordEncoder;
 	private final TokenRepository tokenRepository;
 
-	@Transactional
 	@Override
 	public Member signUp(SignUpRequest request) {
 		checkEmailDuplicated(request.getEmail());
-		request.setPassword(
-			passwordEncoder.encode(request.getPassword())
-		);
+		String encodedPassword = passwordEncoder.encode(request.getPassword());
 
 		Member member = memberRepository.save(Member.from(request));
+		passwordService.createPassword(Password.of(member, encodedPassword));
 		tokenRepository.save(Token.of(member));
 
 		return member;
@@ -44,9 +45,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member updateMember(MemberUpdateRequest request) {
 		Member member = findVerifiedOneById(request.getMemberId());
-
-		Optional.ofNullable(request.getPassword())
-			.ifPresent(password -> member.resetPassword(passwordEncoder.encode(password)));
+		Password password = passwordService.findVerifiedOneByMember(member);
 
 		Optional.ofNullable(request.getNickname())
 			.ifPresent(member::updateNickname);
@@ -58,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Member findVerifiedOneById(Long id) {
 		return memberRepository.findById(id)
 			.orElseThrow(
@@ -66,6 +66,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Member findVerifiedOneByEmail(String email) {
 		return memberRepository.findByEmail(email)
 			.orElseThrow(
@@ -74,6 +75,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public void changePassword(PasswordChangeRequest request) {
+		Member member = findVerifiedOneById(request.getMemberId());
+		passwordService.resetPassword(member, request.getPassword());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public void checkDuplicatedNickname(String nickname) {
 		memberRepository.findByNickname(nickname).ifPresent(
 			member -> {
@@ -83,6 +91,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void checkEmailExists(String email) {
 		if (!isEmailExists(email)) {
 			throw new BusinessLogicException(MEMBER_NOT_FOUND);
@@ -90,7 +99,6 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	@Transactional
 	public void withDraw(Long id) {
 		Member member = findVerifiedOneById(id);
 		member.withdraw();

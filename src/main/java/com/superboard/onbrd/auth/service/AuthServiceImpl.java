@@ -24,7 +24,9 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.ExceptionCode;
 import com.superboard.onbrd.mail.dto.MailSendingEvent;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.member.service.PasswordService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 	private final MemberService memberService;
+	private final PasswordService passwordService;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final TokenRepository tokenRepository;
@@ -42,7 +45,8 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public SignInResponse signIn(SignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
-		validatePassword(request.getPassword(), member.getPassword());
+		Password password = passwordService.findVerifiedOneByMember(member);
+		validatePassword(request.getPassword(), password.getEncodedPassword());
 
 		Token token = tokenRepository.findByMemberId(member.getId()).get();
 
@@ -104,7 +108,8 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public void reconfirmPassword(PasswordCheckRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
-		validatePassword(request.getPassword(), member.getPassword());
+		Password password = passwordService.findVerifiedOneByMember(member);
+		validatePassword(request.getPassword(), password.getEncodedPassword());
 	}
 
 	@Override

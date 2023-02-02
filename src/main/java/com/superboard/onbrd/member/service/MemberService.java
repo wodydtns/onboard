@@ -1,6 +1,7 @@
 package com.superboard.onbrd.member.service;
 
 import com.superboard.onbrd.member.dto.MemberUpdateRequest;
+import com.superboard.onbrd.member.dto.PasswordChangeRequest;
 import com.superboard.onbrd.member.dto.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
 
@@ -12,6 +13,8 @@ public interface MemberService {
 	Member findVerifiedOneById(Long id);
 
 	Member findVerifiedOneByEmail(String email);
+
+	void changePassword(PasswordChangeRequest request);
 
 	void checkDuplicatedNickname(String nickname);
 
