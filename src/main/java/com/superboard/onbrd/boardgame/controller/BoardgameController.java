@@ -1,6 +1,7 @@
 package com.superboard.onbrd.boardgame.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ public class BoardgameController {
 		 @ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path")
 	 })
 	@GetMapping("/searchByRecommand")
-	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand) {
-		return boardGameService.BoardGameSearchByRecommand(boardGameSearchByRecommand);
+	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) {
+		return boardGameService.BoardGameSearchByRecommand(boardGameSearchByRecommand,pageable);
 	}
 }
