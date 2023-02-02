@@ -23,5 +23,5 @@ public class Tag {
 	private String name;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private TagGroup group;
+	private TagType type;
 }

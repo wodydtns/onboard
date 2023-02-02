@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
-import com.superboard.onbrd.auth.dto.AuthCodeSendingRequest;
+import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResponse;
@@ -72,18 +73,11 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/code")
-	public ResponseEntity<Void> sendAuthCodeMail(@RequestBody AuthCodeSendingRequest request) {
-		authService.sendAuthCodeMail(request);
+	@GetMapping("/code")
+	public ResponseEntity<AuthCodeSendingResponse> sendAuthCodeMail(@RequestParam String email) {
+		AuthCodeSendingResponse response = authService.sendAuthCodeMail(email);
 
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/code-resending")
-	public ResponseEntity<Void> resendAuthCodeMail(@RequestBody AuthCodeSendingRequest request) {
-		authService.resendAuthCodeMail(request);
-
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/code-check")

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
-import com.superboard.onbrd.auth.dto.AuthCodeSendingRequest;
+import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResponse;
@@ -108,18 +108,16 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public void sendAuthCodeMail(AuthCodeSendingRequest request) {
-		String code = authCodeMailProvider.getAuthCode(request.getClientKey());
+	public AuthCodeSendingResponse sendAuthCodeMail(String email) {
+		LocalDateTime now = LocalDateTime.now();
+		String clientKey = getClientKey(email, now);
+		String code = authCodeMailProvider.getAuthCode(clientKey);
+
 		MailSendingEvent mailSendingEvent = authCodeMailProvider.buildAuthCodeMail(
-			request.getEmail(), code, LocalDateTime.now().plus(3, ChronoUnit.MINUTES));
-
+			email, code, now.plus(3, ChronoUnit.MINUTES));
 		eventPublisher.publishEvent(mailSendingEvent);
-	}
 
-	@Override
-	public void resendAuthCodeMail(AuthCodeSendingRequest request) {
-		authCodeMailProvider.removeAuthCodeFromCache(request.getClientKey());
-		sendAuthCodeMail(request);
+		return new AuthCodeSendingResponse(clientKey);
 	}
 
 	@Override
@@ -139,5 +137,9 @@ public class AuthServiceImpl implements AuthService {
 		} else {
 			authCodeMailProvider.removeAuthCodeFromCache(request.getClientKey());
 		}
+	}
+
+	private String getClientKey(String email, LocalDateTime requestTime) {
+		return String.valueOf((email + requestTime).hashCode());
 	}
 }

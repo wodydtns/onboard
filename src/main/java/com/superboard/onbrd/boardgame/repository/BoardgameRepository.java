@@ -1,13 +1,13 @@
 package com.superboard.onbrd.boardgame.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+
+import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 
-@Repository
-public interface BoardgameRepository extends JpaRepository<Boardgame, Long> {
+public interface BoardgameRepository  {
 	
-	
-	
+	Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand);
 }

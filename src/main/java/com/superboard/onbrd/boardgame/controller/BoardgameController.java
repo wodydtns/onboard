@@ -1,13 +1,12 @@
 package com.superboard.onbrd.boardgame.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.superboard.onbrd.boardgame.entity.BoardGameSearchByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 
@@ -16,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
 
 @RestController
 @RequestMapping("/api/v1/boardgame")
@@ -34,7 +34,7 @@ public class BoardgameController {
 		 @ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path")
 	 })
 	@GetMapping("/searchByRecommand")
-	public ResponseEntity<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand) {
+	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand) {
 		return boardGameService.BoardGameSearchByRecommand(boardGameSearchByRecommand);
 	}
 }
