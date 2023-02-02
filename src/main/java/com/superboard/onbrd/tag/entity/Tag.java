@@ -1,5 +1,6 @@
 package com.superboard.onbrd.tag.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -30,6 +31,6 @@ public class Tag {
 	@Enumerated(EnumType.STRING)
 	private TagType type;
 	
-	@OneToMany(mappedBy = "tag")
-	private List<Integer> tag_id;
+	@OneToMany(mappedBy = "tag_id")
+	private List<Tag> tag_id  = new ArrayList<>();
 }

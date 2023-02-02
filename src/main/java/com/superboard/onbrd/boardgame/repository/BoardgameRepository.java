@@ -1,8 +1,7 @@
 package com.superboard.onbrd.boardgame.repository;
 
-
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
