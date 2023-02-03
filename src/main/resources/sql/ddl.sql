@@ -1,18 +1,18 @@
 ﻿CREATE TABLE "MEMBER"
 (
-    "ID"                   NUMBER        NOT NULL PRIMARY KEY,
-    "EMAIL"                VARCHAR2(65)  NOT NULL,
-    "PASSWORD"             VARCHAR2(100) NOT NULL,
-    "NICKNAME"             VARCHAR2(20)  NOT NULL,
-    "PROFILE_CHARACTER"    VARCHAR2(20)  NOT NULL,
-    "LEVEL"                VARCHAR2(20)  NOT NULL,
-    "POINT"                NUMBER        NOT NULL,
-    "STATUS"               VARCHAR2(10)  NOT NULL,
-    "ROLE"                 VARCHAR(10)   NOT NULL,
-    "LAST_VISIT"           DATE          NULL,
-    "PASSWORD_MODIFIED_AT" DATE          NULL,
-    "CREATED_AT"           DATE          NOT NULL,
-    "MODIFIED_AT"          DATE          NOT NULL
+    "ID"                           NUMBER        NOT NULL PRIMARY KEY,
+    "EMAIL"                        VARCHAR2(65)  NOT NULL,
+    "NICKNAME"                     VARCHAR2(20)  NOT NULL,
+    "PROFILE_CHARACTER"            VARCHAR2(100) NOT NULL,
+--     "LEVEL"                        VARCHAR2(20)  NOT NULL,
+    "POINT"                        NUMBER        NOT NULL,
+    "STATUS"                       VARCHAR2(10)  NOT NULL,
+    "ROLE"                         VARCHAR(10)   NOT NULL,
+    "PASSWORD_CHANGE_DUE_EXTENDED" NUMBER(1)     NOT NULL,
+    "LAST_VISIT"                   DATE          NULL,
+    "PASSWORD_MODIFIED_AT"         DATE          NULL,
+    "CREATED_AT"                   DATE          NOT NULL,
+    "MODIFIED_AT"                  DATE          NOT NULL
 );
 
 CREATE TABLE "TAG"
@@ -121,15 +121,17 @@ CREATE TABLE "BOARDGAME_TAG"
     "TAG_ID"       NUMBER NOT NULL REFERENCES "TAG" ("ID") ON DELETE CASCADE
 );
 
--- CREATE TABLE "PASSWORD"
--- (
---
--- )
+CREATE TABLE "PASSWORD"
+(
+    "MEMBER_ID"        NUMBER        NOT NULL PRIMARY KEY REFERENCES "MEMBER" ("ID") ON DELETE CASCADE,
+    "ENCODED_PASSWORD" VARCHAR2(100) NULL,
+    "CREATED_AT"       DATE          NOT NULL,
+    "MODIFIED_AT"      DATE          NOT NULL
+);
 
 CREATE TABLE "TOKEN"
 (
-    "ID"                       NUMBER        NOT NULL PRIMARY KEY,
-    "MEMBER_ID"                NUMBER        NOT NULL REFERENCES "MEMBER" ("ID"),
+    "MEMBER_ID"                NUMBER        NOT NULL PRIMARY KEY REFERENCES "MEMBER" ("ID") ON DELETE CASCADE,
     "ANDROID_PUSH_TOKEN"       VARCHAR2(100) NULL,
     "APPLE_PUSH_TOKEN"         VARCHAR2(100) NULL,
     "SIGN_OUT_ACCESS_TOKEN"    VARCHAR2(100) NULL,

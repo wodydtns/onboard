@@ -4,10 +4,9 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.superboard.onbrd.member.entity.Member;
@@ -23,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Token {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "member_id")
 	private Long id;
 	@Column
 	private String androidPushToken;
@@ -38,6 +37,7 @@ public class Token {
 	@Column
 	private LocalDateTime refreshTokenExpiredAt;
 	@OneToOne
+	@MapsId
 	@JoinColumn(name = "member_id")
 	private Member member;
 

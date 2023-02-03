@@ -1,6 +1,5 @@
 package com.superboard.onbrd.member.entity;
 
-import static com.superboard.onbrd.member.entity.MemberLevel.*;
 import static com.superboard.onbrd.member.entity.MemberRole.*;
 import static com.superboard.onbrd.member.entity.MemberStatus.*;
 
@@ -34,9 +33,9 @@ public class Member extends BaseEntity {
 	private String nickname;
 	@Column
 	private String profileCharacter;
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private MemberLevel level = DEFAULT;
+	// @Column(nullable = false)
+	// @Enumerated(EnumType.STRING)
+	// private MemberLevel level = DEFAULT;
 	@Column(nullable = false)
 	private int point = 0;
 	@Column(nullable = false)

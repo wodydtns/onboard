@@ -1,0 +1,248 @@
+1,Card Game,category
+2,Industry / Manufacturing,category
+3,Modern Warfare,category
+4,Murder/Mystery,category
+5,Pike and Shot,category
+6,Environmental,category
+7,Religious,category
+8,World War I,category
+9,Farming,category
+10,Horror,category
+11,Aviation / Flight,category
+12,Civil War,category
+13,Territory Building,category
+14,Animals,category
+15,Ancient,category
+16,City Building,category
+17,Number,category
+18,American West,category
+19,Movies / TV / Radio theme,category
+20,Negotiation,category
+21,Zombies,category
+22,Real-time,category
+23,Age of Reason,category
+24,Space Exploration,category
+25,Comic Book / Strip,category
+26,Electronic,category
+27,Science Fiction,category
+28,Trains,category
+29,Bluffing,category
+30,Mythology,category
+31,Prehistoric,category
+32,Nautical,category
+33,Miniatures,category
+34,Educational,category
+35,Wargame,category
+36,Medieval,category
+37,Economic,category
+38,Arabian,category
+39,Renaissance,category
+40,Civilization,category
+41,Dice,category
+42,Puzzle,category
+43,Video Game Theme,category
+44,Word Game,category
+45,Fantasy,category
+46,Party Game,category
+47,Maze,category
+48,Mafia,category
+49,Pirates,category
+50,World War II,category
+51,Racing,category
+52,Transportation,category
+53,Adventure,category
+54,Abstract Strategy,category
+55,Deduction,category
+56,Travel,category
+57,Mature / Adult,category
+58,Humor,category
+59,Fighting,category
+60,Political,category
+61,Medical,category
+62,Print & Play,category
+63,Sports,category
+64,Post-Napoleonic,category
+65,Novel-based,category
+66,Collectible Components,category
+67,Exploration,category
+68,Spies/Secret Agents,category
+69,Action / Dexterity,category
+70,Thematic,type
+71,Customizable,type
+72,Family,type
+73,Wargames,type
+74,Party,type
+75,Abstract,type
+76,Strategy,type
+77,Score-and-Reset Game,mechanism
+78,Static Capture,mechanism
+79,Auction/Bidding,mechanism
+80,Auction: Sealed Bid,mechanism
+81,Cooperative Game,mechanism
+82,Turn Order: Stat-Based,mechanism
+83,Selection Order Bid,mechanism
+84,Move Through Deck,mechanism
+85,Action Points,mechanism
+86,"Deck, Bag, and Pool Building",mechanism
+87,Modular Board,mechanism
+88,Minimap Resolution,mechanism
+89,Zone of Control,mechanism
+90,Ladder Climbing,mechanism
+91,King of the Hill,mechanism
+92,Auction: Multiple Lot,mechanism
+93,Turn Order: Auction,mechanism
+94,Narrative Choice / Paragraph,mechanism
+95,Tags,mechanism
+96,Line Drawing,mechanism
+97,Finale Ending,mechanism
+98,Passed Action Token,mechanism
+99,Movement Template,mechanism
+100,Enclosure,mechanism
+101,Tech Trees / Tech Tracks,mechanism
+102,Acting,mechanism
+103,Secret Unit Deployment,mechanism
+104,Open Drafting,mechanism
+105,Role Playing,mechanism
+106,Pattern Recognition,mechanism
+107,Simulation,mechanism
+108,Card Play Conflict Resolution,mechanism
+109,Dice Rolling,mechanism
+110,Grid Movement,mechanism
+111,Pick-up and Deliver,mechanism
+112,Area Majority / Influence,mechanism
+113,Map Reduction,mechanism
+114,Highest-Lowest Scoring,mechanism
+115,Three Dimensional Movement,mechanism
+116,Command Cards,mechanism
+117,Stat Check Resolution,mechanism
+118,Predictive Bid,mechanism
+119,"I Cut, You Choose",mechanism
+120,Neighbor Scope,mechanism
+121,Programmed Movement,mechanism
+122,Auction: Turn Order Until Pass,mechanism
+123,Turn Order: Pass Order,mechanism
+124,Race,mechanism
+125,Order Counters,mechanism
+126,Campaign / Battle Card Driven,mechanism
+127,Slide/Push,mechanism
+128,Negotiation,mechanism
+129,Variable Player Powers,mechanism
+130,Variable Phase Order,mechanism
+131,Auction: Once Around,mechanism
+132,Moving Multiple Units,mechanism
+133,Once-Per-Game Abilities,mechanism
+134,Voting,mechanism
+135,Stock Holding,mechanism
+136,Area-Impulse,mechanism
+137,Constrained Bidding,mechanism
+138,Bingo,mechanism
+139,Team-Based Game,mechanism
+140,Catch the Leader,mechanism
+141,Variable Set-up,mechanism
+142,Area Movement,mechanism
+143,Set Collection,mechanism
+144,Increase Value of Unchosen Resources,mechanism
+145,Real-Time,mechanism
+146,Kill Steal,mechanism
+147,Closed Drafting,mechanism
+148,Rondel,mechanism
+149,Storytelling,mechanism
+150,Deduction,mechanism
+151,Map Deformation,mechanism
+152,Turn Order: Role Order,mechanism
+153,Point to Point Movement,mechanism
+154,Turn Order: Progressive,mechanism
+155,Auction: English,mechanism
+156,Interrupts,mechanism
+157,Force Commitment,mechanism
+158,Investment,mechanism
+159,Semi-Cooperative Game,mechanism
+160,Market,mechanism
+161,Worker Placement with Dice Workers,mechanism
+162,Chit-Pull System,mechanism
+163,Roll / Spin and Move,mechanism
+164,Random Production,mechanism
+165,Follow,mechanism
+166,Paper-and-Pencil,mechanism
+167,Bribery,mechanism
+168,Closed Economy Auction,mechanism
+169,Multi-Use Cards,mechanism
+170,Victory Points as a Resource,mechanism
+171,Action/Event,mechanism
+172,Targeted Clues,mechanism
+173,Tug of War,mechanism
+174,Map Addition,mechanism
+175,Auction: Fixed Placement,mechanism
+176,Hexagon Grid,mechanism
+177,Action Retrieval,mechanism
+178,Tile Placement,mechanism
+179,Flicking,mechanism
+180,Legacy Game,mechanism
+181,Turn Order: Claim Action,mechanism
+182,Mancala,mechanism
+183,Square Grid,mechanism
+184,Loans,mechanism
+185,Lose a Turn,mechanism
+186,Pattern Movement,mechanism
+187,Hidden Roles,mechanism
+188,Delayed Purchase,mechanism
+189,End Game Bonuses,mechanism
+190,Elapsed Real Time Ending,mechanism
+191,Ownership,mechanism
+192,Push Your Luck,mechanism
+193,Trick-taking,mechanism
+194,Bias,mechanism
+195,Roles with Asymmetric Information,mechanism
+196,Rock-Paper-Scissors,mechanism
+197,Action Drafting,mechanism
+198,Player Elimination,mechanism
+199,Layering,mechanism
+200,Sudden Death Ending,mechanism
+201,Resource to Move,mechanism
+202,Relative Movement,mechanism
+203,Hidden Movement,mechanism
+204,Ratio / Combat Results Table,mechanism
+205,Action Queue,mechanism
+206,Traitor Game,mechanism
+207,Betting and Bluffing,mechanism
+208,Turn Order: Random,mechanism
+209,Solo / Solitaire Game,mechanism
+210,Connections,mechanism
+211,Take That,mechanism
+212,Prisoner's Dilemma,mechanism
+213,Re-rolling and Locking,mechanism
+214,Pieces as Map,mechanism
+215,Worker Placement,mechanism
+216,Die Icon Resolution,mechanism
+217,Events,mechanism
+218,Cube Tower,mechanism
+219,Auction: Dutch,mechanism
+220,Turn Order: Time Track,mechanism
+221,Drawing,mechanism
+222,Line of Sight,mechanism
+223,Scenario / Mission / Campaign Game,mechanism
+224,Auction Compensation,mechanism
+225,Network and Route Building,mechanism
+226,Income,mechanism
+227,Auction: Dutch Priority,mechanism
+228,Alliances,mechanism
+229,Singing,mechanism
+230,Automatic Resource Growth,mechanism
+231,Trading,mechanism
+232,Critical Hits and Failures,mechanism
+233,Pattern Building,mechanism
+234,Advantage Token,mechanism
+235,Commodity Speculation,mechanism
+236,Grid Coverage,mechanism
+237,Memory,mechanism
+238,Contracts,mechanism
+239,"Worker Placement, Different Worker Types",mechanism
+240,Hand Management,mechanism
+241,Communication Limits,mechanism
+242,Multiple Maps,mechanism
+243,Hidden Victory Points,mechanism
+244,Simultaneous Action Selection,mechanism
+245,Movement Points,mechanism
+246,Deck Construction,mechanism
+247,Melding and Splaying,mechanism
+248,Track Movement,mechanism
