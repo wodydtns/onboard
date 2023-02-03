@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum TagType {
 	PLAYER_COUNT("인원"),
 	GENRE("장르"),
-	DIFFICULTY("난이도"),
 	MECHANISM("메커니즘"),
-	CATEGORY("카테고리");
-	private final String name;
+	CATEGORY("카테고리"),
+	TYPE("타입");
+	private final String desc;
 }

@@ -5,10 +5,12 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class TagListResponse {
 	private List<TypeTagMap> typeTagMaps;
 
+	@Getter
 	@AllArgsConstructor
 	public static class TypeTagMap {
 		private String type;

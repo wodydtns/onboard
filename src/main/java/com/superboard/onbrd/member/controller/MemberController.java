@@ -81,12 +81,12 @@ public class MemberController {
 		return ResponseEntity.ok(null);
 	}
 
-	// @GetMapping("/{memberId}/level")
-	// public ResponseEntity<MemberLevel> getMemberLevel(@PathVariable Long memberId) {
-	// 	Member member = memberService.findVerifiedOneById(memberId);
-	//
-	// 	return ResponseEntity.ok(member.getLevel());
-	// }
+	@GetMapping("/{memberId}/level")
+	public ResponseEntity<MemberLevel> getMemberLevel(@PathVariable Long memberId) {
+		Member member = memberService.findVerifiedOneById(memberId);
+
+		return ResponseEntity.ok(member.getLevel());
+	}
 
 	@PatchMapping("/{memberId}/withdrawal")
 	public ResponseEntity<MemberLevel> withdraw(@PathVariable Long memberId) {

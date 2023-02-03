@@ -15,4 +15,6 @@ public interface PasswordService {
 	PasswordChangeDueExtendResponse extendPasswordChangeDue(Member member);
 
 	Password findVerifiedOneByMember(Member member);
+
+	void validatePassword(String rawRequest, String encodedActual);
 }

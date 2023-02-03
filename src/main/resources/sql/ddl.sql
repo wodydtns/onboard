@@ -1,18 +1,17 @@
 ﻿CREATE TABLE "MEMBER"
 (
-    "ID"                           NUMBER        NOT NULL PRIMARY KEY,
-    "EMAIL"                        VARCHAR2(65)  NOT NULL,
-    "NICKNAME"                     VARCHAR2(20)  NOT NULL,
-    "PROFILE_CHARACTER"            VARCHAR2(100) NOT NULL,
---     "LEVEL"                        VARCHAR2(20)  NOT NULL,
-    "POINT"                        NUMBER        NOT NULL,
-    "STATUS"                       VARCHAR2(10)  NOT NULL,
-    "ROLE"                         VARCHAR(10)   NOT NULL,
-    "PASSWORD_CHANGE_DUE_EXTENDED" NUMBER(1)     NOT NULL,
-    "LAST_VISIT"                   DATE          NULL,
-    "PASSWORD_MODIFIED_AT"         DATE          NULL,
-    "CREATED_AT"                   DATE          NOT NULL,
-    "MODIFIED_AT"                  DATE          NOT NULL
+    "ID"                           NUMBER              NOT NULL PRIMARY KEY,
+    "EMAIL"                        VARCHAR2(65)        NOT NULL,
+    "NICKNAME"                     VARCHAR2(20)        NOT NULL,
+    "PROFILE_CHARACTER"            VARCHAR2(100)       NOT NULL,
+    "LEVEL"                        VARCHAR2(20)        NOT NULL,
+    "POINT"                        NUMBER              NOT NULL,
+    "STATUS"                       VARCHAR2(10)        NOT NULL,
+    "ROLE"                         VARCHAR(10)         NOT NULL,
+    "PASSWORD_CHANGE_DUE_EXTENDED" NUMBER(1) DEFAULT 0 NOT NULL,
+    "LAST_VISIT"                   DATE                NULL,
+    "CREATED_AT"                   DATE                NOT NULL,
+    "MODIFIED_AT"                  DATE                NOT NULL
 );
 
 CREATE TABLE "TAG"
@@ -134,8 +133,8 @@ CREATE TABLE "TOKEN"
     "MEMBER_ID"                NUMBER        NOT NULL PRIMARY KEY REFERENCES "MEMBER" ("ID") ON DELETE CASCADE,
     "ANDROID_PUSH_TOKEN"       VARCHAR2(100) NULL,
     "APPLE_PUSH_TOKEN"         VARCHAR2(100) NULL,
-    "SIGN_OUT_ACCESS_TOKEN"    VARCHAR2(100) NULL,
-    "REFRESH_TOKEN"            VARCHAR2(100) NULL,
+    "SIGN_OUT_ACCESS_TOKEN"    VARCHAR2(300) NULL,
+    "REFRESH_TOKEN"            VARCHAR2(300) NULL,
     "REFRESH_TOKEN_EXPIRED_AT" DATE          NULL,
     "OAUTH_GRANT_TOKEN"        VARCHAR2(100) NULL
 );

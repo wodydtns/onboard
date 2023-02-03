@@ -27,7 +27,7 @@ public class PasswordController {
 	private final MemberService memberService;
 	private final PasswordService passwordService;
 
-	@GetMapping("/api/v1/passwords/deadline")
+	@GetMapping("/deadline")
 	public ResponseEntity<?> getPasswordChangeDeadline(@AuthenticationPrincipal MemberDetails memberDetails) {
 		Member member = memberService.findVerifiedOneByEmail(memberDetails.getEmail());
 		PasswordChangeDueResponse response = passwordService.getPasswordChangeDue(member);
@@ -35,7 +35,7 @@ public class PasswordController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PatchMapping("/api/v1/passwords/deadline")
+	@PatchMapping("/deadline")
 	public ResponseEntity<PasswordChangeDueExtendResponse> extendPasswordChangeDue(
 		@AuthenticationPrincipal MemberDetails memberDetails) {
 

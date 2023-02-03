@@ -7,10 +7,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.global.exception.BusinessLogicException;
+import com.superboard.onbrd.global.exception.ExceptionCode;
 import com.superboard.onbrd.member.dto.PasswordChangeDueExtendResponse;
 import com.superboard.onbrd.member.dto.PasswordChangeDueResponse;
 import com.superboard.onbrd.member.entity.Member;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class PasswordServiceImpl implements PasswordService {
 	private final PasswordRepository passwordRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public void createPassword(Password password) {
@@ -33,6 +36,10 @@ public class PasswordServiceImpl implements PasswordService {
 	@Override
 	public void resetPassword(Member member, String encodedPassword) {
 		Password password = findVerifiedOneByMember(member);
+		if (passwordEncoder.matches(encodedPassword, password.getEncodedPassword())) {
+			throw new BusinessLogicException(SAME_AS_PREVIOUS_PASSWORD);
+		}
+
 		password.resetPassword(encodedPassword);
 	}
 
@@ -76,5 +83,13 @@ public class PasswordServiceImpl implements PasswordService {
 		}
 
 		return passwordOrNull.get();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public void validatePassword(String rawRequest, String encodedActual) {
+		if (!passwordEncoder.matches(rawRequest, encodedActual)) {
+			throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
+		}
 	}
 }

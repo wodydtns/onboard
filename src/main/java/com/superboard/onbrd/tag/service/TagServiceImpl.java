@@ -31,7 +31,7 @@ public class TagServiceImpl implements TagService {
 	public TagListResponse getTagListGroupByType() {
 		List<Tag> tags = tagRepository.findAll();
 		Map<String, List<Tag>> typeTagListMap = tags.stream()
-			.collect(Collectors.groupingBy(tag -> tag.getType().getName()));
+			.collect(Collectors.groupingBy(tag -> tag.getType().getDesc()));
 
 		List<TagListResponse.TypeTagMap> typeTagMaps = new ArrayList<>();
 

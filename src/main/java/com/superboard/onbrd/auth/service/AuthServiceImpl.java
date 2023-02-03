@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import com.superboard.onbrd.auth.repository.TokenRepository;
 import com.superboard.onbrd.auth.util.AuthCodeMailProvider;
 import com.superboard.onbrd.auth.util.JwtTokenProvider;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
-import com.superboard.onbrd.global.exception.ExceptionCode;
 import com.superboard.onbrd.mail.dto.MailSendingEvent;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.Password;
@@ -36,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 	private final MemberService memberService;
 	private final PasswordService passwordService;
-	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final TokenRepository tokenRepository;
 	private final AuthCodeMailProvider authCodeMailProvider;
@@ -46,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
 	public SignInResponse signIn(SignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);
-		validatePassword(request.getPassword(), password.getEncodedPassword());
+		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
 
 		Token token = tokenRepository.findByMemberId(member.getId()).get();
 
@@ -109,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
 	public void reconfirmPassword(PasswordCheckRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);
-		validatePassword(request.getPassword(), password.getEncodedPassword());
+		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
 	}
 
 	@Override
@@ -128,12 +125,6 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public void checkAuthCode(AuthCodeCheckRequest request) {
 		validateAuthCode(authCodeMailProvider.getAuthCode(request.getClientKey()), request);
-	}
-
-	private void validatePassword(String rawRequest, String encodedActual) {
-		if (!passwordEncoder.matches(rawRequest, encodedActual)) {
-			throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
-		}
 	}
 
 	private void validateAuthCode(String storedCode, AuthCodeCheckRequest request) {

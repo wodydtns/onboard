@@ -41,6 +41,7 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			.mvcMatchers("/h2/**").permitAll()
+			.mvcMatchers(HttpMethod.GET, "/api/*/tags").permitAll()
 			.mvcMatchers(HttpMethod.POST, "/api/*/members/sign-up").permitAll()
 			.mvcMatchers(HttpMethod.GET,
 				"/api/*/members/nickname-check", "/api/*/members/mail-check").permitAll()
