@@ -1,5 +1,9 @@
 package com.superboard.onbrd.boardgame.repository;
 
+import static com.superboard.onbrd.boardgame.entity.QBoardgame.boardgame;
+import static com.superboard.onbrd.tag.entity.QBoardgameTag.boardgameTag;
+import static com.superboard.onbrd.tag.entity.QTag.tag;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -36,8 +40,11 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 			builder.and(boardgame.)
 		}
 		*/
-		List<Boardgame> results = queryFactory.selectFrom(boardgame)
-				.join(boardgame.boardgameTags).fetchJoin().join(tag.tag_id).fetch();
+		List<Boardgame> results = queryFactory.select(boardgame)
+				.from(boardgameTag)
+				.join(boardgameTag.boardgame, boardgame)
+				.join(boardgameTag.tag, tag).fetch();
+				
 				
 		return new PageImpl<Boardgame>(results, pageable,results.size()); 
 	}
