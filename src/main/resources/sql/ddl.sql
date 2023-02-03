@@ -4,7 +4,7 @@
     "EMAIL"                        VARCHAR2(65)        NOT NULL,
     "NICKNAME"                     VARCHAR2(20)        NOT NULL,
     "PROFILE_CHARACTER"            VARCHAR2(100)       NOT NULL,
-    "LEVEL"                        VARCHAR2(20)        NOT NULL,
+    "MEMBER_LEVEL"                 VARCHAR2(20)        NOT NULL,
     "POINT"                        NUMBER              NOT NULL,
     "STATUS"                       VARCHAR2(10)        NOT NULL,
     "ROLE"                         VARCHAR(10)         NOT NULL,
