@@ -31,6 +31,6 @@ public class Tag {
 	@Enumerated(EnumType.STRING)
 	private TagType type;
 	
-	@OneToMany(mappedBy = "tag_id")
-	private List<Tag> tag_id  = new ArrayList<>();
+	@OneToMany(mappedBy = "tag")
+	private List<BoardgameTag> tag_id  = new ArrayList<>();
 }
