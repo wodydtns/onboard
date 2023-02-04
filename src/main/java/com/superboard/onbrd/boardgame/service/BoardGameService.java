@@ -8,5 +8,7 @@ import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
 
 public interface BoardGameService {
 
-	Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) ;
+	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) ;
+	
+	public Boardgame BoardGameDetail(Long boardgameId); 
 }

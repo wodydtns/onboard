@@ -20,4 +20,9 @@ public class BoardgameServiceImpl implements BoardGameService {
 			
 		return boardgameRepository.BoardGameSearchByRecommand(boardGameSearchByRecommand,pageable );
 	}
+
+	@Override
+	public Boardgame BoardGameDetail(Long boardgameId) {
+		return boardgameRepository.BoardGameDetail(boardgameId);
+	}
 }

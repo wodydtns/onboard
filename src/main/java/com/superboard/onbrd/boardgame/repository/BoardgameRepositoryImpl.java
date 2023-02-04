@@ -49,4 +49,11 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		return new PageImpl<Boardgame>(results, pageable,results.size()); 
 	}
 
+	@Override
+	public Boardgame BoardGameDetail(Long boardgameId) {
+		QBoardgame boardgame = QBoardgame.boardgame;
+		Boardgame boardgameDetail = queryFactory.selectFrom(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
+		return boardgameDetail;
+	}
+
 }

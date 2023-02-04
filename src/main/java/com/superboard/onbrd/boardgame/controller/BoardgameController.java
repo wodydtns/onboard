@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,5 +38,10 @@ public class BoardgameController {
 	@GetMapping("/searchByRecommand")
 	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) {
 		return boardGameService.BoardGameSearchByRecommand(boardGameSearchByRecommand,pageable);
+	}
+	
+	@GetMapping("boardGameDetail/{boardgameId}")
+	public Boardgame BoardGameDetail(@PathVariable Long boardgameId) {
+		return boardGameService.BoardGameDetail(boardgameId); 
 	}
 }

@@ -9,4 +9,6 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 public interface BoardgameRepository  {
 	
 	Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable );
+	
+	public Boardgame BoardGameDetail(Long boardgameId); 
 }
