@@ -24,8 +24,8 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 
 	@Override
-	public Boardgame selectBoardameDetail(Long boardgameId) {
-		return boardgameRepository.selectBoardgameDetail(boardgameId);
+	public Boardgame selectBoardgameInfo(Long boardgameId) {
+		return boardgameRepository.selectBoardgameInfo(boardgameId);
 	}
 
 

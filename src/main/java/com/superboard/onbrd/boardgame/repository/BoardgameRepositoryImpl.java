@@ -42,23 +42,30 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		List<Boardgame> results = queryFactory.select(boardgame)
 				.from(boardgameTag)
 				.join(boardgameTag.boardgame, boardgame)
-				.join(boardgameTag.tag, tag).fetch();
+				.join(boardgameTag.tag, tag)
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 				
 				
 		return new PageImpl<Boardgame>(results, pageable,results.size()); 
 	}
 
 	@Override
-	public Boardgame selectBoardgameDetail(Long boardgameId) {
+	public Boardgame selectBoardgameInfo(Long boardgameId) {
 		QBoardgame boardgame = QBoardgame.boardgame;
-		Boardgame boardgameDetail = queryFactory.selectFrom(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
+		Boardgame boardgameDetail = queryFactory.selectFrom(boardgame).where(boardgame.id.eq(boardgameId))
+				.fetchOne();
 		return boardgameDetail;
 	}
 
 	@Override
 	public Page<Boardgame> selectBoardgameList(Pageable pageable) {
 		QBoardgame boardgame = QBoardgame.boardgame;
-		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame).fetch();
+		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame)
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 		return new PageImpl<Boardgame>(boardgameList, pageable,boardgameList.size()); 
 	}
 

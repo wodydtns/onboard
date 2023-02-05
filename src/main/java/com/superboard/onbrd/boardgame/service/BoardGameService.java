@@ -10,7 +10,7 @@ public interface BoardGameService {
 
 	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable ) ;
 	
-	public Boardgame selectBoardameDetail(Long boardgameId); 
+	public Boardgame selectBoardgameInfo(Long boardgameId); 
 	
 	public Page<Boardgame> selectBoardgameList(Pageable pageable);
 }
