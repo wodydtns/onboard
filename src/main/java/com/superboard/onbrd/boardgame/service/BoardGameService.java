@@ -4,11 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.superboard.onbrd.boardgame.entity.Boardgame;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
+import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 
 public interface BoardGameService {
 
-	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) ;
+	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable ) ;
 	
-	public Boardgame BoardGameDetail(Long boardgameId); 
+	public Boardgame selectBoardameDetail(Long boardgameId); 
+	
+	public Page<Boardgame> selectBoardgameList(Pageable pageable);
 }

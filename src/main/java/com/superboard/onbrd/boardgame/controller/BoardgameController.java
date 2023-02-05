@@ -17,31 +17,40 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
+import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 
 @RestController
 @RequestMapping("/api/v1/boardgame")
 @RequiredArgsConstructor
 @Validated
-@Api(tags = {"BoardGame 정보를 제공하는 Controller"})
+@Api(tags = { "BoardGame 정보를 제공하는 Controller" })
 public class BoardgameController {
-	
+
 	@Autowired
 	private final BoardGameService boardGameService;
-	
+
 	@ApiOperation(value = "사용자의 이름과 나이를 리턴하는 메소드")
-	 @ApiImplicitParams({
-		 @ApiImplicitParam(name = "playCount", value = "인원", required = true, dataType = "varchar", paramType = "path"),
-		 @ApiImplicitParam(name = "difficulty", value = "난이도", required = true, dataType = "varchar", paramType = "path"),
-		 @ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path")
-	 })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "playCount", value = "인원", required = true, dataType = "varchar", paramType = "path"),
+			@ApiImplicitParam(name = "difficulty", value = "난이도", required = true, dataType = "varchar", paramType = "path"),
+			@ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path") })
 	@GetMapping("/searchByRecommand")
-	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) {
-		return boardGameService.BoardGameSearchByRecommand(boardGameSearchByRecommand,pageable);
+	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
+			Pageable pageable) {
+		return boardGameService.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+	}
+
+	@ApiOperation(value = "보드게임을 리턴하는 메소드")
+	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
+	@GetMapping("/boardGameDetail/{boardgameId}")
+	public Boardgame selectBoardameDetail(@PathVariable Long boardgameId) {
+		return boardGameService.selectBoardameDetail(boardgameId);
 	}
 	
-	@GetMapping("boardGameDetail/{boardgameId}")
-	public Boardgame BoardGameDetail(@PathVariable Long boardgameId) {
-		return boardGameService.BoardGameDetail(boardgameId); 
+	@ApiOperation(value = "보드게임을 리턴하는 메소드")
+	@GetMapping("/boardgameList")
+	public Page<Boardgame> selectBoardgameList(Pageable pageable){
+		return boardGameService.selectBoardgameList(pageable);
 	}
+	
 }

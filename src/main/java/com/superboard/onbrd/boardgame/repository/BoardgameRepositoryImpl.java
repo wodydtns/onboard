@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchByRecommand;
-
+import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.tag.entity.QTag;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	private final JPAQueryFactory queryFactory;
 	
 	@Override
-	public Page<Boardgame> BoardGameSearchByRecommand(BoardGameSearchByRecommand boardGameSearchByRecommand,Pageable pageable ) {
+	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable ) {
 		
 		QBoardgame boardgame = QBoardgame.boardgame;
 		QTag tag = QTag.tag;
@@ -50,10 +49,18 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	}
 
 	@Override
-	public Boardgame BoardGameDetail(Long boardgameId) {
+	public Boardgame selectBoardgameDetail(Long boardgameId) {
 		QBoardgame boardgame = QBoardgame.boardgame;
 		Boardgame boardgameDetail = queryFactory.selectFrom(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
 		return boardgameDetail;
 	}
+
+	@Override
+	public Page<Boardgame> selectBoardgameList(Pageable pageable) {
+		QBoardgame boardgame = QBoardgame.boardgame;
+		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame).fetch();
+		return new PageImpl<Boardgame>(boardgameList, pageable,boardgameList.size()); 
+	}
+
 
 }
