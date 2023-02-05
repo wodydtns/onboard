@@ -27,8 +27,8 @@ public class CustomBoardGameRepositoryImpl implements CustomBoardGameRepository 
 		List<BoardgameSearchByTagResponse.BoardGameResponse> responses = queryFactory
 			.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class,
 				boardgame.id,
-				boardgame.name,
-				boardgame.image
+				boardgame.name
+				//boardgame.image
 			))
 			.from(boardgameTag)
 			.join(boardgameTag.boardgame, boardgame)

@@ -1,10 +1,16 @@
 package com.superboard.onbrd.boardgame.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.superboard.onbrd.tag.entity.BoardgameTag;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +27,7 @@ public class Boardgame {
 	private String name;
 	@Column(nullable = false)
 	private String description;
-	@Column(nullable = false)
-	private String image;
+	
 	@Column(nullable = false)
 	private String playerCount;
 	@Column(nullable = false)
@@ -31,6 +36,9 @@ public class Boardgame {
 	private String age;
 	@Column(nullable = false)
 	private String difficulty;
-	@Column(nullable = false)
-	private long favoriteCount;
+
+	
+	@OneToMany(mappedBy = "boardgame")
+	private List<BoardgameTag> boardgameTags = new ArrayList<>();
+	
 }

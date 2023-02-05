@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OrderBy {
-	BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.favoriteCount.desc()});
+	//BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.favoriteCount.desc()});
+	// favorite count 임시 주석 처리
+	BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.playerCount.desc()});
 
 	private final String name;
 	private final OrderSpecifier<?>[] orderSpecifiers;
