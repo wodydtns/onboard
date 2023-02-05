@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BoardGameSearchByRecommand {
+public class SearchBoardGameByRecommand {
 	
 	@Column(table = "TAG",name = "name")
 	private String tagName;
@@ -18,7 +18,7 @@ public class BoardGameSearchByRecommand {
 	private String type;
 	
 	@QueryProjection
-	public BoardGameSearchByRecommand(String tagName,String type) {
+	public SearchBoardGameByRecommand(String tagName,String type) {
 		this.tagName =tagName;
 		this.type= type;
 	}
