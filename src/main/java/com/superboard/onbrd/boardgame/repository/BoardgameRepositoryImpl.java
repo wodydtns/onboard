@@ -1,34 +1,34 @@
 package com.superboard.onbrd.boardgame.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.boardgame;
-import static com.superboard.onbrd.tag.entity.QBoardgameTag.boardgameTag;
-import static com.superboard.onbrd.tag.entity.QTag.tag;
+import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
-import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
+import com.superboard.onbrd.tag.entity.QBoardgameTag;
 import com.superboard.onbrd.tag.entity.QTag;
 
 import lombok.RequiredArgsConstructor;
-
-import com.superboard.onbrd.tag.entity.QBoardgameTag;
 
 @Repository
 @RequiredArgsConstructor
 public class BoardgameRepositoryImpl implements BoardgameRepository {
 
 	private final JPAQueryFactory queryFactory;
-	
+
 	@Override
-	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable ) {
-		
+	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
+		Pageable pageable) {
+
 		QBoardgame boardgame = QBoardgame.boardgame;
 		QTag tag = QTag.tag;
 		QBoardgameTag boardgameTag = QBoardgameTag.boardgameTag; 
@@ -46,8 +46,7 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
-				
-				
+					
 		return new PageImpl<Boardgame>(results, pageable,results.size()); 
 	}
 
@@ -66,8 +65,17 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
-		return new PageImpl<Boardgame>(boardgameList, pageable,boardgameList.size()); 
+		return new PageImpl<Boardgame>(boardgameList, pageable,boardgameList.size());
 	}
 
+	@Override
+	public Optional<Boardgame> findById(Long id) {
+		return Optional.of(
+			queryFactory
+				.select(boardgame)
+				.from(boardgame)
+				.where(boardgame.id.eq(id))
+				.fetchFirst());
+	}
 
 }

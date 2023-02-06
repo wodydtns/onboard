@@ -28,4 +28,12 @@ public class CommentLike extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comment_id")
 	private Comment comment;
+
+	public static CommentLike of(Member member, Comment comment) {
+		CommentLike commentLike = new CommentLike();
+		commentLike.member = member;
+		commentLike.comment = comment;
+
+		return commentLike;
+	}
 }

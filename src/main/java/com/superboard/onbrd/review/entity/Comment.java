@@ -13,6 +13,7 @@ import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,15 @@ public class Comment extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "review_id")
 	private Review review;
+
+	public void updateContent(String content) {
+		this.content = content;
+	}
+
+	@Builder
+	public Comment(String content, Member writer, Review review) {
+		this.content = content;
+		this.writer = writer;
+		this.review = review;
+	}
 }

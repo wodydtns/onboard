@@ -1,5 +1,7 @@
 package com.superboard.onbrd.boardgame.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,6 +13,8 @@ public interface BoardgameRepository  {
 	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable );
 	
 	public Boardgame selectBoardgameInfo(Long boardgameId); 
-	
+
 	public Page<Boardgame> selectBoardgameList(Pageable pageable);
+
+	Optional<Boardgame> findById(Long id);
 }

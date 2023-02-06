@@ -28,4 +28,12 @@ public class ReviewLike extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "review_id")
 	private Review review;
+
+	public static ReviewLike of(Member member, Review review) {
+		ReviewLike reviewLike = new ReviewLike();
+		reviewLike.member = member;
+		reviewLike.review = review;
+
+		return reviewLike;
+	}
 }
