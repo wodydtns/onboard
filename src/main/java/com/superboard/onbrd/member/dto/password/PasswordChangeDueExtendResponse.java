@@ -1,4 +1,4 @@
-package com.superboard.onbrd.member.dto;
+package com.superboard.onbrd.member.dto.password;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

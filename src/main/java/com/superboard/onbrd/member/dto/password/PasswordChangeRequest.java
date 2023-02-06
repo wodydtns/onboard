@@ -1,4 +1,4 @@
-package com.superboard.onbrd.member.dto;
+package com.superboard.onbrd.member.dto.password;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PasswordChangeRequest {
-	private Long memberId;
 	private String password;
 }

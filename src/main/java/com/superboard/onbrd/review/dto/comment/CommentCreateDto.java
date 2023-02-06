@@ -1,4 +1,4 @@
-package com.superboard.onbrd.review.dto;
+package com.superboard.onbrd.review.dto.comment;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

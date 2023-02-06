@@ -1,4 +1,4 @@
-package com.superboard.onbrd.review.dto;
+package com.superboard.onbrd.review.dto.review;
 
 import com.superboard.onbrd.global.entity.OrderBy;
 

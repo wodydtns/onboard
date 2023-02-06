@@ -2,8 +2,6 @@ package com.superboard.onbrd.member.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.repository.TokenRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
-import com.superboard.onbrd.member.dto.MemberUpdateRequest;
-import com.superboard.onbrd.member.dto.PasswordChangeRequest;
-import com.superboard.onbrd.member.dto.SignUpRequest;
+import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.repository.MemberRepository;
@@ -41,21 +37,6 @@ public class MemberServiceImpl implements MemberService {
 		return member;
 	}
 
-	@Transactional
-	@Override
-	public Member updateMember(MemberUpdateRequest request) {
-		Member member = findVerifiedOneById(request.getMemberId());
-		Password password = passwordService.findVerifiedOneByMember(member);
-
-		Optional.ofNullable(request.getNickname())
-			.ifPresent(member::updateNickname);
-
-		Optional.ofNullable(request.getProfileCharacter())
-			.ifPresent(member::updateProfileCharacter);
-
-		return member;
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public Member findVerifiedOneById(Long id) {
@@ -75,12 +56,6 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void changePassword(PasswordChangeRequest request) {
-		Member member = findVerifiedOneById(request.getMemberId());
-		passwordService.resetPassword(member, request.getPassword());
-	}
-
-	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedNickname(String nickname) {
 		memberRepository.findByNickname(nickname).ifPresent(
@@ -96,12 +71,6 @@ public class MemberServiceImpl implements MemberService {
 		if (!isEmailExists(email)) {
 			throw new BusinessLogicException(MEMBER_NOT_FOUND);
 		}
-	}
-
-	@Override
-	public void withDraw(Long id) {
-		Member member = findVerifiedOneById(id);
-		member.withdraw();
 	}
 
 	private boolean isEmailExists(String email) {

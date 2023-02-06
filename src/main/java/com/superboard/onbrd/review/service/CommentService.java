@@ -1,7 +1,7 @@
 package com.superboard.onbrd.review.service;
 
-import com.superboard.onbrd.review.dto.CommentCreateDto;
-import com.superboard.onbrd.review.dto.CommentUpdateDto;
+import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
+import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
 import com.superboard.onbrd.review.entity.Comment;
 
 public interface CommentService {

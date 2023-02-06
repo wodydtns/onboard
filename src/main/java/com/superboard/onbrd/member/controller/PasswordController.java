@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.member.dto.PasswordChangeDueExtendResponse;
-import com.superboard.onbrd.member.dto.PasswordChangeDueResponse;
-import com.superboard.onbrd.member.dto.PasswordResetRequest;
+import com.superboard.onbrd.member.dto.password.PasswordChangeDueExtendResponse;
+import com.superboard.onbrd.member.dto.password.PasswordChangeDueResponse;
+import com.superboard.onbrd.member.dto.password.PasswordResetRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.member.service.PasswordService;

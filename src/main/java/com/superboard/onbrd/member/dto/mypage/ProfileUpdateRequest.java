@@ -1,6 +1,4 @@
-package com.superboard.onbrd.member.dto;
-
-import java.util.List;
+package com.superboard.onbrd.member.dto.mypage;
 
 import javax.validation.Valid;
 
@@ -10,10 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Valid
-public class SignUpRequest {
-	private String email;
-	private String password;
+public class ProfileUpdateRequest {
 	private String nickname;
 	private String profileCharacter;
-	private List<Long> tagIds;
 }

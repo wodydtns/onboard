@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.review.dto.CommentCreateDto;
-import com.superboard.onbrd.review.dto.CommentPatchRequest;
-import com.superboard.onbrd.review.dto.CommentPostRequest;
-import com.superboard.onbrd.review.dto.CommentUpdateDto;
+import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
+import com.superboard.onbrd.review.dto.comment.CommentPatchRequest;
+import com.superboard.onbrd.review.dto.comment.CommentPostRequest;
+import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
 import com.superboard.onbrd.review.service.CommentService;
 
 import lombok.RequiredArgsConstructor;

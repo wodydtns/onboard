@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.review.dto.ReviewByBoardgameIdResponse;
-import com.superboard.onbrd.review.dto.ReviewCreateDto;
-import com.superboard.onbrd.review.dto.ReviewGetParameterDto;
-import com.superboard.onbrd.review.dto.ReviewGetRequest;
-import com.superboard.onbrd.review.dto.ReviewPatchRequest;
-import com.superboard.onbrd.review.dto.ReviewPostRequest;
-import com.superboard.onbrd.review.dto.ReviewUpdateDto;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
+import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
+import com.superboard.onbrd.review.dto.review.ReviewGetRequest;
+import com.superboard.onbrd.review.dto.review.ReviewPatchRequest;
+import com.superboard.onbrd.review.dto.review.ReviewPostRequest;
+import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
 import com.superboard.onbrd.review.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;

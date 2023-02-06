@@ -12,10 +12,10 @@ import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
-import com.superboard.onbrd.review.dto.ReviewByBoardgameIdResponse;
-import com.superboard.onbrd.review.dto.ReviewCreateDto;
-import com.superboard.onbrd.review.dto.ReviewGetParameterDto;
-import com.superboard.onbrd.review.dto.ReviewUpdateDto;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
+import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
+import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.ReviewRepository;
 

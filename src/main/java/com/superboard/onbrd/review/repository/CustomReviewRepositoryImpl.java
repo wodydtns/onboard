@@ -14,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.superboard.onbrd.review.dto.ReviewByBoardgameIdResponse;
-import com.superboard.onbrd.review.dto.ReviewGetParameterDto;
+import com.superboard.onbrd.global.util.SliceUtil;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,10 +25,32 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	private final JPAQueryFactory queryFactory;
+	private final SliceUtil sliceUtil;
 
 	@Override
 	public ReviewByBoardgameIdResponse searchReviewsByBoardgameId(ReviewGetParameterDto params) {
-		List<ReviewByBoardgameIdResponse.ReviewCard> reviewCards = queryFactory
+		List<ReviewByBoardgameIdResponse.ReviewCard> reviewCards = getReviewCards(params);
+
+		Boolean hasNext = sliceUtil.getHasNext(reviewCards, params.getLimit());
+
+		List<Long> reviewIds = reviewCards.stream()
+			.map(ReviewByBoardgameIdResponse.ReviewCard::getId)
+			.collect(Collectors.toList());
+
+		Map<Long, List<ReviewByBoardgameIdResponse.CommentCard>> reviewIdCommentCardListMap =
+			getReviewIdCommentCardListMap(reviewIds);
+
+		reviewCards.forEach(
+			reviewCard -> reviewCard.setComments(
+				reviewIdCommentCardListMap.get(reviewCard.getId())
+			)
+		);
+
+		return new ReviewByBoardgameIdResponse(hasNext, reviewCards);
+	}
+
+	private List<ReviewByBoardgameIdResponse.ReviewCard> getReviewCards(ReviewGetParameterDto params) {
+		return queryFactory
 			.select(Projections.fields(ReviewByBoardgameIdResponse.ReviewCard.class,
 				review.id,
 				review.grade,
@@ -46,13 +69,10 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
 			.fetch();
+	}
 
-		Boolean hasNext = getHasNext(reviewCards, params.getLimit());
-
-		List<Long> reviewIds = reviewCards.stream()
-			.map(reviewCard -> reviewCard.getId())
-			.collect(Collectors.toList());
-
+	private Map<Long, List<ReviewByBoardgameIdResponse.CommentCard>>
+	getReviewIdCommentCardListMap(List<Long> reviewIds) {
 		List<Tuple> tuples = queryFactory
 			.select(comment.review.id, Projections.fields(ReviewByBoardgameIdResponse.CommentCard.class,
 				comment.id,
@@ -67,29 +87,12 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.where(comment.review.id.in(reviewIds))
 			.fetch();
 
-		Map<Long, List<ReviewByBoardgameIdResponse.CommentCard>> reviewIdCommentCardListMap = tuples.stream()
+		return tuples.stream()
 			.collect(
 				Collectors.groupingBy(
 					tuple -> tuple.get(comment.review.id),
 					Collectors.mapping(tuple -> tuple.get(1, ReviewByBoardgameIdResponse.CommentCard.class),
 						Collectors.toList())
 				));
-
-		reviewCards.forEach(
-			reviewCard -> reviewCard.setComments(
-				reviewIdCommentCardListMap.get(reviewCard.getId())
-			)
-		);
-
-		return new ReviewByBoardgameIdResponse(hasNext, reviewCards);
-	}
-
-	private Boolean getHasNext(List<?> cards, int limit) {
-		if (cards.size() > limit) {
-			cards.remove(limit);
-			return true;
-		}
-
-		return false;
 	}
 }

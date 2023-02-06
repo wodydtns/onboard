@@ -34,11 +34,11 @@ public class FavoriteTagServiceImpl implements FavoriteTagService {
 	}
 
 	@Override
-	public void resetFavoriteTags(Long memberId, List<Long> tagIds) {
+	public void resetFavoriteTags(String email, List<Long> tagIds) {
 		List<FavoriteTag> toBeDeleted = new ArrayList<>();
 		List<FavoriteTag> toBeSaved = new ArrayList<>();
 
-		Member member = memberService.findVerifiedOneById(memberId);
+		Member member = memberService.findVerifiedOneByEmail(email);
 		List<FavoriteTag> favoriteTags = favoriteTagRepository.findAllByMember(member);
 
 		for (FavoriteTag favoriteTag : favoriteTags) {

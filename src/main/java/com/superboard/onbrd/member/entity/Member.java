@@ -17,7 +17,7 @@ import com.superboard.onbrd.global.converter.MemberLevelConverter;
 import com.superboard.onbrd.global.converter.MemberRoleConverter;
 import com.superboard.onbrd.global.converter.MemberStatusConverter;
 import com.superboard.onbrd.global.entity.BaseEntity;
-import com.superboard.onbrd.member.dto.SignUpRequest;
+import com.superboard.onbrd.member.dto.member.SignUpRequest;
 
 import lombok.AccessLevel;
 import lombok.Getter;
