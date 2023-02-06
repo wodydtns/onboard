@@ -8,9 +8,9 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 
 public interface BoardgameRepository  {
 	
-	Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable );
+	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,Pageable pageable );
 	
-	public Boardgame selectBoardgameDetail(Long boardgameId); 
+	public Boardgame selectBoardgameInfo(Long boardgameId); 
 	
 	public Page<Boardgame> selectBoardgameList(Pageable pageable);
 }

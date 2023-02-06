@@ -43,8 +43,8 @@ public class BoardgameController {
 	@ApiOperation(value = "보드게임을 리턴하는 메소드")
 	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
 	@GetMapping("/boardGameDetail/{boardgameId}")
-	public Boardgame selectBoardameDetail(@PathVariable Long boardgameId) {
-		return boardGameService.selectBoardameDetail(boardgameId);
+	public Boardgame selectBoardgameInfo(@PathVariable Long boardgameId) {
+		return boardGameService.selectBoardgameInfo(boardgameId);
 	}
 	
 	@ApiOperation(value = "보드게임을 리턴하는 메소드")
