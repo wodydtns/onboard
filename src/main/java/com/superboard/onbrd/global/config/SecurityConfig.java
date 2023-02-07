@@ -49,7 +49,8 @@ public class SecurityConfig {
 			.mvcMatchers(HttpMethod.GET, "/api/*/auth/code").permitAll()
 			.mvcMatchers(HttpMethod.POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
 			.mvcMatchers(HttpMethod.PATCH, "/api/*/passwords").permitAll()
-			.mvcMatchers("/api/**").authenticated();
+			.mvcMatchers("/api/**").authenticated()
+			.and().authorizeRequests().antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll();
 
 		return http.build();
 	}
