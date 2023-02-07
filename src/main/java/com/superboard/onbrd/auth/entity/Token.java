@@ -41,7 +41,7 @@ public class Token {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	public static Token of(Member member) {
+	public static Token from(Member member) {
 		Token token = new Token();
 		token.member = member;
 

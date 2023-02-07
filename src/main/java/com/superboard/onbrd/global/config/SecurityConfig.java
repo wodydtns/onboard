@@ -28,19 +28,25 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.httpBasic().disable()
-			.formLogin().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		http.httpBasic()
+			.disable()
+			.formLogin()
+			.disable()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.addFilterBefore(
 				new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository),
 				UsernamePasswordAuthenticationFilter.class)
-			.csrf().disable()
+			.csrf()
+			.disable()
 			.headers()
-			.frameOptions().disable()
+			.frameOptions()
+			.disable()
 			.and()
 			.authorizeRequests()
 			.mvcMatchers("/h2/**").permitAll()
+			.mvcMatchers(HttpMethod.GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
 			.mvcMatchers(HttpMethod.GET, "/api/*/tags").permitAll()
 			.mvcMatchers(HttpMethod.POST, "/api/*/members/sign-up").permitAll()
 			.mvcMatchers(HttpMethod.GET,
@@ -50,7 +56,10 @@ public class SecurityConfig {
 			.mvcMatchers(HttpMethod.POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
 			.mvcMatchers(HttpMethod.PATCH, "/api/*/passwords").permitAll()
 			.mvcMatchers("/api/**").authenticated()
-			.and().authorizeRequests().antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll();
+			.and()
+			.authorizeRequests()
+			.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
+			.permitAll();
 
 		return http.build();
 	}

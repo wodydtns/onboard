@@ -17,8 +17,12 @@ import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.member.service.PasswordService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Password")
 @RestController
 @RequestMapping("/api/v1/passwords")
 @RequiredArgsConstructor
@@ -27,14 +31,21 @@ public class PasswordController {
 	private final MemberService memberService;
 	private final PasswordService passwordService;
 
+	@Tag(name = "Password")
+	@ApiOperation(value = "비밀번호 변경 기한 조회")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/deadline")
-	public ResponseEntity<?> getPasswordChangeDeadline(@AuthenticationPrincipal MemberDetails memberDetails) {
+	public ResponseEntity<PasswordChangeDueResponse> getPasswordChangeDeadline(
+		@AuthenticationPrincipal MemberDetails memberDetails) {
 		Member member = memberService.findVerifiedOneByEmail(memberDetails.getEmail());
 		PasswordChangeDueResponse response = passwordService.getPasswordChangeDue(member);
 
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Password")
+	@ApiOperation(value = "비밀번호 변경 기한 연장")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@PatchMapping("/deadline")
 	public ResponseEntity<PasswordChangeDueExtendResponse> extendPasswordChangeDue(
 		@AuthenticationPrincipal MemberDetails memberDetails) {
@@ -45,11 +56,13 @@ public class PasswordController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Password")
+	@ApiOperation(value = "비밀번호 재설정")
 	@PatchMapping
 	public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		passwordService.resetPassword(member, request.getPassword());
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok().build();
 	}
 }

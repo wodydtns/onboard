@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
 
 		Member member = memberRepository.save(Member.from(request));
 		passwordService.createPassword(Password.of(member, encodedPassword));
-		tokenRepository.save(Token.of(member));
+		tokenRepository.save(Token.from(member));
 
 		return member;
 	}

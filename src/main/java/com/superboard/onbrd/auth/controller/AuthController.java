@@ -20,38 +20,74 @@ import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
-import com.superboard.onbrd.auth.dto.SignInResponse;
+import com.superboard.onbrd.auth.dto.SignInResultDto;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.auth.service.AuthService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "Authentication", description = "인증")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Validated
-@Slf4j
 public class AuthController {
 	private final AuthService authService;
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "로그인")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "로그인 성공/로그인한 멤버 ID 응답",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class),
+				examples = {@ExampleObject(value = "1")}),
+			headers = {
+				@Header(name = "Authorization", description = "AccessToken", schema = @Schema(implementation = String.class)),
+				@Header(name = "RefreshToken", schema = @Schema(implementation = String.class))}),
+		@ApiResponse(responseCode = "401", description = "잘못된 비밀번호"),
+		@ApiResponse(responseCode = "404", description = "가입되지 않은 이메일")
+	})
 	@PostMapping("/sign-in")
 	public ResponseEntity<Long> signIn(@RequestBody SignInRequest request, HttpServletResponse response) {
-		SignInResponse signInResponse = authService.signIn(request);
-		setTokensToHeader(response, signInResponse.getAccessToken(), signInResponse.getRefreshToken());
+		SignInResultDto signInResultDto = authService.signIn(request);
+		setTokensToHeader(response, signInResultDto.getAccessToken(), signInResultDto.getRefreshToken());
 
-		return ResponseEntity.ok(signInResponse.getId());
+		return ResponseEntity.ok(signInResultDto.getId());
 	}
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "로그아웃")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+	@ApiResponse(responseCode = "200", description = "로그아웃 성공")
 	@PatchMapping("/sign-out")
 	public ResponseEntity<Void> signOut(HttpServletRequest request) {
-		String accessToken = request.getHeader(AUTH_HEADER).substring(7);
+		String accessToken = getAccessTokenFromHeader(request);
 		authService.signOut(accessToken);
 
 		return ResponseEntity.ok().build();
 	}
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "토큰 재발급")
+	@ApiImplicitParams(value = {
+		@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class),
+		@ApiImplicitParam(paramType = "header", name = "RefreshToken", required = true, dataTypeClass = String.class)
+	})
+	@ApiResponse(responseCode = "200", description = "토큰 재발급 성공",
+		content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)),
+		headers = {
+			@Header(name = "Authorization", description = "AccessToken", schema = @Schema(implementation = String.class)),
+			@Header(name = "RefreshToken", schema = @Schema(implementation = String.class))})
 	@GetMapping("/token-reissue")
 	public ResponseEntity<Void> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
 		TokenDto dto = new TokenDto(
@@ -63,9 +99,17 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "비밀번호 재확인")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "비밀번호 일치"),
+		@ApiResponse(responseCode = "401", description = "비밀번호 불일치")
+	})
 	@PostMapping("/password-check")
 	public ResponseEntity<Void> reconfirmPassword(
-		@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordCheckRequest request) {
+		@AuthenticationPrincipal MemberDetails memberDetails,
+		@RequestBody PasswordCheckRequest request) {
 
 		request.setEmail(memberDetails.getEmail());
 		authService.reconfirmPassword(request);
@@ -73,6 +117,9 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "인증 코드 메일 발송")
+	@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AuthCodeSendingResponse.class)))
 	@GetMapping("/code")
 	public ResponseEntity<AuthCodeSendingResponse> sendAuthCodeMail(@RequestParam String email) {
 		AuthCodeSendingResponse response = authService.sendAuthCodeMail(email);
@@ -80,6 +127,12 @@ public class AuthController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Authentication")
+	@ApiOperation(value = "인증 코드 검증")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "인증 코드 일치"),
+		@ApiResponse(responseCode = "401", description = "인증 코드 불일치")
+	})
 	@PostMapping("/code-check")
 	public ResponseEntity<Void> checkAuthCode(@RequestBody AuthCodeCheckRequest request) {
 		authService.checkAuthCode(request);
@@ -93,7 +146,6 @@ public class AuthController {
 	}
 
 	private String getAccessTokenFromHeader(HttpServletRequest request) {
-
 		return request.getHeader(AUTH_HEADER).substring(AUTH_HEADER_BEGIN_INDEX);
 	}
 

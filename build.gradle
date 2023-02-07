@@ -68,6 +68,7 @@ dependencies {
     /* Swagger 설정 */
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation "io.springfox:springfox-swagger-ui:3.0.0"
+    implementation group: 'io.springfox', name: 'springfox-oas', version: '3.0.0'
 
     /* Spring boot mail 설정*/
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -91,7 +92,7 @@ tasks.named('test') {
 }
 
 //querydsl 
-def querydslSrcDir = 'src/main/querydsl'
+def querydslSrcDir = "$buildDir/generated/querydsl"
 querydsl {
     jpa = true
     //querydslDefault = true

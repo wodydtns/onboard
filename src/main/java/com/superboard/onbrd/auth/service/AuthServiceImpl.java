@@ -13,7 +13,7 @@ import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
-import com.superboard.onbrd.auth.dto.SignInResponse;
+import com.superboard.onbrd.auth.dto.SignInResultDto;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.repository.TokenRepository;
@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
-	public SignInResponse signIn(SignInRequest request) {
+	public SignInResultDto signIn(SignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);
 		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
 		token.setRefreshTokenExpiredAt(
 			jwtTokenProvider.getExpiredAt(refreshToken));
 
-		return new SignInResponse(member.getId(), accessToken, refreshToken);
+		return new SignInResultDto(member.getId(), accessToken, refreshToken);
 	}
 
 	@Override
@@ -103,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void reconfirmPassword(PasswordCheckRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);

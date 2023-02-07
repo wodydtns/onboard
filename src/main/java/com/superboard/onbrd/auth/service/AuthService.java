@@ -4,11 +4,11 @@ import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
-import com.superboard.onbrd.auth.dto.SignInResponse;
+import com.superboard.onbrd.auth.dto.SignInResultDto;
 import com.superboard.onbrd.auth.dto.TokenDto;
 
 public interface AuthService {
-	SignInResponse signIn(SignInRequest request);
+	SignInResultDto signIn(SignInRequest request);
 
 	void signOut(String accessToken);
 
