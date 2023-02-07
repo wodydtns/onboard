@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum TagType {
-	PLAYER_COUNT("인원"),
-	GENRE("장르"),
-	MECHANISM("메커니즘"),
-	CATEGORY("카테고리"),
-	TYPE("타입");
+	BEST_PLAYER("권장 인원"),
+	PLAYTIME("게임 시간"),
+	AGE("권장 연령"),
+	CATEGORY("카테고리");
+
 	private final String desc;
 }
