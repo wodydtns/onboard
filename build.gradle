@@ -94,7 +94,7 @@ tasks.named('test') {
 def querydslSrcDir = 'src/main/querydsl'
 querydsl {
     jpa = true
-    querydslDefault = true
+    //querydslDefault = true
     querydslSourcesDir = querydslSrcDir
 }
 sourceSets {
