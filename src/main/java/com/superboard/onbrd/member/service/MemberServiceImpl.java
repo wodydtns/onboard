@@ -68,9 +68,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public void checkEmailExists(String email) {
-		if (!isEmailExists(email)) {
-			throw new BusinessLogicException(MEMBER_NOT_FOUND);
-		}
+		memberRepository.findByEmail(email).ifPresent(
+			member -> {
+				throw new BusinessLogicException(DUPLICATED_EMAIL,
+					String.format("Email %s is duplicated", email));
+			}
+		);
 	}
 
 	private boolean isEmailExists(String email) {
