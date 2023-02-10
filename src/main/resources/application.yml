@@ -8,10 +8,10 @@ spring:
 
       #hikari:
       #connection-timeout: 3000
-      #validation-timeout: 3000
-      #schema: self
-      #maximum-pool-size: 20
-      #idle-timeout: 200000
+    #validation-timeout: 3000
+    #schema: self
+    #maximum-pool-size: 20
+    #idle-timeout: 200000
     #max-lifetime: 240000
     #pool-name: oraPool
 
@@ -27,6 +27,19 @@ spring:
     static-path-pattern: /static/**
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ontheboard.superboard@gmail.com
+    password: biscfgvzjlvpmfpc
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:
