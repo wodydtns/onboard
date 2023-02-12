@@ -76,6 +76,12 @@ public class MemberServiceImpl implements MemberService {
 		);
 	}
 
+	@Override
+	public void deleteMemberById(Long id) {
+		Member member = findVerifiedOneById(id);
+		memberRepository.delete(member);
+	}
+
 	private boolean isEmailExists(String email) {
 		return memberRepository.findByEmail(email).isPresent();
 	}
