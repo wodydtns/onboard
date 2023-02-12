@@ -28,6 +28,11 @@ repositories {
 }
 
 dependencies {
+
+	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-objectstorage
+	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-objectstorage', version: '3.3.0'
+	
+
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -77,6 +82,20 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
     implementation("com.google.guava:guava:31.1-jre")
+    
+   	implementation 'com.oracle.oci.sdk:oci-java-sdk-full:latest.release'
+   	
+	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-common-httpclient-jersey
+	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-common-httpclient-jersey', version: '3.3.0'
+	
+	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-audit
+	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-audit', version: '3.3.0'
+	
+	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-core
+	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-core', version: '3.3.0'
+	
+	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-database
+	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-database', version: '3.3.0'
 }
 
 bootWar {
