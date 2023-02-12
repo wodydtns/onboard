@@ -1,10 +1,11 @@
 package com.superboard.onbrd.global.config;
 
+import static org.springframework.http.HttpMethod.*;
+
 import java.security.SecureRandom;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -46,15 +47,16 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			.mvcMatchers("/h2/**").permitAll()
-			.mvcMatchers(HttpMethod.GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
-			.mvcMatchers(HttpMethod.GET, "/api/*/tags").permitAll()
-			.mvcMatchers(HttpMethod.POST, "/api/*/members/sign-up").permitAll()
-			.mvcMatchers(HttpMethod.GET,
+			.mvcMatchers(GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
+			.mvcMatchers(GET, "/api/*/tags").permitAll()
+			.mvcMatchers(DELETE, "/api/*/members/{memberId:[0-9]+}").permitAll()
+			.mvcMatchers(POST, "/api/*/members/sign-up").permitAll()
+			.mvcMatchers(GET,
 				"/api/*/members/nickname-check", "/api/*/members/mail-check").permitAll()
-			.mvcMatchers(HttpMethod.POST, "/api/*/auth/sign-in").permitAll()
-			.mvcMatchers(HttpMethod.GET, "/api/*/auth/code").permitAll()
-			.mvcMatchers(HttpMethod.POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
-			.mvcMatchers(HttpMethod.PATCH, "/api/*/passwords").permitAll()
+			.mvcMatchers(POST, "/api/*/auth/sign-in").permitAll()
+			.mvcMatchers(GET, "/api/*/auth/code").permitAll()
+			.mvcMatchers(POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
+			.mvcMatchers(PATCH, "/api/*/passwords").permitAll()
 			.mvcMatchers("/api/**").authenticated()
 			.and()
 			.authorizeRequests()

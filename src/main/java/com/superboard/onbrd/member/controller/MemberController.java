@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,5 +86,19 @@ public class MemberController {
 		Member member = memberService.findVerifiedOneById(memberId);
 
 		return ResponseEntity.ok(member.getLevel());
+	}
+
+	@Tag(name = "Member")
+	@ApiOperation(value = "테스트용 임시 회원삭제")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "204"),
+		@ApiResponse(responseCode = "404")
+	})
+	@ResponseStatus(NO_CONTENT)
+	@DeleteMapping("/{memberId}")
+	public ResponseEntity<Void> deleteMember(@PathVariable Long memberId) {
+		memberService.deleteMemberById(memberId);
+
+		return ResponseEntity.noContent().build();
 	}
 }
