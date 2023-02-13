@@ -51,3 +51,10 @@ jwt:
 
 server:
   port: 8080
+  #ssl:
+    #key-store: classpath:ssl/keystore.p12
+    #key-store-password: onboard7
+    #key-store-type: PKCS12
+
+    
+  
