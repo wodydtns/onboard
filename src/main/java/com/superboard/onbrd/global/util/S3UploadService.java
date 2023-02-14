@@ -1,8 +1,11 @@
 package com.superboard.onbrd.global.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
 import com.oracle.bmc.Region;
@@ -16,57 +19,46 @@ import com.oracle.bmc.objectstorage.requests.GetBucketRequest;
 import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.ListObjectsRequest;
+import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.GetBucketResponse;
 import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.ListObjectsResponse;
+import com.oracle.bmc.objectstorage.transfer.UploadConfiguration;
+import com.oracle.bmc.objectstorage.transfer.UploadManager;
+import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
+import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
 
 public class S3UploadService {
 	
 	public final String bucketName = "onboard";
 	
-	public void OciUtil() throws Exception {
-		ObjectStorage client = getObjectStorageClient();
-
-		System.out.println("Getting the namespace.");
-		String namespaceName = getNameSpaceName(client);
-
-		System.out.println("Creating the source object");
-		List<GetBucketRequest.Fields> fieldsList = new ArrayList<>(2);
-		fieldsList.add(GetBucketRequest.Fields.ApproximateCount);
-		fieldsList.add(GetBucketRequest.Fields.ApproximateSize);
-		GetBucketRequest request = GetBucketRequest.builder().namespaceName(namespaceName).bucketName(bucketName)
-				.fields(fieldsList).build();
-
-		System.out.println("Fetching bucket details");
-		GetBucketResponse response = client.getBucket(request);
-
-		System.out.println("Bucket Name : " + response.getBucket().getName());
-		System.out.println("Bucket Compartment : " + response.getBucket().getCompartmentId());
-		System.out.println("The Approximate total number of objects within this bucket : "
-				+ response.getBucket().getApproximateCount());
-		System.out.println("The Approximate total size of objects within this bucket : "
-				+ response.getBucket().getApproximateSize());
-		
-		client.close();
-	}
-
+	/**
+	 * @param fileName 
+	 * @throws Exception
+	 * @method : 버킷의 특정 파일 가져오기
+	 */
 	public void getObjectOne(String fileName) throws Exception {
 		ObjectStorage client = getObjectStorageClient();
 
 		String namespaceName = getNameSpaceName(client);
 		
-		String objectName = "onboard/" + fileName;
+		String objectName = "boardgame/" + fileName;
 
 		GetObjectRequest request = GetObjectRequest.builder().namespaceName(namespaceName).bucketName(bucketName)
 				.objectName(objectName).build();
 
 		GetObjectResponse response = client.getObject(request);
 		System.out.println(response);
+		System.out.println(response.getETag());
 
 		client.close();
 	}
 	
+	/**
+	 * @throws Exception
+	 * @method : bucket의 모든 파일 가져오기
+	 */
 	public void getObjectList() throws Exception{
 		ObjectStorage client = getObjectStorageClient();
 		
@@ -95,6 +87,44 @@ public class S3UploadService {
         }
         
         System.out.println(response.getListObjects());
+        client.close();
+	}
+	
+	public void UploadObject() throws Exception {
+		ObjectStorage client = getObjectStorageClient();
+		UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
+		UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
+		String namespaceName = getNameSpaceName(client);
+		
+		// bucket에 넣을 파일 이름
+        String objectName = "review/test_object.txt";
+        Map<String, String> metadata = null;
+        String contentType = "text/plain";
+        
+        String contentEncoding = null;
+        String contentLanguage = null;
+        
+        // 실제 파일
+        File body = new File("D:/onbrd/repo.txt");
+
+        PutObjectRequest request =
+	                PutObjectRequest.builder()
+	                        .bucketName(bucketName)
+	                        .namespaceName(namespaceName)
+	                        .objectName(objectName)
+	                        .contentType(contentType)
+	                        .contentLanguage(contentLanguage)
+	                        .contentEncoding(contentEncoding)
+	                        .opcMeta(metadata)
+	                        .build();
+		
+		
+		UploadRequest uploadDetails =
+	                UploadRequest.builder(body).allowOverwrite(true).build(request);
+		
+		UploadResponse response = uploadManager.upload(uploadDetails);
+        System.out.println(response);
+        
         client.close();
 	}
 	
