@@ -29,7 +29,7 @@ import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
 
-public class S3UploadService {
+public class OciObjectStorageUtil {
 	
 	public final String bucketName = "onboard";
 	
