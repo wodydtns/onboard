@@ -35,13 +35,6 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		Pageable pageable) {
 
 		QBoardgame boardgame = QBoardgame.boardgame;
-		/*
-		
-		BooleanBuilder builder = new BooleanBuilder();
-		if(StringUtils.hasText(boardGameSearchByRecommand.getTagName())) {
-			builder.and(boardgame.)
-		}
-		*/
 		List<Boardgame> results = queryFactory.select(boardgame)
 				.from(boardgameTag)
 				.join(boardgameTag.boardgame, boardgame)
@@ -59,9 +52,10 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		BoardgameDetailDto boardgameDetail = queryFactory.select(
 				Projections.constructor(BoardgameDetailDto.class,
 						boardgame.name,boardgame.description,boardgame.image, boardgame.favoriteCount))
+				.from(boardgame)
 				.where(boardgame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag)
-				.join(boardgameTag.tag,tag).fetch(); 
+				.join(boardgameTag.tag,tag).where(boardgameTag.boardgame.id.eq(boardgameId)).fetch(); 
 		boardgameDetail.setTagList(tagList);
 		return boardgameDetail;
 	}

@@ -17,6 +17,8 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
 public class BoardgameServiceImpl implements BoardGameService {
+	
+	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
 
 	@Autowired
 	private BoardgameRepository boardgameRepository;
@@ -24,12 +26,20 @@ public class BoardgameServiceImpl implements BoardGameService {
 	@Override
 	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
 		Pageable pageable) {
-		return boardgameRepository.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+		Page<Boardgame> boardgameList = boardgameRepository.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+		for (Boardgame boardgame : boardgameList) {
+			String imageName = boardgame.getImage();
+			boardgame.setImage(imagePath + imageName);
+		}
+		return boardgameList ;
 	}
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
-		return boardgameRepository.selectBoardgameInfo(boardgameId);
+		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
+		String imageName = boardgameDetail.getImage();
+		boardgameDetail.setImage(imagePath + imageName);
+		return boardgameDetail;
 	}
 
 	@Override
