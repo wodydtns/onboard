@@ -4,6 +4,8 @@ import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +17,9 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
-import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
-import com.superboard.onbrd.tag.entity.QBoardgameTag;
 import com.superboard.onbrd.tag.entity.QTag;
 import com.superboard.onbrd.tag.entity.Tag;
 
@@ -31,31 +32,22 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
-		Pageable pageable) {
-
-		QBoardgame boardgame = QBoardgame.boardgame;
-		List<Boardgame> results = queryFactory.select(boardgame)
-				.from(boardgameTag)
-				.join(boardgameTag.boardgame, boardgame)
-				.join(boardgameTag.tag, tag)
-				.offset(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.fetch();
-					
-		return new PageImpl<Boardgame>(results, pageable,results.size()); 
+	public Page<Boardgame> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
+			Pageable pageable) {
+		 List<Boardgame> results = queryFactory.select(boardgame)
+				 .from(boardgameTag).join(boardgame, boardgameTag.boardgame).fetch();
+		return new PageImpl<Boardgame>(results, pageable, results.size());
 	}
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
 		QTag tag = QTag.tag;
-		BoardgameDetailDto boardgameDetail = queryFactory.select(
-				Projections.constructor(BoardgameDetailDto.class,
-						boardgame.name,boardgame.description,boardgame.image, boardgame.favoriteCount))
-				.from(boardgame)
-				.where(boardgame.id.eq(boardgameId)).fetchOne();
-		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag)
-				.join(boardgameTag.tag,tag).where(boardgameTag.boardgame.id.eq(boardgameId)).fetch(); 
+		BoardgameDetailDto boardgameDetail = queryFactory
+				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.name, boardgame.description,
+						boardgame.image, boardgame.favoriteCount))
+				.from(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
+		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag).join(boardgameTag.tag, tag)
+				.where(boardgameTag.boardgame.id.eq(boardgameId)).fetch();
 		boardgameDetail.setTagList(tagList);
 		return boardgameDetail;
 	}
@@ -63,21 +55,14 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	@Override
 	public Page<Boardgame> selectBoardgameList(Pageable pageable) {
 		QBoardgame boardgame = QBoardgame.boardgame;
-		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame)
-				.offset(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.fetch();
-		return new PageImpl<Boardgame>(boardgameList, pageable,boardgameList.size());
+		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame).offset(pageable.getOffset())
+				.limit(pageable.getPageSize()).fetch();
+		return new PageImpl<Boardgame>(boardgameList, pageable, boardgameList.size());
 	}
 
 	@Override
 	public Optional<Boardgame> findById(Long id) {
-		return Optional.of(
-			queryFactory
-				.select(boardgame)
-				.from(boardgame)
-				.where(boardgame.id.eq(id))
-				.fetchFirst());
+		return Optional.of(queryFactory.select(boardgame).from(boardgame).where(boardgame.id.eq(id)).fetchFirst());
 	}
 
 }
