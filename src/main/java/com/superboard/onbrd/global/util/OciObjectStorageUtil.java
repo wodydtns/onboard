@@ -15,6 +15,7 @@ import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import com.oracle.bmc.objectstorage.model.ListObjects;
 import com.oracle.bmc.objectstorage.model.ObjectSummary;
+import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.GetBucketRequest;
 import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
@@ -89,7 +90,10 @@ public class OciObjectStorageUtil {
         System.out.println(response.getListObjects());
         client.close();
 	}
-	
+	/**
+	 * @throws Exception
+	 * @method : 파일 업로드
+	 */
 	public void UploadObject() throws Exception {
 		ObjectStorage client = getObjectStorageClient();
 		UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
@@ -125,6 +129,26 @@ public class OciObjectStorageUtil {
 		UploadResponse response = uploadManager.upload(uploadDetails);
         System.out.println(response);
         
+        client.close();
+	}
+	/**
+	 * @throws Exception
+	 * @method : 파일 삭제
+	 */
+	public void deleteObject() throws Exception {
+		ObjectStorage client = getObjectStorageClient();
+		
+		String namespaceName = getNameSpaceName(client);
+		
+        DeleteObjectRequest request = 
+        		DeleteObjectRequest.builder()
+        			.bucketName(bucketName)
+        			.namespaceName(namespaceName)
+        			.objectName("test_object.txt")
+        			.build();
+        		
+        
+        client.deleteObject(request);
         client.close();
 	}
 	
