@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
@@ -43,7 +44,7 @@ public class BoardgameController {
 	@ApiOperation(value = "보드게임을 리턴하는 메소드")
 	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
 	@GetMapping("/boardGameDetail/{boardgameId}")
-	public Boardgame selectBoardgameInfo(@PathVariable Long boardgameId) {
+	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId) {
 		return boardGameService.selectBoardgameInfo(boardgameId);
 	}
 

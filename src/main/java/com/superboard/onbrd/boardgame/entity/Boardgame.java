@@ -25,20 +25,16 @@ public class Boardgame {
 	private Long id;
 	@Column(nullable = false)
 	private String name;
+	
 	@Column(nullable = false)
 	private String description;
-	@Column(nullable = false)
-	private String playerCount;
-	@Column(nullable = false)
-	private String playtime;
-	@Column(nullable = false)
-	private String age;
-	@Column(nullable = false)
-	private String difficulty;
+	
 	@Column(nullable = false)
 	private String image;
+	
 	@Column(nullable = false)
 	private long favoriteCount = 0;
+	
 	@OneToMany(mappedBy = "boardgame")
 	private List<BoardgameTag> boardgameTags = new ArrayList<>();
 }
