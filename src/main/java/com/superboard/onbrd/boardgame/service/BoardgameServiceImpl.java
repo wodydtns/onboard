@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
@@ -25,10 +26,10 @@ public class BoardgameServiceImpl implements BoardGameService {
 	private BoardgameRepository boardgameRepository;
 
 	@Override
-	public Page<Boardgame> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
 		Pageable pageable) {
-		Page<Boardgame> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
-		for (Boardgame boardgame : boardgameList) {
+		Page<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
+		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
 		}
