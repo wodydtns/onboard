@@ -1,17 +1,18 @@
 ﻿CREATE TABLE "MEMBER"
 (
-    "ID"                           NUMBER              NOT NULL PRIMARY KEY,
-    "EMAIL"                        VARCHAR2(65)        NOT NULL,
-    "NICKNAME"                     VARCHAR2(20)        NOT NULL,
-    "PROFILE_CHARACTER"            VARCHAR2(100)       NOT NULL,
-    "MEMBER_LEVEL"                 VARCHAR2(20)        NOT NULL,
-    "POINT"                        NUMBER              NOT NULL,
-    "STATUS"                       VARCHAR2(10)        NOT NULL,
-    "ROLE"                         VARCHAR(10)         NOT NULL,
-    "PASSWORD_CHANGE_DUE_EXTENDED" NUMBER(1) DEFAULT 0 NOT NULL,
-    "LAST_VISIT"                   DATE                NULL,
-    "CREATED_AT"                   DATE                NOT NULL,
-    "MODIFIED_AT"                  DATE                NOT NULL
+    "ID"                          NUMBER           NOT NULL PRIMARY KEY,
+    "EMAIL"                       VARCHAR2(65)     NOT NULL,
+    "NICKNAME"                    VARCHAR2(20)     NOT NULL,
+    "PROFILE_CHARACTER"           VARCHAR2(100)    NOT NULL,
+    "MEMBER_LEVEL"                VARCHAR2(20)     NOT NULL,
+    "POINT"                       NUMBER           NOT NULL,
+    "STATUS"                      VARCHAR2(10)     NOT NULL,
+    "ROLE"                        VARCHAR(10)      NOT NULL,
+    "IS_SOCIAL"                   NUMBER(1)        NOT NULL,
+    "PASSWORD_CHANGE_DELAY_COUNT" NUMBER DEFAULT 0 NOT NULL,
+    "LAST_VISIT"                  DATE             NULL,
+    "CREATED_AT"                  DATE             NOT NULL,
+    "MODIFIED_AT"                 DATE             NOT NULL
 );
 
 CREATE TABLE "TAG"

@@ -48,7 +48,9 @@ public class Member extends BaseEntity {
 	@Convert(converter = MemberRoleConverter.class)
 	private MemberRole role = ROLE_USER;
 	@Column(nullable = false)
-	private Boolean passwordChangeDueExtended = false;
+	private boolean isSocial = false;
+	@Column(nullable = false)
+	private int passwordChangeDelayCount = 0;
 	@Column
 	private LocalDateTime lastVisit;
 
@@ -65,8 +67,8 @@ public class Member extends BaseEntity {
 		this.profileCharacter = profileCharacter;
 	}
 
-	public void extendChangeDue() {
-		this.passwordChangeDueExtended = true;
+	public void delayPasswordChange() {
+		this.passwordChangeDelayCount++;
 	}
 
 	public void withdraw() {

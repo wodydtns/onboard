@@ -36,6 +36,7 @@ public class PasswordServiceImpl implements PasswordService {
 	@Override
 	public void resetPassword(Member member, String encodedPassword) {
 		Password password = findVerifiedOneByMember(member);
+
 		if (passwordEncoder.matches(encodedPassword, password.getEncodedPassword())) {
 			throw new BusinessLogicException(SAME_AS_PREVIOUS_PASSWORD);
 		}
@@ -46,30 +47,30 @@ public class PasswordServiceImpl implements PasswordService {
 	@Override
 	@Transactional(readOnly = true)
 	public PasswordChangeDueResponse getPasswordChangeDue(Member member) {
+		checkMemberHavingPassword(member);
+
 		Password password = findVerifiedOneByMember(member);
 
-		LocalDateTime changeDue = password.getModifiedAt().plusDays(PASSWORD_CHANGE_PERIOD_DAYS);
-		if (member.getPasswordChangeDueExtended()) {
-			changeDue = changeDue.plusDays(PASSWORD_CHANGE_PERIOD_DAYS);
-		}
+		LocalDateTime changeDue = password.getModifiedAt()
+			.plusDays((long)PASSWORD_CHANGE_PERIOD_DAYS * member.getPasswordChangeDelayCount());
+
+		checkPasswordChangeOverdue(changeDue, LocalDateTime.now());
 
 		String passwordChangeDue = changeDue.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		Boolean overdue = LocalDateTime.now().isAfter(changeDue);
 
-		return PasswordChangeDueResponse.of(passwordChangeDue, member.getPasswordChangeDueExtended(), overdue);
+		return PasswordChangeDueResponse.from(passwordChangeDue);
 	}
 
 	@Override
 	public PasswordChangeDueExtendResponse extendPasswordChangeDue(Member member) {
-		if (member.getPasswordChangeDueExtended()) {
-			throw new BusinessLogicException(PASSWORD_CHANGE_DUE_ALREADY_EXTENDED);
-		}
+		checkMemberHavingPassword(member);
 
-		member.extendChangeDue();
+		member.delayPasswordChange();
+
 		Password password = findVerifiedOneByMember(member);
 		String extendedChangeDue = password.getModifiedAt()
-			.plusDays(2 * PASSWORD_CHANGE_PERIOD_DAYS)
-			.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			.plusDays((long)PASSWORD_CHANGE_PERIOD_DAYS * member.getPasswordChangeDelayCount())
+			.toString();
 
 		return PasswordChangeDueExtendResponse.from(extendedChangeDue);
 	}
@@ -90,6 +91,18 @@ public class PasswordServiceImpl implements PasswordService {
 	public void validatePassword(String rawRequest, String encodedActual) {
 		if (!passwordEncoder.matches(rawRequest, encodedActual)) {
 			throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
+		}
+	}
+
+	private void checkPasswordChangeOverdue(LocalDateTime changeDue, LocalDateTime now) {
+		if (changeDue.isAfter(now)) {
+			throw new BusinessLogicException(PASSWORD_CHANGE_OVERDUE);
+		}
+	}
+
+	private void checkMemberHavingPassword(Member member) {
+		if (member.isSocial()) {
+			throw new BusinessLogicException(SOCIAL_MEMBER_NOT_HAVING_PASSWORD);
 		}
 	}
 }
