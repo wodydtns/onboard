@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
@@ -33,12 +34,11 @@ public class BoardgameController {
 	@ApiOperation(value = "사용자의 이름과 나이를 리턴하는 메소드")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "playCount", value = "인원", required = true, dataType = "varchar", paramType = "path"),
-		@ApiImplicitParam(name = "difficulty", value = "난이도", required = true, dataType = "varchar", paramType = "path"),
 		@ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path")})
 	@GetMapping("/searchByRecommand")
-	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
+	public Page<Boardgame> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
 		Pageable pageable) {
-		return boardGameService.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+		return boardGameService.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
 	}
 
 	@ApiOperation(value = "보드게임을 리턴하는 메소드")
