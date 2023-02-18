@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
@@ -16,19 +19,29 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
 public class BoardgameServiceImpl implements BoardGameService {
+	
+	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
 
 	@Autowired
 	private BoardgameRepository boardgameRepository;
 
 	@Override
-	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
 		Pageable pageable) {
-		return boardgameRepository.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+		Page<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
+		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
+			String imageName = boardgame.getImage();
+			boardgame.setImage(imagePath + imageName);
+		}
+		return boardgameList ;
 	}
 
 	@Override
-	public Boardgame selectBoardgameInfo(Long boardgameId) {
-		return boardgameRepository.selectBoardgameInfo(boardgameId);
+	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
+		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
+		String imageName = boardgameDetail.getImage();
+		boardgameDetail.setImage(imagePath + imageName);
+		return boardgameDetail;
 	}
 
 	@Override

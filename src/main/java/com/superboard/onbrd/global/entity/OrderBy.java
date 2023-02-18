@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public enum OrderBy {
 	//BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.favoriteCount.desc()});
 	// favorite count 임시 주석 처리
-	BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.playerCount.desc()}),
+	//BOARDGAME_MOST_FAVORITE("보드게임_관심회원순", new OrderSpecifier<?>[] {boardgame.playerCount.desc()}),
 
 	REVIEW_NEWEST("리뷰_최신순", new OrderSpecifier<?>[] {review.id.desc()}),
 	REVIEW_MOST_LIKE("리뷰_좋아요순", new OrderSpecifier<?>[] {review.likeCount.desc(), review.id.desc()});

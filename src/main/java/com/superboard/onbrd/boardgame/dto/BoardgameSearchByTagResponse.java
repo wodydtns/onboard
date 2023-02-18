@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -14,6 +15,7 @@ public class BoardgameSearchByTagResponse {
 
 	@Getter
 	@NoArgsConstructor
+	@Setter
 	public static class BoardGameResponse {
 		private Long id;
 		private String name;

@@ -3,12 +3,16 @@ package com.superboard.onbrd.boardgame.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
@@ -31,19 +35,18 @@ public class BoardgameController {
 
 	@ApiOperation(value = "사용자의 이름과 나이를 리턴하는 메소드")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "playCount", value = "인원", required = true, dataType = "varchar", paramType = "path"),
-		@ApiImplicitParam(name = "difficulty", value = "난이도", required = true, dataType = "varchar", paramType = "path"),
-		@ApiImplicitParam(name = "name", value = "장르", required = true, dataType = "varchar", paramType = "path")})
+		@ApiImplicitParam(name = "tagIds", value = "태그 ID 리스트", required = true, dataType = "List", paramType = "path"),
+		@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")})
 	@GetMapping("/searchByRecommand")
-	public Page<Boardgame> searchBoardgameByRecommand(SearchBoardGameByRecommand searchBoardGameByRecommand,
-		Pageable pageable) {
-		return boardGameService.searchBoardgameByRecommand(searchBoardGameByRecommand, pageable);
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
+		@PageableDefault(size = 5) Pageable pageable) {
+		return boardGameService.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
 	}
 
 	@ApiOperation(value = "보드게임을 리턴하는 메소드")
 	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
 	@GetMapping("/boardGameDetail/{boardgameId}")
-	public Boardgame selectBoardgameInfo(@PathVariable Long boardgameId) {
+	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId) {
 		return boardGameService.selectBoardgameInfo(boardgameId);
 	}
 
