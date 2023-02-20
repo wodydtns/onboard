@@ -26,6 +26,7 @@ import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.member.service.PasswordService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -73,11 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public TokenDto reissueTokens(TokenDto dto) {
-		LocalDateTime refreshTokenExpiredAt = jwtTokenProvider.getExpiredAt(dto.getRefreshToken());
-
-		if (refreshTokenExpiredAt.isBefore(LocalDateTime.now())) {
-			throw new BusinessLogicException(EXPIRED_REFRESH_TOKEN);
-		}
+		checkRefreshTokenExpired(dto.getRefreshToken());
 
 		String email = jwtTokenProvider.parseEmail(dto.getAccessToken());
 		LocalDateTime accessTokenExpiredAt = jwtTokenProvider.getExpiredAt(dto.getAccessToken());
@@ -138,5 +135,14 @@ public class AuthServiceImpl implements AuthService {
 
 	private String getClientKey(String email, LocalDateTime requestTime) {
 		return String.valueOf((email + requestTime).hashCode());
+	}
+
+	private void checkRefreshTokenExpired(String refreshToken) {
+		try {
+			jwtTokenProvider.getExpiredAt(refreshToken);
+
+		} catch (ExpiredJwtException e) {
+			throw new BusinessLogicException(EXPIRED_REFRESH_TOKEN);
+		}
 	}
 }
