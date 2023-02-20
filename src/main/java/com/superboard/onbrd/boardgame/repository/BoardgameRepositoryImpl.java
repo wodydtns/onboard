@@ -2,9 +2,11 @@ package com.superboard.onbrd.boardgame.repository;
 
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import org.springframework.util.ObjectUtils;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
@@ -93,7 +96,22 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		.from(boardgame);
 		return null;
 	}
-	
-	
+
+	@Override
+	public void insertOrUpdateClickCount(Long id) {
+		Long isExist = queryFactory.select(boardgameClickLog.count()).from(boardgameClickLog).where(boardgameClickLog.boardgame.id.eq(id)).fetchOne();
+		NumberExpression<Long> clicklogId = boardgameClickLog.clicklogId;
+		if(isExist > 0) {
+			queryFactory.update(boardgameClickLog).set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1));
+		}else {
+			/*
+			queryFactory.insert(boardgameClickLog).set(boardgameClickLog.boardgame.id, id)
+			.set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1))
+			.set(boardgameClickLog.lastClickAt, LocalDateTime.now());
+			*/
+			queryFactory.insert(boardgameClickLog).set(boardgameClickLog.clicklogId, clicklogId).set(boardgameClickLog.boardgame.id, id)
+			.set(boardgameClickLog.lastClickAt, LocalDateTime.now()).set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1)).execute();
+		}
+	}
 
 }
