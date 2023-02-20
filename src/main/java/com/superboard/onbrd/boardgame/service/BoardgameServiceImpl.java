@@ -7,12 +7,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
-import com.superboard.onbrd.boardgame.dto.SearchBoardGameByRecommand;
+import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
@@ -45,8 +47,8 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public Page<Boardgame> selectBoardgameList(Pageable pageable) {
-		return boardgameRepository.selectBoardgameList(pageable);
+	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
+		return boardgameRepository.selectRecommandBoardgameList(pageable);
 	}
 
 	@Override
@@ -57,4 +59,11 @@ public class BoardgameServiceImpl implements BoardGameService {
 			throw new BusinessLogicException(BOARDGAME_NOT_FOUND);
 		});
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long updateFavoriteCount(Long id) {
+		return boardgameRepository.updateFavoriteCount(id);
+	}
+
 }
