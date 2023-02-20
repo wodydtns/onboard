@@ -11,5 +11,7 @@ public interface TokenService {
 
 	TokenDto issueTokens(Member member);
 
+	void checkRefreshTokenExpired(String refreshToken);
+
 	void breakRefreshToken(Member member);
 }

@@ -16,9 +16,7 @@ import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResultDto;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.Token;
-import com.superboard.onbrd.auth.repository.TokenRepository;
 import com.superboard.onbrd.auth.util.AuthCodeMailProvider;
-import com.superboard.onbrd.auth.util.JwtTokenProvider;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.mail.dto.MailSendingEvent;
 import com.superboard.onbrd.member.entity.Member;
@@ -26,7 +24,6 @@ import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.member.service.PasswordService;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,8 +33,6 @@ public class AuthServiceImpl implements AuthService {
 	private final MemberService memberService;
 	private final PasswordService passwordService;
 	private final TokenService tokenService;
-	private final JwtTokenProvider jwtTokenProvider;
-	private final TokenRepository tokenRepository;
 	private final AuthCodeMailProvider authCodeMailProvider;
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -60,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public TokenDto reissueTokens(String refreshToken) {
-		checkRefreshTokenExpired(refreshToken);
+		tokenService.checkRefreshTokenExpired(refreshToken);
 
 		Token token = tokenService.findVerifiedOneByRefreshToken(refreshToken);
 		Member member = memberService.findVerifiedOneById(token.getId());
@@ -104,14 +99,5 @@ public class AuthServiceImpl implements AuthService {
 
 	private String getClientKey(String email, LocalDateTime requestTime) {
 		return String.valueOf((email + requestTime).hashCode());
-	}
-
-	private void checkRefreshTokenExpired(String refreshToken) {
-		try {
-			jwtTokenProvider.getExpiredAt(refreshToken);
-
-		} catch (ExpiredJwtException e) {
-			throw new BusinessLogicException(EXPIRED_REFRESH_TOKEN);
-		}
 	}
 }

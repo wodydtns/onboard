@@ -14,6 +14,7 @@ import com.superboard.onbrd.auth.util.JwtTokenProvider;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,6 +50,16 @@ public class TokenServiceImpl implements TokenService {
 		token.setRefreshToken(refreshToken);
 
 		return new TokenDto(accessToken, refreshToken);
+	}
+
+	@Override
+	public void checkRefreshTokenExpired(String refreshToken) {
+		try {
+			jwtTokenProvider.getExpiredAt(refreshToken);
+
+		} catch (ExpiredJwtException e) {
+			throw new BusinessLogicException(EXPIRED_REFRESH_TOKEN);
+		}
 	}
 
 	@Override
