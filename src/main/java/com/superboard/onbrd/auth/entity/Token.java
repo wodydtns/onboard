@@ -1,7 +1,5 @@
 package com.superboard.onbrd.auth.entity;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,17 +23,7 @@ public class Token {
 	@Column(name = "member_id")
 	private Long id;
 	@Column
-	private String androidPushToken;
-	@Column
-	private String applePushToken;
-	@Column
-	private String signOutAccessToken;
-	@Column
 	private String refreshToken;
-	@Column
-	private String oauthGrantToken;
-	@Column
-	private LocalDateTime refreshTokenExpiredAt;
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "member_id")

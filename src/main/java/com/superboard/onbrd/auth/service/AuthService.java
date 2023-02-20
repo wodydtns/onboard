@@ -10,9 +10,9 @@ import com.superboard.onbrd.auth.dto.TokenDto;
 public interface AuthService {
 	SignInResultDto signIn(SignInRequest request);
 
-	void signOut(String accessToken);
+	void signOut(String email);
 
-	TokenDto reissueTokens(TokenDto dto);
+	TokenDto reissueTokens(String refreshToken);
 
 	void reconfirmPassword(PasswordCheckRequest request);
 

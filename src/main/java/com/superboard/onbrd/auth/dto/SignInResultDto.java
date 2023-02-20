@@ -7,6 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SignInResultDto {
 	private Long id;
-	private String accessToken;
-	private String refreshToken;
+	private TokenDto tokens;
 }

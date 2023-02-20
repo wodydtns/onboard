@@ -15,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.superboard.onbrd.auth.filter.JwtAuthenticationFilter;
-import com.superboard.onbrd.auth.repository.TokenRepository;
 import com.superboard.onbrd.auth.util.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
-	private final TokenRepository tokenRepository;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,7 +35,7 @@ public class SecurityConfig {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.addFilterBefore(
-				new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository),
+				new JwtAuthenticationFilter(jwtTokenProvider),
 				UsernamePasswordAuthenticationFilter.class)
 			.csrf()
 			.disable()

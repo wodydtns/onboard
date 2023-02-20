@@ -2,9 +2,7 @@ package com.superboard.onbrd.auth.controller;
 
 import static com.superboard.onbrd.auth.util.AuthProperties.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,11 +57,14 @@ public class AuthController {
 		@ApiResponse(responseCode = "404", description = "가입되지 않은 이메일")
 	})
 	@PostMapping("/sign-in")
-	public ResponseEntity<Long> signIn(@RequestBody SignInRequest request, HttpServletResponse response) {
+	public ResponseEntity<Long> signIn(@RequestBody SignInRequest request) {
 		SignInResultDto signInResultDto = authService.signIn(request);
-		setTokensToHeader(response, signInResultDto.getAccessToken(), signInResultDto.getRefreshToken());
 
-		return ResponseEntity.ok(signInResultDto.getId());
+		HttpHeaders headers = addTokensToHeader(signInResultDto.getTokens());
+
+		return ResponseEntity.ok()
+			.headers(headers)
+			.body(signInResultDto.getId());
 	}
 
 	@Tag(name = "Authentication")
@@ -70,9 +72,8 @@ public class AuthController {
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponse(responseCode = "200", description = "로그아웃 성공")
 	@PatchMapping("/sign-out")
-	public ResponseEntity<Void> signOut(HttpServletRequest request) {
-		String accessToken = getAccessTokenFromHeader(request);
-		authService.signOut(accessToken);
+	public ResponseEntity<Void> signOut(@AuthenticationPrincipal MemberDetails memberDetails) {
+		authService.signOut(memberDetails.getEmail());
 
 		return ResponseEntity.ok().build();
 	}
@@ -80,7 +81,6 @@ public class AuthController {
 	@Tag(name = "Authentication")
 	@ApiOperation(value = "토큰 재발급")
 	@ApiImplicitParams(value = {
-		@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class),
 		@ApiImplicitParam(paramType = "header", name = "RefreshToken", required = true, dataTypeClass = String.class)
 	})
 	@ApiResponse(responseCode = "200", description = "토큰 재발급 성공",
@@ -89,14 +89,14 @@ public class AuthController {
 			@Header(name = "Authorization", description = "AccessToken", schema = @Schema(implementation = String.class)),
 			@Header(name = "RefreshToken", schema = @Schema(implementation = String.class))})
 	@GetMapping("/token-reissue")
-	public ResponseEntity<Void> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-		TokenDto dto = new TokenDto(
-			getAccessTokenFromHeader(request), getRefreshTokenFromHeader(request));
+	public ResponseEntity<Void> reissueTokens(@RequestHeader("RefreshToken") String refreshToken) {
+		TokenDto reissued = authService.reissueTokens(refreshToken);
 
-		TokenDto reissued = authService.reissueTokens(dto);
-		setTokensToHeader(response, reissued.getAccessToken(), reissued.getRefreshToken());
+		HttpHeaders headers = addTokensToHeader(reissued);
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok()
+			.headers(headers)
+			.build();
 	}
 
 	@Tag(name = "Authentication")
@@ -140,16 +140,12 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
-	private void setTokensToHeader(HttpServletResponse response, String accessToken, String refreshToken) {
-		response.setHeader(AUTH_HEADER, TOKEN_TYPE + " " + accessToken);
-		response.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
-	}
+	private HttpHeaders addTokensToHeader(TokenDto tokens) {
+		HttpHeaders headers = new HttpHeaders();
 
-	private String getAccessTokenFromHeader(HttpServletRequest request) {
-		return request.getHeader(AUTH_HEADER).substring(AUTH_HEADER_BEGIN_INDEX);
-	}
+		headers.add(AUTH_HEADER, TOKEN_TYPE + " " + tokens.getAccessToken());
+		headers.add(REFRESH_TOKEN_HEADER, tokens.getRefreshToken());
 
-	private String getRefreshTokenFromHeader(HttpServletRequest request) {
-		return request.getHeader(REFRESH_TOKEN_HEADER);
+		return headers;
 	}
 }

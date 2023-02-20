@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 	private final MemberService memberService;
 	private final PasswordService passwordService;
+	private final TokenService tokenService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final TokenRepository tokenRepository;
 	private final AuthCodeMailProvider authCodeMailProvider;
@@ -46,57 +47,25 @@ public class AuthServiceImpl implements AuthService {
 		Password password = passwordService.findVerifiedOneByMember(member);
 		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
 
-		Token token = tokenRepository.findByMemberId(member.getId()).get();
+		TokenDto tokens = tokenService.issueTokens(member);
 
-		String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole().name());
-		String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
-
-		token.setRefreshToken(refreshToken);
-		token.setRefreshTokenExpiredAt(
-			jwtTokenProvider.getExpiredAt(refreshToken));
-
-		return new SignInResultDto(member.getId(), accessToken, refreshToken);
+		return new SignInResultDto(member.getId(), tokens);
 	}
 
 	@Override
-	public void signOut(String accessToken) {
-		String email = jwtTokenProvider.parseEmail(accessToken);
-		LocalDateTime expiredAt = jwtTokenProvider.getExpiredAt(accessToken);
-
-		Token token = tokenRepository.findByEmail(email);
-		token.setRefreshToken(null);
-		token.setRefreshTokenExpiredAt(null);
-
-		if (expiredAt.isAfter(LocalDateTime.now())) {
-			token.setSignOutAccessToken(accessToken);
-		}
-	}
-
-	@Override
-	public TokenDto reissueTokens(TokenDto dto) {
-		checkRefreshTokenExpired(dto.getRefreshToken());
-
-		String email = jwtTokenProvider.parseEmail(dto.getAccessToken());
-		LocalDateTime accessTokenExpiredAt = jwtTokenProvider.getExpiredAt(dto.getAccessToken());
-
+	public void signOut(String email) {
 		Member member = memberService.findVerifiedOneByEmail(email);
-		Token token = tokenRepository.findByEmail(email);
+		tokenService.breakRefreshToken(member);
+	}
 
-		String reissuedAccessToken = jwtTokenProvider.createAccessToken(email, member.getRole().name());
-		String reissuedRefreshToken = jwtTokenProvider.createRefreshToken(email);
-		LocalDateTime reissuedRefreshTokenExpiredAt = jwtTokenProvider.getExpiredAt(reissuedRefreshToken);
+	@Override
+	public TokenDto reissueTokens(String refreshToken) {
+		checkRefreshTokenExpired(refreshToken);
 
-		if (accessTokenExpiredAt.isAfter(LocalDateTime.now())) {
-			token.setSignOutAccessToken(dto.getAccessToken());
-		}
+		Token token = tokenService.findVerifiedOneByRefreshToken(refreshToken);
+		Member member = memberService.findVerifiedOneById(token.getId());
 
-		token.setRefreshToken(reissuedRefreshToken);
-		token.setRefreshTokenExpiredAt(reissuedRefreshTokenExpiredAt);
-
-		dto.setAccessToken(reissuedAccessToken);
-		dto.setRefreshToken(reissuedRefreshToken);
-
-		return dto;
+		return tokenService.issueTokens(member);
 	}
 
 	@Override
