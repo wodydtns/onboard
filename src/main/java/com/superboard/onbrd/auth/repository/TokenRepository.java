@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.superboard.onbrd.auth.entity.Token;
 
-public interface TokenRepository extends JpaRepository<Token, Long>, CustomTokenRepository {
+public interface TokenRepository extends JpaRepository<Token, Long> {
 	Optional<Token> findByRefreshToken(String refreshToken);
 }
