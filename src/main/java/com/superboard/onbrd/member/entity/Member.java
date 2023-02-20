@@ -68,7 +68,11 @@ public class Member extends BaseEntity {
 	}
 
 	public void delayPasswordChange() {
-		this.passwordChangeDelayCount++;
+		passwordChangeDelayCount++;
+	}
+
+	public void resetPasswordChangeCount() {
+		passwordChangeDelayCount = 0;
 	}
 
 	public void withdraw() {

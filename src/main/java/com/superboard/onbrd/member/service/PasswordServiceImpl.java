@@ -42,6 +42,7 @@ public class PasswordServiceImpl implements PasswordService {
 		}
 
 		password.resetPassword(encodedPassword);
+		member.resetPasswordChangeCount();
 	}
 
 	@Override
