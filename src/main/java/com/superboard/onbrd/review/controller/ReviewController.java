@@ -56,7 +56,7 @@ public class ReviewController {
 	public ResponseEntity<ReviewByBoardgameIdResponse> getReviews(
 		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request) {
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
-
+		
 		ReviewByBoardgameIdResponse response = reviewService.getReviewsByBoardgameId(params);
 
 		return ResponseEntity.ok(response);

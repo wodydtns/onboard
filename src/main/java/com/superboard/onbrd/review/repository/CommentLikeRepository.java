@@ -10,4 +10,5 @@ import com.superboard.onbrd.review.entity.CommentLike;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
 	Optional<CommentLike> findByMemberAndComment(Member member, Comment comment);
+	
 }

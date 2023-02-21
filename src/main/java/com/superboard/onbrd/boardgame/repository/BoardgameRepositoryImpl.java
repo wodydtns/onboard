@@ -2,27 +2,34 @@ package com.superboard.onbrd.boardgame.repository;
 
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse.BoardGameResponse;
+import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
 import com.superboard.onbrd.tag.entity.QTag;
@@ -68,19 +75,27 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		return boardgameDetail;
 	}
 
-	@Override
-	public Page<Boardgame> selectBoardgameList(Pageable pageable) {
-		QBoardgame boardgame = QBoardgame.boardgame;
-		List<Boardgame> boardgameList = queryFactory.selectFrom(boardgame).offset(pageable.getOffset())
-				.limit(pageable.getPageSize()).fetch();
-		return new PageImpl<Boardgame>(boardgameList, pageable, boardgameList.size());
-	}
 
 	@Override
 	public Optional<Boardgame> findById(Long id) {
 		return Optional.of(queryFactory.select(boardgame).from(boardgame).where(boardgame.id.eq(id)).fetchFirst());
 	}
-	
-	
+
+	@Override
+	@Transactional
+	public Long updateFavoriteCount(Long id) {
+		long count = queryFactory.update(boardgame)
+		.where(boardgame.favoriteCount.eq(id))
+		.set(boardgame.favoriteCount, boardgame.favoriteCount.add(1)).execute();
+		return count; 
+	}
+
+	@Override
+	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
+		queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
+		.from(boardgame);
+		return null;
+	}
+
 
 }
