@@ -2,12 +2,14 @@ package com.superboard.onbrd.member.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.auth.entity.Token;
-import com.superboard.onbrd.auth.repository.TokenRepository;
+import com.superboard.onbrd.auth.service.TokenService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
@@ -23,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordService passwordService;
 	private final PasswordEncoder passwordEncoder;
-	private final TokenRepository tokenRepository;
+	private final TokenService tokenService;
 
 	@Override
 	public Member signUp(SignUpRequest request) {
@@ -32,7 +34,7 @@ public class MemberServiceImpl implements MemberService {
 
 		Member member = memberRepository.save(Member.from(request));
 		passwordService.createPassword(Password.of(member, encodedPassword));
-		tokenRepository.save(Token.from(member));
+		tokenService.createToken(Token.from(member));
 
 		return member;
 	}
@@ -80,6 +82,19 @@ public class MemberServiceImpl implements MemberService {
 	public void deleteMemberById(Long id) {
 		Member member = findVerifiedOneById(id);
 		memberRepository.delete(member);
+	}
+
+	@Override
+	public Optional<Member> findByEmail(String email) {
+		return memberRepository.findByEmail(email);
+	}
+
+	@Override
+	public Member createMember(Member member) {
+		Member created = memberRepository.save(member);
+		tokenService.createToken(Token.from(created));
+
+		return created;
 	}
 
 	private boolean isEmailExists(String email) {

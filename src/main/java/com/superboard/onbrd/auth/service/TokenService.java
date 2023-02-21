@@ -14,4 +14,6 @@ public interface TokenService {
 	void checkRefreshTokenExpired(String refreshToken);
 
 	void breakRefreshToken(Member member);
+
+	void createToken(Token token);
 }

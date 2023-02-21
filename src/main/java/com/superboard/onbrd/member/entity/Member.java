@@ -59,6 +59,15 @@ public class Member extends BaseEntity {
 			request.getEmail(), request.getNickname(), request.getProfileCharacter());
 	}
 
+	public static Member fromOauth(String email) {
+		Member member = new Member();
+		member.email = email;
+		member.nickname = "default";
+		member.isSocial = true;
+
+		return member;
+	}
+
 	public void updateNickname(String nickname) {
 		this.nickname = nickname;
 	}

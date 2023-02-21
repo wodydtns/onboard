@@ -53,11 +53,13 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public void checkRefreshTokenExpired(String refreshToken) {
 		try {
 			jwtTokenProvider.getExpiredAt(refreshToken);
 
 		} catch (ExpiredJwtException e) {
+			e.printStackTrace();
 			throw new BusinessLogicException(EXPIRED_REFRESH_TOKEN);
 		}
 	}
@@ -66,5 +68,10 @@ public class TokenServiceImpl implements TokenService {
 	public void breakRefreshToken(Member member) {
 		Token token = findVerifiedOneByMember(member);
 		token.setRefreshToken(null);
+	}
+
+	@Override
+	public void createToken(Token token) {
+		tokenRepository.save(token);
 	}
 }
