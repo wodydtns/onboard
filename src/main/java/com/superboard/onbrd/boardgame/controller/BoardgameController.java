@@ -17,7 +17,6 @@ import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
-import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 
 import io.swagger.annotations.Api;

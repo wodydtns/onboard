@@ -97,21 +97,5 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		return null;
 	}
 
-	@Override
-	public void insertOrUpdateClickCount(Long id) {
-		Long isExist = queryFactory.select(boardgameClickLog.count()).from(boardgameClickLog).where(boardgameClickLog.boardgame.id.eq(id)).fetchOne();
-		NumberExpression<Long> clicklogId = boardgameClickLog.clicklogId;
-		if(isExist > 0) {
-			queryFactory.update(boardgameClickLog).set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1));
-		}else {
-			/*
-			queryFactory.insert(boardgameClickLog).set(boardgameClickLog.boardgame.id, id)
-			.set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1))
-			.set(boardgameClickLog.lastClickAt, LocalDateTime.now());
-			*/
-			queryFactory.insert(boardgameClickLog).set(boardgameClickLog.clicklogId, clicklogId).set(boardgameClickLog.boardgame.id, id)
-			.set(boardgameClickLog.lastClickAt, LocalDateTime.now()).set(boardgameClickLog.clickCount, boardgameClickLog.clickCount.add(1)).execute();
-		}
-	}
 
 }

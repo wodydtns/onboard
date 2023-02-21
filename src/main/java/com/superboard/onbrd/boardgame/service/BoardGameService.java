@@ -2,7 +2,6 @@ package com.superboard.onbrd.boardgame.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;

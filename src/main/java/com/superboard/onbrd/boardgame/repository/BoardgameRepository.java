@@ -23,5 +23,4 @@ public interface BoardgameRepository  {
 	
 	public Long updateFavoriteCount(Long id);
 	
-	public void insertOrUpdateClickCount(Long id);
 }
