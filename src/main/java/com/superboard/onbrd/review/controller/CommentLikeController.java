@@ -40,7 +40,7 @@ public class CommentLikeController {
 	public ResponseEntity<Long> likeCommentOrCancelLike
 		(@AuthenticationPrincipal MemberDetails memberDetails, @PathVariable Long commentId) {
 		commentLikeService.createCommentLikeOrDeleteIfExist(memberDetails.getEmail(), commentId);
-
+		
 		return ResponseEntity.ok(commentId);
 	}
 }
