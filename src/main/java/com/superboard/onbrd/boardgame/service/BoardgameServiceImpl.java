@@ -39,6 +39,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
+		boardgameRepository.updateClickCount(boardgameId);
 		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
 		String imageName = boardgameDetail.getImage();
 		boardgameDetail.setImage(imagePath + imageName);

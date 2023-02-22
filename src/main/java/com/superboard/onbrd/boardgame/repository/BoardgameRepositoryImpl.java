@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import com.querydsl.core.BooleanBuilder;
@@ -82,19 +82,28 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Long updateFavoriteCount(Long id) {
 		long count = queryFactory.update(boardgame)
-		.where(boardgame.favoriteCount.eq(id))
+		.where(boardgame.id.eq(id))
 		.set(boardgame.favoriteCount, boardgame.favoriteCount.add(1)).execute();
 		return count; 
 	}
 
 	@Override
 	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
-		queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
-		.from(boardgame);
-		return null;
+		List<RecommandBoardgameDto> recommandBoardgameList = queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
+		.from(boardgame)
+		.orderBy(boardgame.clickCount.desc())
+		.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
+		return new PageImpl<RecommandBoardgameDto>(recommandBoardgameList, pageable, recommandBoardgameList.size());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public void updateClickCount(Long id) {
+		queryFactory.update(boardgame).where(boardgame.id.eq(id))
+		.set(boardgame.clickCount, boardgame.clickCount.add(1)).execute();
 	}
 
 
