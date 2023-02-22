@@ -37,6 +37,9 @@ public class Boardgame {
 	@Column(nullable = false)
 	private long favoriteCount = 0;
 	
+	@Column(nullable = false)
+	private long clickCount = 0;
+	
 	@OneToMany(mappedBy = "boardgame")
 	private List<BoardgameTag> boardgameTags = new ArrayList<>();
 }

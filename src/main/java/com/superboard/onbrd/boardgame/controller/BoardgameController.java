@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,12 +55,14 @@ public class BoardgameController {
 
 	@ApiOperation(value = "추천 보드게임")
 	@GetMapping("/recommandBoardgame")
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(@PageableDefault(size = 5) Pageable pageable) {
+	@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")
+	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(@PageableDefault(size = 3) Pageable pageable) {
 		return boardGameService.selectRecommandBoardgameList(pageable);
 	}
 	
 	@ApiOperation(value = "보드게임 좋아요 증가")
-	@PutMapping("/updateFavorite")
+	@PatchMapping("/updateFavorite")
+	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
 	public ResponseEntity<Void> updateFavoriteCount(Long id) {
 		long count = boardGameService.updateFavoriteCount(id);
 		if(count > 0) {
