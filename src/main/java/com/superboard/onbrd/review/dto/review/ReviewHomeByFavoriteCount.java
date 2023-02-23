@@ -1,5 +1,7 @@
 package com.superboard.onbrd.review.dto.review;
 
+import java.util.List;
+
 import javax.persistence.Convert;
 
 import com.querydsl.core.annotations.QueryProjection;
@@ -14,16 +16,15 @@ public class ReviewHomeByFavoriteCount {
 	
 	private long likeCount = 0;
 	
-	@Convert(converter = ImagesJsonConverter.class)
-	private String image;
+	private List<String> images;
 	
-	private String writer;
+	private String nickname;
 
 	@QueryProjection
-	public ReviewHomeByFavoriteCount(Long id, long likeCount, String image, String writer) {
+	public ReviewHomeByFavoriteCount(Long id, long likeCount, List<String> images, String nickname) {
 		this.id = id;
 		this.likeCount = likeCount;
-		this.image = image;
-		this.writer = writer;
+		this.images = images;
+		this.nickname = nickname;
 	}
 }

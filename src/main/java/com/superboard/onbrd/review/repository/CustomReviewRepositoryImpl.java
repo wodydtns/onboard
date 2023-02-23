@@ -105,9 +105,11 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	@Override
 	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
 		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.constructor(ReviewHomeByFavoriteCount.class, review.id,
-				review.likeCount, review.images.get(0),review.writer.nickname
+				review.likeCount, review.images,member.nickname
 				))
-			.from(review).fetch();
+			.from(review)
+			.join(review.writer, member)
+			.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 		return new PageImpl<ReviewHomeByFavoriteCount>(results, pageable, results.size());
 	}
 }
