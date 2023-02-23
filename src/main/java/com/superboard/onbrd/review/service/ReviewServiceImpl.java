@@ -4,6 +4,8 @@ import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
+import com.superboard.onbrd.review.dto.review.ReviewHomeByFavoriteCount;
 import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.ReviewRepository;
@@ -75,5 +78,10 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewOptional.orElseThrow(() -> {
 			throw new BusinessLogicException(REVIEW_NOT_FOUND);
 		});
+	}
+
+	@Override
+	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
+		return reviewRepository.selectRecommandReviewList(pageable);
 	}
 }
