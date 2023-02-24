@@ -14,6 +14,8 @@ public interface MemberService {
 
 	void checkDuplicatedNickname(String nickname);
 
+	void checkDuplicatedEmail(String email);
+
 	void checkEmailExists(String email);
 
 	void deleteMemberById(Long id);

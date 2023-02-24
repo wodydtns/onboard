@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.service.TokenService;
@@ -69,13 +70,18 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public void checkEmailExists(String email) {
+	public void checkDuplicatedEmail(String email) {
 		memberRepository.findByEmail(email).ifPresent(
 			member -> {
 				throw new BusinessLogicException(DUPLICATED_EMAIL,
 					String.format("Email %s is duplicated", email));
 			}
 		);
+	}
+
+	@Override
+	public void checkEmailExists(String email) {
+		Assert.isTrue(memberRepository.findByEmail(email).isPresent(), "NOT_SIGNED_EMAIL");
 	}
 
 	@Override

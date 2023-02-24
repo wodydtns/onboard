@@ -19,4 +19,8 @@ public interface AuthService {
 	AuthCodeSendingResponse sendAuthCodeMail(String email);
 
 	void checkAuthCode(AuthCodeCheckRequest request);
+
+	String issuePasswordResetToken();
+
+	void validateResetToken(String resetToken);
 }

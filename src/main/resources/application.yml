@@ -5,10 +5,10 @@ spring:
     username: ADMIN
     password: Onboard!side7
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    #driver-class-name: oracle.jdbc.OracleDriver
+      #driver-class-name: oracle.jdbc.OracleDriver
 
       #hikari:
-      #connection-timeout: 3000
+    #connection-timeout: 3000
     #validation-timeout: 3000
     #schema: self
     #maximum-pool-size: 20
@@ -41,7 +41,7 @@ spring:
           auth: true
           starttls:
             enable: true
-            
+
 # log4jdbc, Mybatis Console Log
 logging:
   level:
@@ -57,7 +57,7 @@ logging:
       resultsettable: DEBUG  #SQL 결과 데이터 Table을 로그로 남긴다.
       sqlonly: OFF      #SQL만 로그로 남긴다.
       sqltiming: DEBUG  #SQL과 소요시간을 표기한다.
-      connection : OFF  # 커넥션 확인가능
+      connection: OFF  # 커넥션 확인가능
     org:
       hibernate:
         SQL: DEBUG
@@ -71,10 +71,11 @@ jwt:
   secret-key: 38cc3f3e0de60904e11130540bec75dbb449fc9a6abd3b2784fa0074103f3cf4c7a25e4123863147805aea23e2f6faebce424d07900effaeeaa5e30b1c238fd1
   access-token-expiration-minutes: 30
   refresh-token-expiration-minutes: 30240
+  reset-token-expiration-minutes: 10
 
 server:
   port: 8080
-  #ssl:
+    #ssl:
     #key-store: classpath:ssl/keystore.p12
     #key-store-password: onboard7
     #key-store-type: PKCS12

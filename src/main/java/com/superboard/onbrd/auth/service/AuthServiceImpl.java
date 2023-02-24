@@ -89,6 +89,16 @@ public class AuthServiceImpl implements AuthService {
 		validateAuthCode(authCodeMailProvider.getAuthCode(request.getClientKey()), request);
 	}
 
+	@Override
+	public String issuePasswordResetToken() {
+		return tokenService.issuePasswordResetToken();
+	}
+
+	@Override
+	public void validateResetToken(String resetToken) {
+		tokenService.validateResetToken(resetToken);
+	}
+
 	private void validateAuthCode(String storedCode, AuthCodeCheckRequest request) {
 		if (!storedCode.equals(request.getAuthCode())) {
 			throw new BusinessLogicException(INVALID_AUTH_CODE);

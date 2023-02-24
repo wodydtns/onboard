@@ -74,4 +74,20 @@ public class TokenServiceImpl implements TokenService {
 	public void createToken(Token token) {
 		tokenRepository.save(token);
 	}
+
+	@Override
+	public String issuePasswordResetToken() {
+		return jwtTokenProvider.createResetToken();
+	}
+
+	@Override
+	public void validateResetToken(String resetToken) {
+		try {
+			jwtTokenProvider.getExpiredAt(resetToken);
+
+		} catch (ExpiredJwtException e) {
+			e.printStackTrace();
+			throw new BusinessLogicException(EXPIRED_RESET_TOKEN);
+		}
+	}
 }

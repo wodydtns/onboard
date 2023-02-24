@@ -56,6 +56,8 @@ public class SecurityConfig {
 			.mvcMatchers(GET, "/api/*/auth/code").permitAll()
 			.mvcMatchers(POST, "/api/*/auth/code-resending", "/api/*/auth/code-check").permitAll()
 			.mvcMatchers(PATCH, "/api/*/passwords").permitAll()
+			.mvcMatchers(GET, "/api/*/passwords/code").permitAll()
+			.mvcMatchers(POST, "api/*/passwords/code-check").permitAll()
 			.mvcMatchers("/api/**").authenticated()
 			.and()
 			.authorizeRequests()

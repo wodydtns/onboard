@@ -41,6 +41,8 @@ public class JwtTokenProvider {
 	private int accessTokenExpirationMinutes;
 	@Value("${jwt.refresh-token-expiration-minutes}")
 	private int refreshTokenExpirationMinutes;
+	@Value("${jwt.reset-token-expiration-minutes}")
+	private int resetTokenExpirationMinutes;
 
 	@PostConstruct
 	protected void init() {
@@ -104,6 +106,23 @@ public class JwtTokenProvider {
 		Date expiration = getTokenExpiration(refreshTokenExpirationMinutes);
 
 		return refreshTokenAssembly(email, expiration);
+	}
+
+	public String resetTokenAssembly(Date expiration) {
+		Key key = getKeyFromBase64EncodedSecretKey(secretKey);
+
+		return Jwts.builder()
+			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+			.setIssuedAt(Calendar.getInstance().getTime())
+			.setExpiration(expiration)
+			.signWith(key)
+			.compact();
+	}
+
+	public String createResetToken() {
+		Date expiration = getTokenExpiration(resetTokenExpirationMinutes);
+
+		return resetTokenAssembly(expiration);
 	}
 
 	public UserDetails parseToken(String jws) {

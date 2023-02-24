@@ -70,7 +70,7 @@ public class MemberController {
 	})
 	@GetMapping("/mail-check")
 	public ResponseEntity<String> checkEmailExists(@RequestParam String email) {
-		memberService.checkEmailExists(email);
+		memberService.checkDuplicatedEmail(email);
 
 		return ResponseEntity.ok(email);
 	}

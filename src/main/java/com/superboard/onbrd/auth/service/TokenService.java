@@ -16,4 +16,8 @@ public interface TokenService {
 	void breakRefreshToken(Member member);
 
 	void createToken(Token token);
+
+	String issuePasswordResetToken();
+
+	void validateResetToken(String resetToken);
 }

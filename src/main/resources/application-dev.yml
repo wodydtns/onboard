@@ -51,3 +51,4 @@ jwt:
   secret-key: ${JWT_SECRET_KEY}
   access-token-expiration-minutes: ${ACCESS_TOKEN_EXPIRATION_MINUTES}
   refresh-token-expiration-minutes: ${REFRESH_TOKEN_EXPIRATION_MINUTES}
+  reset-token-expiration-minutes: ${RESET_TOKEN_EXPIRATION_MINUTES}
