@@ -1,10 +1,11 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-seoul-1.oraclecloud.com))(connect_data=(service_name=gd32c7b5c8d9fe1_onboard_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+    url: jdbc:log4jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.ap-seoul-1.oraclecloud.com))(connect_data=(service_name=gd32c7b5c8d9fe1_onboard_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
     #url: jdbc:oracle:thin:@onboard_medium?TNS_ADMIN=[전자지갑주소]
     username: ADMIN
     password: Onboard!side7
-    driver-class-name: oracle.jdbc.OracleDriver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    #driver-class-name: oracle.jdbc.OracleDriver
 
       #hikari:
       #connection-timeout: 3000
@@ -40,10 +41,32 @@ spring:
           auth: true
           starttls:
             enable: true
-
+            
+# log4jdbc, Mybatis Console Log
 logging:
   level:
-    root: info
+    com:
+      zaxxer:
+        hikari: INFO
+    javax:
+      sql:
+        DataSource: OFF
+    jdbc:
+      audit: OFF
+      resultset: OFF
+      resultsettable: DEBUG  #SQL 결과 데이터 Table을 로그로 남긴다.
+      sqlonly: OFF      #SQL만 로그로 남긴다.
+      sqltiming: DEBUG  #SQL과 소요시간을 표기한다.
+      connection : OFF  # 커넥션 확인가능
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: INFO
+    root: INFO
+
 jwt:
   secret-key: 38cc3f3e0de60904e11130540bec75dbb449fc9a6abd3b2784fa0074103f3cf4c7a25e4123863147805aea23e2f6faebce424d07900effaeeaa5e30b1c238fd1
   access-token-expiration-minutes: 30

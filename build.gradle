@@ -97,6 +97,10 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-database
 	implementation group: 'com.oracle.oci.sdk', name: 'oci-java-sdk-database', version: '3.3.0'
+	
+	
+	//log4j 설정
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 }
 
 bootWar {
