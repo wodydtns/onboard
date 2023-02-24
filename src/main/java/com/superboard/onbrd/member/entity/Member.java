@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
 	private String profileCharacter;
 	@Column(name = "member_level", nullable = false)
 	@Convert(converter = MemberLevelConverter.class)
-	private MemberLevel level = DEFAULT;
+	private MemberLevel level = PLAYER;
 	@Column(nullable = false)
 	private int point = 0;
 	@Column(nullable = false)
@@ -82,6 +82,15 @@ public class Member extends BaseEntity {
 
 	public void resetPasswordChangeCount() {
 		passwordChangeDelayCount = 0;
+	}
+
+	public void increasePoint(ActivityPoint activityPoint) {
+		this.point += activityPoint.getQuantity();
+
+	}
+
+	public void updateLevel(MemberLevel level) {
+		this.level = level;
 	}
 
 	public void withdraw() {
