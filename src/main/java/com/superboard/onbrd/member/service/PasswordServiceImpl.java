@@ -34,14 +34,14 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 
 	@Override
-	public void resetPassword(Member member, String encodedPassword) {
+	public void resetPassword(Member member, String rawPassword) {
 		Password password = findVerifiedOneByMember(member);
 
-		if (passwordEncoder.matches(encodedPassword, password.getEncodedPassword())) {
+		if (passwordEncoder.matches(rawPassword, password.getEncodedPassword())) {
 			throw new BusinessLogicException(SAME_AS_PREVIOUS_PASSWORD);
 		}
 
-		password.resetPassword(encodedPassword);
+		password.resetPassword(passwordEncoder.encode(rawPassword));
 		member.resetPasswordChangeCount();
 	}
 
