@@ -64,7 +64,6 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
-		QTag tag = QTag.tag;
 		BoardgameDetailDto boardgameDetail = queryFactory
 				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.name, boardgame.description,
 						boardgame.image, boardgame.favoriteCount))
