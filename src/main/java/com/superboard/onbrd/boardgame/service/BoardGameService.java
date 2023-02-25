@@ -12,7 +12,7 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 public interface BoardGameService {
 	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,Pageable pageable ) ;
 	
-	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId); 
+	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer); 
   
 	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable);
 

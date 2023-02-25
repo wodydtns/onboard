@@ -1,11 +1,15 @@
 package com.superboard.onbrd.boardgame.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.codehaus.groovy.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,12 +18,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oracle.bmc.http.client.HttpRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 
+import antlr.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -48,9 +54,13 @@ public class BoardgameController {
 
 	@ApiOperation(value = "보드게임 상세")
 	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
-	@GetMapping("/boardGameDetail/{boardgameId}")
-	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId) {
-		return boardGameService.selectBoardgameInfo(boardgameId);
+	@GetMapping("/{boardgameId}")
+	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest  request) {
+		String referer = request.getHeader("Referer");
+		if(ObjectUtils.isEmpty(referer)) {
+			referer  = "";
+		}
+		return boardGameService.selectBoardgameInfo(boardgameId,referer);
 	}
 
 	@ApiOperation(value = "추천 보드게임")
