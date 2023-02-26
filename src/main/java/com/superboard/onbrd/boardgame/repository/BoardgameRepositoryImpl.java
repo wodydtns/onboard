@@ -3,10 +3,14 @@ package com.superboard.onbrd.boardgame.repository;
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
+import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -91,8 +95,13 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 
 	@Override
 	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDateTime startDate =LocalDateTime.now().minusDays(30);
+		LocalDateTime endDate =LocalDateTime.now();
 		List<RecommandBoardgameDto> recommandBoardgameList = queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
-		.from(boardgame)
+				
+		.from(nonSearchClickLog).join(nonSearchClickLog.boardgame, boardgame )
+		.where(nonSearchClickLog.clickAt.between(startDate,endDate))
 		.orderBy(boardgame.clickCount.desc())
 		.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 		return new PageImpl<RecommandBoardgameDto>(recommandBoardgameList, pageable, recommandBoardgameList.size());
@@ -107,3 +116,4 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 
 
 }
+
