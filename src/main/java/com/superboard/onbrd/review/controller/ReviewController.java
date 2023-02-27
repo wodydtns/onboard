@@ -2,6 +2,8 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
@@ -74,7 +77,7 @@ public class ReviewController {
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public ResponseEntity<Long> postReview(@AuthenticationPrincipal MemberDetails memberDetails,
-		@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request) {
+		@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request, List<MultipartFile> files) {
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
 
 		Long createdId = reviewService.crewateReview(dto).getId();
