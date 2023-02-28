@@ -1,9 +1,7 @@
 package com.superboard.onbrd.member.entity;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
 public enum ActivityPoint {
 	REVIEW_WRITING(50),
@@ -13,4 +11,8 @@ public enum ActivityPoint {
 	REVIEW_LIKED(10);
 
 	private final int quantity;
+
+	public int point() {
+		return quantity;
+	}
 }

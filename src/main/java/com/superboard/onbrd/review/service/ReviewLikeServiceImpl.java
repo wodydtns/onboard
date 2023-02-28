@@ -1,6 +1,7 @@
 package com.superboard.onbrd.review.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
+import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.entity.ReviewLike;
@@ -27,8 +29,9 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
 	@Override
 	public void createReviewLikeOrDeleteIfExist(String email, Long reviewId) {
 		Review review = reviewService.findVerifiedOneById(reviewId);
+		Member writer = review.getWriter();
 
-		checkOwnReview(email, review);
+		checkOwnReview(email, writer);
 
 		Member member = memberService.findVerifiedOneByEmail(email);
 
@@ -44,10 +47,14 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
 				review.increaseLikeCountOrDecreaseIfCancelLike(false);
 			}
 		);
+
+		writer.increasePoint(REVIEW_LIKED.point());
+		writer.updateLevel(
+			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 	}
 
-	private void checkOwnReview(String email, Review review) {
-		if (review.getWriter().getEmail().equals(email)) {
+	private void checkOwnReview(String email, Member writer) {
+		if (writer.getEmail().equals(email)) {
 			throw new BusinessLogicException(LIKE_OWN_REVIEW_NOT_PERMITTED);
 		}
 	}

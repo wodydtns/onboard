@@ -1,6 +1,7 @@
 package com.superboard.onbrd.review.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
+import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
@@ -49,6 +51,10 @@ public class ReviewServiceImpl implements ReviewService {
 			.content(dto.getContent())
 			.images(dto.getImages())
 			.build();
+
+		writer.increasePoint(REVIEW_WRITING.point());
+		writer.updateLevel(
+			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 
 		return reviewRepository.save(created);
 	}
