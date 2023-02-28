@@ -94,17 +94,15 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	}
 
 	@Override
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable) {
 		LocalDateTime startDate =LocalDateTime.now().minusDays(30);
-		LocalDateTime endDate =LocalDateTime.now();
-		List<RecommandBoardgameDto> recommandBoardgameList = queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
-				
-		.from(nonSearchClickLog).join(nonSearchClickLog.boardgame, boardgame )
-		.where(nonSearchClickLog.clickAt.between(startDate,endDate))
+		
+		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = queryFactory.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,boardgame.name,boardgame.image))
+		.from(nonSearchClickLog).join(nonSearchClickLog.boardgame  ,boardgame )
+		.where(nonSearchClickLog.clickAt.after(startDate))
 		.orderBy(boardgame.clickCount.desc())
-		.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
-		return new PageImpl<RecommandBoardgameDto>(recommandBoardgameList, pageable, recommandBoardgameList.size());
+		.limit(pageable.getPageSize()).fetch();
+		return new PageImpl<BoardgameSearchByTagResponse.BoardGameResponse>(recommandBoardgameList, pageable, recommandBoardgameList.size());
 	}
 
 	@Override
@@ -113,7 +111,6 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		queryFactory.update(boardgame).where(boardgame.id.eq(id))
 		.set(boardgame.clickCount, boardgame.clickCount.add(1)).execute();
 	}
-
 
 }
 

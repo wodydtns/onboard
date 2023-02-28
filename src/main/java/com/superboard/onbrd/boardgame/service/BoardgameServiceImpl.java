@@ -21,7 +21,6 @@ import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepositor
 import com.superboard.onbrd.boardgame.repository.BoardSearchClickLogRepository;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
-import com.superboard.onbrd.tag.entity.BoardgameTag;
 
 @Service
 public class BoardgameServiceImpl implements BoardGameService {
@@ -63,7 +62,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 				boardSearchClickLogRepository.save(isExistClickLog);
 			}else {
 				SearchClickLog createClickLog = new SearchClickLog();
-				//createClickLog.setBoardgameId(boardgameId);
+				createClickLog.setBoardgameId(boardgameId);
 				boardSearchClickLogRepository.save(createClickLog);
 			}
 		}else {
@@ -82,7 +81,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable) {
 		return boardgameRepository.selectRecommandBoardgameList(pageable);
 	}
 
