@@ -66,7 +66,7 @@ public class BoardgameController {
 	@ApiOperation(value = "추천 보드게임")
 	@GetMapping("/recommandBoardgame")
 	@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(@PageableDefault(size = 3) Pageable pageable) {
+	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(@PageableDefault(size = 5) Pageable pageable) {
 		return boardGameService.selectRecommandBoardgameList(pageable);
 	}
 	

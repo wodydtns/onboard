@@ -2,7 +2,6 @@ package com.superboard.onbrd.boardgame.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,7 @@ import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepositor
 import com.superboard.onbrd.boardgame.repository.BoardSearchClickLogRepository;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
-
-import lombok.RequiredArgsConstructor;
+import com.superboard.onbrd.tag.entity.BoardgameTag;
 
 @Service
 public class BoardgameServiceImpl implements BoardGameService {
@@ -65,7 +63,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 				boardSearchClickLogRepository.save(isExistClickLog);
 			}else {
 				SearchClickLog createClickLog = new SearchClickLog();
-				createClickLog.setBoardgameId(boardgameId);
+				//createClickLog.setBoardgameId(boardgameId);
 				boardSearchClickLogRepository.save(createClickLog);
 			}
 		}else {
