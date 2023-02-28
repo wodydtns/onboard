@@ -26,7 +26,7 @@ public class SearchClickLog {
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "boardgame_id")
+	@JoinColumn(name = "id")
 	private Boardgame boardgame;
 	
 	@Column(nullable = false)
@@ -35,4 +35,7 @@ public class SearchClickLog {
 	
 	@Column(nullable = false)
 	private long clickCount = 1;
+	
+	@Column(nullable = false)
+	private Long boardgameId;
 }

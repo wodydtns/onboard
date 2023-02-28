@@ -17,7 +17,7 @@ public interface BoardgameRepository  {
 	
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId); 
 
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable);
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable);
 
 	Optional<Boardgame> findById(Long id);
 	

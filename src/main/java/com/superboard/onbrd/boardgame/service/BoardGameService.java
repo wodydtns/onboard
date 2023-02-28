@@ -14,7 +14,7 @@ public interface BoardGameService {
 	
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer); 
   
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable);
+	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable);
 
 	Boardgame findVerifiedOneById(Long id);
 	
