@@ -1,6 +1,7 @@
 package com.superboard.onbrd.review.repository;
 
 import static com.superboard.onbrd.member.entity.QMember.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 import static com.superboard.onbrd.review.dto.review.QReviewHomeByFavoriteCount.*;
@@ -104,11 +105,12 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 
 	@Override
 	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
-		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.constructor(ReviewHomeByFavoriteCount.class, review.id,
-				review.likeCount, review.images,member.nickname
+		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.fields(ReviewHomeByFavoriteCount.class, review.id,
+				review.images, review.content, member.nickname,member.level,boardgame.name, review.likeCount
 				))
 			.from(review)
 			.join(review.writer, member)
+			.join(review.boardgame, boardgame )
 			.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 		return new PageImpl<ReviewHomeByFavoriteCount>(results, pageable, results.size());
 	}

@@ -5,26 +5,33 @@ import java.util.List;
 import javax.persistence.Convert;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse.BoardGameResponse;
 import com.superboard.onbrd.global.converter.ImagesJsonConverter;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class ReviewHomeByFavoriteCount {
-
-	private Long id;
 	
-	private long likeCount = 0;
+	private Boolean hasNext;
+	private List<BoardGameResponse> boardGameResponses;
 	
-	private List<String> images;
-	
-	private String nickname;
-
-	@QueryProjection
-	public ReviewHomeByFavoriteCount(Long id, long likeCount, List<String> images, String nickname) {
-		this.id = id;
-		this.likeCount = likeCount;
-		this.images = images;
-		this.nickname = nickname;
+	@Getter
+	@NoArgsConstructor
+	@Setter
+	public static class  ReviewHomeByFavoriteCountResponse {
+		private Long id;
+		private String image;
+		private String content;
+		private String writer;
+		private String level;
+		private String title;
+		private long likeCount;
 	}
+
 }
