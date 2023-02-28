@@ -82,7 +82,12 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable) {
-		return boardgameRepository.selectRecommandBoardgameList(pageable);
+		Page<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = boardgameRepository.selectRecommandBoardgameList(pageable);
+		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : recommandBoardgameList) {
+			String imageName = boardgame.getImage();
+			boardgame.setImage(imagePath + imageName);
+		}
+		return recommandBoardgameList;
 	}
 
 	@Override
