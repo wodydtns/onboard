@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class BoardgameDetailDto {
 	
+	private Long id;
+	
 	private String name;
 
 	private String description;
@@ -22,7 +24,8 @@ public class BoardgameDetailDto {
 	private List<Tag> tagList = new ArrayList<>();
 
 	@QueryProjection
-	public BoardgameDetailDto(String name, String description, String image, long favoriteCount) {
+	public BoardgameDetailDto(Long id,String name, String description, String image, long favoriteCount) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.image = image;

@@ -69,7 +69,7 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
 		BoardgameDetailDto boardgameDetail = queryFactory
-				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.name, boardgame.description,
+				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.id,boardgame.name, boardgame.description,
 						boardgame.image, boardgame.favoriteCount))
 				.from(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag).join(boardgameTag.tag, tag)
