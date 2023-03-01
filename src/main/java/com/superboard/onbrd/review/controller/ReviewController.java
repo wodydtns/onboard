@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -47,19 +48,18 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController {
 	private final ReviewService reviewService;
 
+	private final OciObjectStorageUtil ociObjectStorageUtil;
+
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ReviewByBoardgameIdResponse.class))),
-		@ApiResponse(responseCode = "404")
-	})
+			@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameIdResponse.class))),
+			@ApiResponse(responseCode = "404") })
 	@GetMapping
-	public ResponseEntity<ReviewByBoardgameIdResponse> getReviews(
-		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request) {
+	public ResponseEntity<ReviewByBoardgameIdResponse> getReviews(@PathVariable Long boardgameId,
+			@ModelAttribute ReviewGetRequest request) {
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
-		
+
 		ReviewByBoardgameIdResponse response = reviewService.getReviewsByBoardgameId(params);
 
 		return ResponseEntity.ok(response);
@@ -69,18 +69,31 @@ public class ReviewController {
 	@ApiOperation(value = "리뷰 작성")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "201", description = "생성 리뷰 ID 응답",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
-		@ApiResponse(responseCode = "404")
-	})
+			@ApiResponse(responseCode = "201", description = "생성 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
+					@ExampleObject(value = "1") })),
+			@ApiResponse(responseCode = "404") })
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public ResponseEntity<Long> postReview(@AuthenticationPrincipal MemberDetails memberDetails,
-		@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request, List<MultipartFile> files) {
+			@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request, List<MultipartFile> files) {
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
+		boolean insertFlag = true;
+		Long createdId = (long) 0;
+		try {
+			for (MultipartFile multipartFile : files) {
 
-		Long createdId = reviewService.crewateReview(dto).getId();
+				boolean isSuccess = ociObjectStorageUtil.UploadObject(multipartFile);
+				if (isSuccess != insertFlag) {
+					insertFlag = false;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (insertFlag) {
+
+			createdId = reviewService.crewateReview(dto).getId();
+		}
 
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
@@ -89,14 +102,11 @@ public class ReviewController {
 	@ApiOperation(value = "리뷰 수정")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
-		@ApiResponse(responseCode = "404")
-	})
+			@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
+					@ExampleObject(value = "1") })),
+			@ApiResponse(responseCode = "404") })
 	@PatchMapping("/{reviewId}")
-	public ResponseEntity<Long> patchReview(
-		@PathVariable Long reviewId, @RequestBody ReviewPatchRequest request) {
+	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestBody ReviewPatchRequest request) {
 		ReviewUpdateDto dto = ReviewUpdateDto.of(reviewId, request);
 
 		Long updatedId = reviewService.updateReview(dto).getId();
@@ -107,10 +117,8 @@ public class ReviewController {
 	@Tag(name = "Review")
 	@ApiOperation(value = "리뷰 삭제")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "204", description = "리뷰 삭제"),
-		@ApiResponse(responseCode = "404")
-	})
+	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "리뷰 삭제"),
+			@ApiResponse(responseCode = "404") })
 	@ResponseStatus(NO_CONTENT)
 	@DeleteMapping("/{reviewId}")
 	public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
