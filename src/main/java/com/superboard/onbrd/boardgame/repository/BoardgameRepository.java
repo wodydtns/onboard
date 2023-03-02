@@ -1,5 +1,6 @@
 package com.superboard.onbrd.boardgame.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -13,11 +14,11 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 
 public interface BoardgameRepository  {
 	
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,Pageable pageable );
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest );
 	
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId); 
 
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable);
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest);
 
 	Optional<Boardgame> findById(Long id);
 	

@@ -48,22 +48,21 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(
-			BoardgameSearchByTagRequest boardgameSearchByTagRequest, Pageable pageable) {
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		
 		JPAQuery<BoardgameSearchByTagResponse.BoardGameResponse> query = queryFactory
 				.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,
 						boardgame.name, boardgame.image))
 				.from(boardgameTag).join(boardgameTag.boardgame, boardgame).join(boardgameTag.tag, tag)
 				.orderBy(tag.id.asc())
-				.offset(pageable.getOffset()).limit(pageable.getPageSize());
+				.offset(boardgameSearchByTagRequest.getOffset()).limit(boardgameSearchByTagRequest.getLimit());
 		
 		if(!ObjectUtils.isEmpty(boardgameSearchByTagRequest.getTagIds())) {
 			query.where(tag.id.in(boardgameSearchByTagRequest.getTagIds()));
 		}
 		List<BoardgameSearchByTagResponse.BoardGameResponse> results = query.fetch();
 			
-		return new PageImpl<BoardgameSearchByTagResponse.BoardGameResponse>(results, pageable, results.size());
+		return results;
 	}
 
 	@Override
@@ -94,15 +93,15 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	}
 
 	@Override
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(Pageable pageable) {
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		LocalDateTime startDate =LocalDateTime.now().minusDays(30);
 		
 		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = queryFactory.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,boardgame.name,boardgame.image))
 		.from(nonSearchClickLog).join(nonSearchClickLog.boardgame  ,boardgame )
 		.where(nonSearchClickLog.clickAt.after(startDate))
 		.orderBy(boardgame.clickCount.desc())
-		.limit(pageable.getPageSize()).fetch();
-		return new PageImpl<BoardgameSearchByTagResponse.BoardGameResponse>(recommandBoardgameList, pageable, recommandBoardgameList.size());
+		.limit(boardgameSearchByTagRequest.getLimit()).fetch();
+		return recommandBoardgameList;
 	}
 
 	@Override

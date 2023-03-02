@@ -1,5 +1,7 @@
 package com.superboard.onbrd.boardgame.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.groovy.util.StringUtil;
@@ -47,9 +49,8 @@ public class BoardgameController {
 		@ApiImplicitParam(name = "tagIds", value = "태그 ID 리스트", required = true, dataType = "List", paramType = "path"),
 		@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")})
 	@GetMapping("/searchByRecommand")
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
-		@PageableDefault(size = 5) Pageable pageable) {
-		return boardGameService.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+		return boardGameService.searchBoardgameByRecommand(boardgameSearchByTagRequest);
 	}
 
 	@ApiOperation(value = "보드게임 상세")
@@ -66,8 +67,8 @@ public class BoardgameController {
 	@ApiOperation(value = "추천 보드게임")
 	@GetMapping("/recommandBoardgame")
 	@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(@PageableDefault(size = 5) Pageable pageable) {
-		return boardGameService.selectRecommandBoardgameList(pageable);
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+		return boardGameService.selectRecommandBoardgameList(boardgameSearchByTagRequest);
 	}
 	
 	@ApiOperation(value = "보드게임 좋아요 증가")
