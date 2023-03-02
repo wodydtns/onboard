@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-@Entity(name = "SearchClickLog")
+@Entity
 @DynamicInsert
 public class SearchClickLog {
 

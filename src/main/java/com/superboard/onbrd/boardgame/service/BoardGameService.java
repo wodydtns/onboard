@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
-import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 
 public interface BoardGameService {
@@ -17,6 +17,8 @@ public interface BoardGameService {
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer); 
   
 	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest);
+	
+	public List<TopBoardgameDto> selectTop10BoardgameList();
 
 	Boardgame findVerifiedOneById(Long id);
 	

@@ -24,7 +24,7 @@ import com.oracle.bmc.http.client.HttpRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
-import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 
 import antlr.StringUtils;
@@ -84,5 +84,10 @@ public class BoardgameController {
 		}
 		
 	}
-
+	
+	@ApiOperation(value = "보드게임 검색순위 top 10")
+	@GetMapping("/top10")
+	public  List<TopBoardgameDto> selectTop10BoardgameList(){
+		return boardGameService.selectTop10BoardgameList();
+	}
 }

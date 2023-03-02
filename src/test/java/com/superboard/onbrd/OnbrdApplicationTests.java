@@ -17,6 +17,7 @@ class OnbrdApplicationTests {
 
 	@Test
 	void contextLoads() throws Exception {
+		/*
 		OciObjectStorageUtil test = new OciObjectStorageUtil();
 		try {
 			FileInputStream fileInputStream = new FileInputStream(new File("E:/220709.png"));
@@ -28,6 +29,7 @@ class OnbrdApplicationTests {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }

@@ -4,7 +4,6 @@ import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
-import static com.superboard.onbrd.review.dto.review.QReviewHomeByFavoriteCount.*;
 
 import java.util.List;
 import java.util.Map;

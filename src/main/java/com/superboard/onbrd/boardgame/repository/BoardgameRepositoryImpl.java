@@ -4,6 +4,7 @@ import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
 import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
+import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
 
@@ -33,7 +34,7 @@ import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse.BoardGameResponse;
-import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
 import com.superboard.onbrd.tag.entity.QTag;
@@ -109,6 +110,16 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	public void updateClickCount(Long id) {
 		queryFactory.update(boardgame).where(boardgame.id.eq(id))
 		.set(boardgame.clickCount, boardgame.clickCount.add(1)).execute();
+	}
+
+	@Override
+	public List<TopBoardgameDto> selectTop10BoardgameList() {
+		List<TopBoardgameDto> top10BoardgameList = queryFactory.select(Projections.constructor(TopBoardgameDto.class, boardgame.id,boardgame.name)).from(searchClickLog)
+				.join(searchClickLog.boardgame,boardgame)
+				.orderBy(searchClickLog.clickCount.desc())
+				.limit(10)
+				.fetch();
+		return top10BoardgameList;
 	}
 
 }
