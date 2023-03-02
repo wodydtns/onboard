@@ -19,6 +19,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
+import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.util.SliceUtil;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -103,14 +104,15 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	}
 
 	@Override
-	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
+	public List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
 		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.fields(ReviewHomeByFavoriteCount.class, review.id,
 				review.images, review.content, member.nickname,member.level,boardgame.name, review.likeCount
 				))
 			.from(review)
 			.join(review.writer, member)
 			.join(review.boardgame, boardgame )
-			.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
-		return new PageImpl<ReviewHomeByFavoriteCount>(results, pageable, results.size());
+			.orderBy(review.likeCount.desc())
+			.limit(pageBasicEntity.getLimit()).fetch();
+		return results;
 	}
 }

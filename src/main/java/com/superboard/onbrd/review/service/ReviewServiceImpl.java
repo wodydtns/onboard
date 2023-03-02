@@ -3,6 +3,7 @@ package com.superboard.onbrd.review.service;
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
+import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
@@ -87,7 +89,7 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
-		return reviewRepository.selectRecommandReviewList(pageable);
+	public List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
+		return reviewRepository.selectRecommandReviewList(pageBasicEntity);
 	}
 }
