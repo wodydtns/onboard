@@ -21,7 +21,7 @@ public class ReviewHomeController {
 	private final ReviewService reviewService;
 
 	@ApiOperation(value = "추천 리뷰 목록")
-	@GetMapping("/recommandReview")
+	@GetMapping("/curation")
 	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(@PageableDefault(size = 5) Pageable pageable){
 		return reviewService.selectRecommandReviewList(pageable);
 	}
