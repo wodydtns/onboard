@@ -3,6 +3,7 @@ package com.superboard.onbrd.mail.service;
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 import static com.superboard.onbrd.mail.service.MailProperties.*;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -41,6 +42,7 @@ public class MailServiceImpl implements MailService {
 			messageHelper.setTo(dto.getReceiver());
 			messageHelper.setSubject(dto.getTitle());
 			messageHelper.setText(dto.getContent(), true);
+			messageHelper.addInline(LOGO_CID, new ClassPathResource(LOGO_IMAGE_PATH));
 		};
 
 		return messagePreparator;

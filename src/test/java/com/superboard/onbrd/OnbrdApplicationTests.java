@@ -18,10 +18,10 @@ class OnbrdApplicationTests {
 
 	@Test
 	void contextLoads() throws Exception {
+		/*
 		OciObjectStorageUtil test = new OciObjectStorageUtil();
 		try {
 			FileInputStream fileInputStream = new FileInputStream(new File("E:/220709.png"));
-			String fileName = "220709";
 			String contentType = "image/png";
 			MockMultipartFile file = new MockMultipartFile(fileName, fileInputStream);
 			boolean successFlag = test.UploadObject(file);
@@ -29,6 +29,7 @@ class OnbrdApplicationTests {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }

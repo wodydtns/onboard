@@ -84,8 +84,8 @@ public class Member extends BaseEntity {
 		passwordChangeDelayCount = 0;
 	}
 
-	public void increasePoint(ActivityPoint activityPoint) {
-		this.point += activityPoint.getQuantity();
+	public void increasePoint(int point) {
+		this.point += point;
 
 	}
 

@@ -6,18 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class RecommandBoardgameDto {
+public class TopBoardgameDto {
 	private Long id;
 	
 	private String name;
 	
-	private String image;
-
 	@QueryProjection
-	public RecommandBoardgameDto(Long id, String name, String image) {
+	public TopBoardgameDto(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.image = image;
 	}
 }

@@ -1,8 +1,11 @@
 package com.superboard.onbrd.review.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -21,5 +24,5 @@ public interface ReviewService {
 
 	Review findVerifiedOneById(Long id);
 	
-	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable);
+	public List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity);
 }

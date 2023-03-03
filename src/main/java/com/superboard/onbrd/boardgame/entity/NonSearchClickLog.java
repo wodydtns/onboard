@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Builder;
 import lombok.Data;

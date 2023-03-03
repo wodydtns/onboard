@@ -1,6 +1,7 @@
 package com.superboard.onbrd.review.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
+import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
@@ -36,6 +38,10 @@ public class CommentServiceImpl implements CommentService {
 			.review(review)
 			.content(dto.getContent())
 			.build();
+
+		writer.increasePoint(COMMENT_WRITING.point());
+		writer.updateLevel(
+			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 
 		return commentRepository.save(created);
 	}

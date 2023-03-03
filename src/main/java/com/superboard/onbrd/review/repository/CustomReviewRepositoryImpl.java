@@ -1,9 +1,9 @@
 package com.superboard.onbrd.review.repository;
 
 import static com.superboard.onbrd.member.entity.QMember.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
-import static com.superboard.onbrd.review.dto.review.QReviewHomeByFavoriteCount.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
+import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.util.SliceUtil;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -103,13 +104,15 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	}
 
 	@Override
-	public Page<ReviewHomeByFavoriteCount> selectRecommandReviewList(Pageable pageable) {
-		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.constructor(ReviewHomeByFavoriteCount.class, review.id,
-				review.likeCount, review.images,member.nickname
+	public List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
+		List<ReviewHomeByFavoriteCount> results = queryFactory.select(Projections.fields(ReviewHomeByFavoriteCount.class, review.id,
+				review.images, review.content, member.nickname,member.level,boardgame.name, review.likeCount
 				))
 			.from(review)
 			.join(review.writer, member)
-			.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
-		return new PageImpl<ReviewHomeByFavoriteCount>(results, pageable, results.size());
+			.join(review.boardgame, boardgame )
+			.orderBy(review.likeCount.desc())
+			.limit(pageBasicEntity.getLimit()).fetch();
+		return results;
 	}
 }

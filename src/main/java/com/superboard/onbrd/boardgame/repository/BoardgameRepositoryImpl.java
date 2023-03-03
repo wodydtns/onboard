@@ -3,10 +3,15 @@ package com.superboard.onbrd.boardgame.repository;
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
+import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
+import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +34,7 @@ import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse.BoardGameResponse;
-import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.QBoardgame;
 import com.superboard.onbrd.tag.entity.QTag;
@@ -44,28 +49,27 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(
-			BoardgameSearchByTagRequest boardgameSearchByTagRequest, Pageable pageable) {
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		
 		JPAQuery<BoardgameSearchByTagResponse.BoardGameResponse> query = queryFactory
 				.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,
 						boardgame.name, boardgame.image))
 				.from(boardgameTag).join(boardgameTag.boardgame, boardgame).join(boardgameTag.tag, tag)
 				.orderBy(tag.id.asc())
-				.offset(pageable.getOffset()).limit(pageable.getPageSize());
+				.offset(boardgameSearchByTagRequest.getOffset()).limit(boardgameSearchByTagRequest.getLimit());
 		
 		if(!ObjectUtils.isEmpty(boardgameSearchByTagRequest.getTagIds())) {
 			query.where(tag.id.in(boardgameSearchByTagRequest.getTagIds()));
 		}
 		List<BoardgameSearchByTagResponse.BoardGameResponse> results = query.fetch();
 			
-		return new PageImpl<BoardgameSearchByTagResponse.BoardGameResponse>(results, pageable, results.size());
+		return results;
 	}
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
 		BoardgameDetailDto boardgameDetail = queryFactory
-				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.name, boardgame.description,
+				.select(Projections.constructor(BoardgameDetailDto.class, boardgame.id,boardgame.name, boardgame.description,
 						boardgame.image, boardgame.favoriteCount))
 				.from(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag).join(boardgameTag.tag, tag)
@@ -90,12 +94,15 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 	}
 
 	@Override
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
-		List<RecommandBoardgameDto> recommandBoardgameList = queryFactory.select(Projections.constructor(RecommandBoardgameDto.class, boardgame.id,boardgame.name,boardgame.image))
-		.from(boardgame)
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+		LocalDateTime startDate =LocalDateTime.now().minusDays(30);
+		
+		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = queryFactory.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,boardgame.name,boardgame.image))
+		.from(nonSearchClickLog).join(nonSearchClickLog.boardgame  ,boardgame )
+		.where(nonSearchClickLog.clickAt.after(startDate))
 		.orderBy(boardgame.clickCount.desc())
-		.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
-		return new PageImpl<RecommandBoardgameDto>(recommandBoardgameList, pageable, recommandBoardgameList.size());
+		.limit(boardgameSearchByTagRequest.getLimit()).fetch();
+		return recommandBoardgameList;
 	}
 
 	@Override
@@ -105,5 +112,15 @@ public class BoardgameRepositoryImpl implements BoardgameRepository {
 		.set(boardgame.clickCount, boardgame.clickCount.add(1)).execute();
 	}
 
+	@Override
+	public List<TopBoardgameDto> selectTop10BoardgameList() {
+		List<TopBoardgameDto> top10BoardgameList = queryFactory.select(Projections.constructor(TopBoardgameDto.class, boardgame.id,boardgame.name)).from(searchClickLog)
+				.join(searchClickLog.boardgame,boardgame)
+				.orderBy(searchClickLog.clickCount.desc())
+				.limit(10)
+				.fetch();
+		return top10BoardgameList;
+	}
 
 }
+

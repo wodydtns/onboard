@@ -2,7 +2,7 @@ package com.superboard.onbrd.boardgame.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
-import com.superboard.onbrd.boardgame.dto.RecommandBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
@@ -22,8 +22,6 @@ import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepositor
 import com.superboard.onbrd.boardgame.repository.BoardSearchClickLogRepository;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class BoardgameServiceImpl implements BoardGameService {
@@ -40,9 +38,9 @@ public class BoardgameServiceImpl implements BoardGameService {
 	private BoardNonSearchClickLogRepository boardNonSearchClickLogRepository;
 
 	@Override
-	public Page<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest,
-		Pageable pageable) {
-		Page<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest, pageable);
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+		
+		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest);
 		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
@@ -84,8 +82,13 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public Page<RecommandBoardgameDto> selectRecommandBoardgameList(Pageable pageable) {
-		return boardgameRepository.selectRecommandBoardgameList(pageable);
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest);
+		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : recommandBoardgameList) {
+			String imageName = boardgame.getImage();
+			boardgame.setImage(imagePath + imageName);
+		}
+		return recommandBoardgameList;
 	}
 
 	@Override
@@ -101,6 +104,11 @@ public class BoardgameServiceImpl implements BoardGameService {
 	@Transactional(readOnly = true)
 	public Long updateFavoriteCount(Long id) {
 		return boardgameRepository.updateFavoriteCount(id);
+	}
+
+	@Override
+	public List<TopBoardgameDto> selectTop10BoardgameList() {
+		return boardgameRepository.selectTop10BoardgameList();
 	}
 
 	
