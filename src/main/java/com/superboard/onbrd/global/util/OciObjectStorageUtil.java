@@ -1,10 +1,20 @@
 package com.superboard.onbrd.global.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
 
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
@@ -30,6 +40,7 @@ import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
 
+@Component
 public class OciObjectStorageUtil {
 	
 	public final String bucketName = "onboard";
@@ -94,48 +105,86 @@ public class OciObjectStorageUtil {
 	 * @throws Exception
 	 * @method : 파일 업로드
 	 */
-	public void UploadObject() throws Exception {
+	public boolean UploadObject(MultipartFile file) throws Exception {
+		boolean successFlag = false;
 		ObjectStorage client = getObjectStorageClient();
-		UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
-		UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
-		String namespaceName = getNameSpaceName(client);
+		FileOutputStream outputStream = null;
 		
-		// bucket에 넣을 파일 이름
-        String objectName = "review/test_object.txt";
-        Map<String, String> metadata = null;
-        String contentType = "text/plain";
+		BufferedOutputStream bos = null;
+		
+		try {
+			UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
+			UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
+			String namespaceName = getNameSpaceName(client);
+			
+			// bucket에 넣을 파일 이름
+			// 경로 추가 필요
+	        String objectName = "boardgame/" +file.getOriginalFilename();
+	        Map<String, String> metadata = null;
+	        
+	        String contentType = file.getContentType();
+	        
+	        String contentEncoding = null;
+	        String contentLanguage = null;
+	        
+	        // 실제 파일
+	        
+	        InputStream inputStream = file.getInputStream();
+	        
+	        File body = new File(file.getName());
+	        outputStream = new FileOutputStream(body);
+	        
+	        bos = new BufferedOutputStream(outputStream);
+	        
+	        bos.write(file.getBytes());
+	        inputStream.close();
+	        outputStream.close();
+	        bos.close();
+	        
+	        PutObjectRequest request =
+		                PutObjectRequest.builder()
+		                        .bucketName(bucketName)
+		                        .namespaceName(namespaceName)
+		                        .objectName(objectName)
+		                        .contentType(contentType)
+		                        .contentLanguage(contentLanguage)
+		                        .contentEncoding(contentEncoding)
+		                        .opcMeta(metadata)
+		                        .build();
+			
+			
+			UploadRequest uploadDetails =
+		                UploadRequest.builder(body).allowOverwrite(true).build(request);
+			
+			UploadResponse response = uploadManager.upload(uploadDetails);
+			System.out.println(response);
+			if(response.getETag() != null) {
+				successFlag = true;
+			}
+			
+			client.close();
+		} catch (Exception e) {
+			e.getMessage();
+		}finally {
+			if(client != null ) {
+				client.close();
+			}
+			if(outputStream != null) {
+				outputStream.close();
+			}
+			if(bos != null) {
+				bos.close();
+			}
+		}
+		return successFlag;
+		
         
-        String contentEncoding = null;
-        String contentLanguage = null;
-        
-        // 실제 파일
-        File body = new File("D:/onbrd/repo.txt");
-
-        PutObjectRequest request =
-	                PutObjectRequest.builder()
-	                        .bucketName(bucketName)
-	                        .namespaceName(namespaceName)
-	                        .objectName(objectName)
-	                        .contentType(contentType)
-	                        .contentLanguage(contentLanguage)
-	                        .contentEncoding(contentEncoding)
-	                        .opcMeta(metadata)
-	                        .build();
-		
-		
-		UploadRequest uploadDetails =
-	                UploadRequest.builder(body).allowOverwrite(true).build(request);
-		
-		UploadResponse response = uploadManager.upload(uploadDetails);
-        System.out.println(response);
-        
-        client.close();
 	}
 	/**
 	 * @throws Exception
 	 * @method : 파일 삭제
 	 */
-	public void deleteObject() throws Exception {
+	public void deleteObject(String fileName) throws Exception {
 		ObjectStorage client = getObjectStorageClient();
 		
 		String namespaceName = getNameSpaceName(client);
@@ -144,7 +193,7 @@ public class OciObjectStorageUtil {
         		DeleteObjectRequest.builder()
         			.bucketName(bucketName)
         			.namespaceName(namespaceName)
-        			.objectName("test_object.txt")
+        			.objectName(fileName)
         			.build();
         		
         

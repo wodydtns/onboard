@@ -1,5 +1,6 @@
 package com.superboard.onbrd;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -21,7 +22,6 @@ class OnbrdApplicationTests {
 		OciObjectStorageUtil test = new OciObjectStorageUtil();
 		try {
 			FileInputStream fileInputStream = new FileInputStream(new File("E:/220709.png"));
-			String fileName = "220709.png";
 			String contentType = "image/png";
 			MockMultipartFile file = new MockMultipartFile(fileName, fileInputStream);
 			boolean successFlag = test.UploadObject(file);
