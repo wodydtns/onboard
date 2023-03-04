@@ -1,35 +1,22 @@
 package com.superboard.onbrd;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 
-import com.superboard.onbrd.global.util.OciObjectStorageUtil;
+import com.superboard.onbrd.global.util.FCMUtil;
 
 @SpringBootTest
 class OnbrdApplicationTests {
 
 	@Test
 	void contextLoads() throws Exception {
-		/*
-		OciObjectStorageUtil test = new OciObjectStorageUtil();
-		try {
-			FileInputStream fileInputStream = new FileInputStream(new File("E:/220709.png"));
-			String contentType = "image/png";
-			MockMultipartFile file = new MockMultipartFile(fileName, fileInputStream);
-			boolean successFlag = test.UploadObject(file);
-			assertTrue(successFlag);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
+		FCMUtil fcmUtil = new FCMUtil();
+		String targetToken = "BMf038cb7t9f7xmSJaZpVswxh3ZHvwYR3OfgsSQwqSQp0tlrnB6efqff5aog_nPTRyLIiijXge5AwhQeyR-z5-4";
+		String title = "타이틀";
+		String body ="바디";
+		String res = fcmUtil.sendAndroidMessage(0, targetToken, title, body);
+		assertFalse(res.isEmpty());
 	}
 
 }
