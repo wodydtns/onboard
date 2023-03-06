@@ -2,8 +2,10 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,25 +76,30 @@ public class ReviewController {
 					@ExampleObject(value = "1") })),
 			@ApiResponse(responseCode = "404") })
 	@ResponseStatus(CREATED)
-	@PostMapping
+	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<Long> postReview(@AuthenticationPrincipal MemberDetails memberDetails,
-			@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request, List<MultipartFile> files) {
+			@PathVariable Long boardgameId,   @RequestPart ReviewPostRequest request, @RequestPart(required = false) List<MultipartFile> files) {
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
+		
 		boolean insertFlag = true;
 		Long createdId = (long) 0;
+		List<String> imageList = new ArrayList<>();
 		try {
-			for (MultipartFile multipartFile : files) {
-
-				boolean isSuccess = ociObjectStorageUtil.UploadObject(multipartFile);
-				if (isSuccess != insertFlag) {
-					insertFlag = false;
+			if (files != null ) {
+				for (MultipartFile multipartFile : files) {
+					imageList.add(multipartFile.getOriginalFilename());
+					boolean isSuccess = ociObjectStorageUtil.UploadObject(multipartFile);
+					if (isSuccess != insertFlag) {
+						insertFlag = false;
+					}
 				}
+				dto.setImages(imageList);		
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (insertFlag) {
-
+			
 			createdId = reviewService.crewateReview(dto).getId();
 		}
 
