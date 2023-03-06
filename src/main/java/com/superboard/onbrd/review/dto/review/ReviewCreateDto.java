@@ -4,9 +4,11 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
+@Setter
 public class ReviewCreateDto {
 	private String email;
 	private Long boardgameId;
@@ -20,7 +22,6 @@ public class ReviewCreateDto {
 		dto.boardgameId = boardgameId;
 		dto.grade = request.getGrade();
 		dto.content = request.getContent();
-		dto.images = request.getImages();
 
 		return dto;
 	}
