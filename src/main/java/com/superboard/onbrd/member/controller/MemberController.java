@@ -1,8 +1,10 @@
 package com.superboard.onbrd.member.controller;
 
+import static com.superboard.onbrd.global.exception.ExceptionCode.FORBIDDEN;
 import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.exception.OnbrdAssert;
+import com.superboard.onbrd.member.dto.member.MemberInfoResponse;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
-import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.tag.service.FavoriteTagService;
 
@@ -76,16 +80,21 @@ public class MemberController {
 	}
 
 	@Tag(name = "Member")
-	@ApiOperation(value = "회원 레벨조회")
+	@ApiOperation(value = "로그인 회원 정보 조회")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200"),
+		@ApiResponse(responseCode = "403"),
 		@ApiResponse(responseCode = "404")
 	})
-	@GetMapping("/{memberId}/level")
-	public ResponseEntity<MemberLevel> getMemberLevel(@PathVariable Long memberId) {
+	@GetMapping("/{memberId}")
+	public ResponseEntity<MemberInfoResponse> getMemberLevel(
+		@PathVariable Long memberId, @AuthenticationPrincipal MemberDetails memberDetails) {
+		String loginEmail = memberDetails.getEmail();
 		Member member = memberService.findVerifiedOneById(memberId);
 
-		return ResponseEntity.ok(member.getLevel());
+		OnbrdAssert.state(member.getEmail().equals(loginEmail), FORBIDDEN);
+
+		return ResponseEntity.ok(MemberInfoResponse.toDto(member));
 	}
 
 	@Tag(name = "Member")

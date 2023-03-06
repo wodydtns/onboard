@@ -48,7 +48,7 @@ public class Member extends BaseEntity {
 	@Convert(converter = MemberRoleConverter.class)
 	private MemberRole role = ROLE_USER;
 	@Column(nullable = false)
-	private boolean isSocial = false;
+	private Boolean isSocial = false;
 	@Column(nullable = false)
 	private int passwordChangeDelayCount = 0;
 	@Column
