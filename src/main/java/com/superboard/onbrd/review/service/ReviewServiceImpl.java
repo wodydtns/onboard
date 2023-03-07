@@ -15,6 +15,7 @@ import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
+import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
@@ -35,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final MemberService memberService;
 	private final BoardGameService boardGameService;
+	private final OciObjectStorageUtil ociObjectStorageUtil;
 
 	@Override
 	public ReviewByBoardgameIdResponse getReviewsByBoardgameId(ReviewGetParameterDto params) {
@@ -45,7 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public Review crewateReview(ReviewCreateDto dto) {
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
 		Boardgame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
-
+		
 		Review created = Review.builder()
 			.writer(writer)
 			.boardgame(boardgame)
@@ -75,6 +77,12 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public void deleteReviewById(Long id) {
 		Review deleted = findVerifiedOneById(id);
+		List<String> imageList = deleted.getImages();
+		try {
+			ociObjectStorageUtil.deleteObject(imageList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		reviewRepository.delete(deleted);
 	}
 
@@ -82,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Transactional(readOnly = true)
 	public Review findVerifiedOneById(Long id) {
 		Optional<Review> reviewOptional = reviewRepository.findById(id);
-
+		
 		return reviewOptional.orElseThrow(() -> {
 			throw new BusinessLogicException(REVIEW_NOT_FOUND);
 		});

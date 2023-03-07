@@ -184,20 +184,20 @@ public class OciObjectStorageUtil {
 	 * @throws Exception
 	 * @method : 파일 삭제
 	 */
-	public void deleteObject(String fileName) throws Exception {
+	public void deleteObject(List<String> imageList) throws Exception {
 		ObjectStorage client = getObjectStorageClient();
 		
 		String namespaceName = getNameSpaceName(client);
-		
-        DeleteObjectRequest request = 
-        		DeleteObjectRequest.builder()
-        			.bucketName(bucketName)
-        			.namespaceName(namespaceName)
-        			.objectName(fileName)
-        			.build();
-        		
-        
-        client.deleteObject(request);
+		for (String imageName : imageList) {
+			DeleteObjectRequest request = 
+					DeleteObjectRequest.builder()
+					.bucketName(bucketName)
+					.namespaceName(namespaceName)
+					.objectName(imageName)
+					.build();
+			
+			client.deleteObject(request);
+		}
         client.close();
 	}
 	
