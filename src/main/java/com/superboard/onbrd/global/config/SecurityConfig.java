@@ -44,6 +44,7 @@ public class SecurityConfig {
 			.disable()
 			.and()
 			.authorizeRequests()
+			.mvcMatchers("/admin/**").hasRole("ADMIN")
 			.mvcMatchers("/h2/**").permitAll()
 			.mvcMatchers("/api/*/auth/token-reissue").permitAll()
 			.mvcMatchers(GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
