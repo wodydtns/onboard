@@ -189,11 +189,12 @@ public class OciObjectStorageUtil {
 		
 		String namespaceName = getNameSpaceName(client);
 		for (String imageName : imageList) {
+			String objectName = "boardgame/" + imageName;
 			DeleteObjectRequest request = 
 					DeleteObjectRequest.builder()
 					.bucketName(bucketName)
 					.namespaceName(namespaceName)
-					.objectName(imageName)
+					.objectName(objectName)
 					.build();
 			
 			client.deleteObject(request);
