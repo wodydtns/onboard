@@ -51,8 +51,6 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController {
 	private final ReviewService reviewService;
 
-	private final OciObjectStorageUtil ociObjectStorageUtil;
-
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
 	@ApiResponses(value = {
@@ -81,27 +79,7 @@ public class ReviewController {
 			@PathVariable Long boardgameId,   @RequestPart ReviewPostRequest request, @RequestPart(required = false) List<MultipartFile> files) {
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
 		
-		boolean insertFlag = true;
-		Long createdId = (long) 0;
-		List<String> imageList = new ArrayList<>();
-		try {
-			if (files != null ) {
-				for (MultipartFile multipartFile : files) {
-					imageList.add(multipartFile.getOriginalFilename());
-					boolean isSuccess = ociObjectStorageUtil.UploadObject(multipartFile);
-					if (isSuccess != insertFlag) {
-						insertFlag = false;
-					}
-				}
-				dto.setImages(imageList);		
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (insertFlag) {
-			
-			createdId = reviewService.crewateReview(dto).getId();
-		}
+		Long createdId = reviewService.crewateReview(dto,files).getId();			
 
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
@@ -113,11 +91,11 @@ public class ReviewController {
 			@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
 					@ExampleObject(value = "1") })),
 			@ApiResponse(responseCode = "404") })
-	@PatchMapping("/{reviewId}")
-	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestBody ReviewPatchRequest request) {
+	@PatchMapping(path = "/{reviewId}", consumes = {"multipart/form-data"})
+	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestPart ReviewPatchRequest request, @RequestPart(required = false) List<MultipartFile> files) {
 		ReviewUpdateDto dto = ReviewUpdateDto.of(reviewId, request);
 
-		Long updatedId = reviewService.updateReview(dto).getId();
+		Long updatedId = reviewService.updateReview(dto, files).getId();
 
 		return ResponseEntity.ok(updatedId);
 	}

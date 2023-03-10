@@ -1,20 +1,15 @@
 package com.superboard.onbrd.global.util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
 
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
@@ -26,14 +21,14 @@ import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import com.oracle.bmc.objectstorage.model.ListObjects;
 import com.oracle.bmc.objectstorage.model.ObjectSummary;
 import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
-import com.oracle.bmc.objectstorage.requests.GetBucketRequest;
 import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
+import com.oracle.bmc.objectstorage.requests.HeadObjectRequest;
 import com.oracle.bmc.objectstorage.requests.ListObjectsRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
-import com.oracle.bmc.objectstorage.responses.GetBucketResponse;
 import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
+import com.oracle.bmc.objectstorage.responses.HeadObjectResponse;
 import com.oracle.bmc.objectstorage.responses.ListObjectsResponse;
 import com.oracle.bmc.objectstorage.transfer.UploadConfiguration;
 import com.oracle.bmc.objectstorage.transfer.UploadManager;
@@ -50,21 +45,22 @@ public class OciObjectStorageUtil {
 	 * @throws Exception
 	 * @method : 버킷의 특정 파일 가져오기
 	 */
-	public void getObjectOne(String fileName) throws Exception {
+	public boolean getObjectOne(String fileName, String filePath) throws Exception {
+		
 		ObjectStorage client = getObjectStorageClient();
 
 		String namespaceName = getNameSpaceName(client);
 		
-		String objectName = "boardgame/" + fileName;
+		String objectName = filePath + fileName;
 
 		GetObjectRequest request = GetObjectRequest.builder().namespaceName(namespaceName).bucketName(bucketName)
 				.objectName(objectName).build();
 
 		GetObjectResponse response = client.getObject(request);
-		System.out.println(response);
-		System.out.println(response.getETag());
 
 		client.close();
+		
+		return response.getETag().isEmpty();
 	}
 	
 	/**
@@ -72,6 +68,7 @@ public class OciObjectStorageUtil {
 	 * @method : bucket의 모든 파일 가져오기
 	 */
 	public void getObjectList() throws Exception{
+		
 		ObjectStorage client = getObjectStorageClient();
 		
 		String namespaceName = getNameSpaceName(client);
@@ -105,7 +102,7 @@ public class OciObjectStorageUtil {
 	 * @throws Exception
 	 * @method : 파일 업로드
 	 */
-	public boolean UploadObject(MultipartFile file) throws Exception {
+	public boolean UploadObject(MultipartFile file, String filePath) throws Exception {
 		boolean successFlag = false;
 		ObjectStorage client = getObjectStorageClient();
 		FileOutputStream outputStream = null;
@@ -119,7 +116,7 @@ public class OciObjectStorageUtil {
 			
 			// bucket에 넣을 파일 이름
 			// 경로 추가 필요
-	        String objectName = "boardgame/" +file.getOriginalFilename();
+	        String objectName = filePath +file.getOriginalFilename();
 	        Map<String, String> metadata = null;
 	        
 	        String contentType = file.getContentType();
@@ -184,12 +181,12 @@ public class OciObjectStorageUtil {
 	 * @throws Exception
 	 * @method : 파일 삭제
 	 */
-	public void deleteObject(List<String> imageList) throws Exception {
+	public void deleteObject(List<String> imageList, String filePath) throws Exception {
 		ObjectStorage client = getObjectStorageClient();
 		
 		String namespaceName = getNameSpaceName(client);
 		for (String imageName : imageList) {
-			String objectName = "boardgame/" + imageName;
+			String objectName = filePath + imageName;
 			DeleteObjectRequest request = 
 					DeleteObjectRequest.builder()
 					.bucketName(bucketName)
@@ -200,6 +197,26 @@ public class OciObjectStorageUtil {
 			client.deleteObject(request);
 		}
         client.close();
+	}
+	
+	public boolean fileExists(String fileName, String filePath) throws IOException {
+		
+		ObjectStorage client = getObjectStorageClient();
+		
+		String namespaceName = getNameSpaceName(client);
+		
+		String objectName = fileName + filePath;
+		
+		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+                .namespaceName(namespaceName)
+                .bucketName(bucketName)
+                .objectName(objectName)
+
+                .build();
+		HeadObjectResponse response= client.headObject(headObjectRequest);
+		String eTag = response.getETag();
+
+		return eTag.isEmpty();
 	}
 	
 	private ObjectStorage getObjectStorageClient() throws IOException {
@@ -218,4 +235,5 @@ public class OciObjectStorageUtil {
 		return namespaceName;
 	}
 
+	
 }
