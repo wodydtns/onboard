@@ -103,7 +103,7 @@ dependencies {
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 	
 	// https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
-	runtimeOnly 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
 	
 }
 

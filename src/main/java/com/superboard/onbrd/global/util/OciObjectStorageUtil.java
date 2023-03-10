@@ -47,7 +47,6 @@ public class OciObjectStorageUtil {
 	 */
 	public boolean getObjectOne(String fileName, String filePath) throws Exception {
 		
-		boolean isExist = false;
 		ObjectStorage client = getObjectStorageClient();
 
 		String namespaceName = getNameSpaceName(client);
@@ -56,15 +55,12 @@ public class OciObjectStorageUtil {
 
 		GetObjectRequest request = GetObjectRequest.builder().namespaceName(namespaceName).bucketName(bucketName)
 				.objectName(objectName).build();
-		System.out.println(request.toString());
+
 		GetObjectResponse response = client.getObject(request);
-		if(!response.getETag().isEmpty() ) {
-			isExist = true;
-		}
 
 		client.close();
 		
-		return isExist;
+		return response.getETag().isEmpty();
 	}
 	
 	/**
@@ -205,7 +201,6 @@ public class OciObjectStorageUtil {
 	
 	public boolean fileExists(String fileName, String filePath) throws IOException {
 		
-		boolean flag = true;
 		ObjectStorage client = getObjectStorageClient();
 		
 		String namespaceName = getNameSpaceName(client);
@@ -216,12 +211,12 @@ public class OciObjectStorageUtil {
                 .namespaceName(namespaceName)
                 .bucketName(bucketName)
                 .objectName(objectName)
+
                 .build();
 		HeadObjectResponse response= client.headObject(headObjectRequest);
-		if(response.getETag().isEmpty()) {
-			flag = false;
-		}
-		return flag;
+		String eTag = response.getETag();
+
+		return eTag.isEmpty();
 	}
 	
 	private ObjectStorage getObjectStorageClient() throws IOException {
