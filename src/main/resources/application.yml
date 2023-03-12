@@ -8,12 +8,11 @@ spring:
       #driver-class-name: oracle.jdbc.OracleDriver
   servlet:
     multipart:
+      enabled: true
       max-file-size: 500KB
       max-request-size: 500KB
-      allowed-file-extensions: [jpg, jpeg,png, pdf ]
-  resources:
-    cache:
-      period: 3600
+      file-size-threshold: 0
+      resolve-lazily: true
       #hikari:
     #connection-timeout: 3000
     #validation-timeout: 3000
@@ -48,7 +47,6 @@ spring:
           auth: true
           starttls:
             enable: true
-
 
 # log4jdbc, Mybatis Console Log
 logging:
