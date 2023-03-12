@@ -13,6 +13,7 @@ spring:
       max-request-size: 500KB
       file-size-threshold: 0
       resolve-lazily: true
+
       #hikari:
     #connection-timeout: 3000
     #validation-timeout: 3000

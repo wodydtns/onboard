@@ -43,6 +43,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
+    /* quartz 설정 */
+    implementation 'org.quartz-scheduler:quartz:2.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:2.7.7'
+
+
+    /* lombok 설정*/
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -60,7 +66,6 @@ dependencies {
     // Additional Jars for High Availability 
     //implementation("com.oracle.database.ha:ons")
     //implementation("com.oracle.database.ha:simplefan")
-
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
