@@ -1,50 +1,32 @@
 package com.superboard.onbrd.boardgame.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
-import static com.superboard.onbrd.boardgame.dto.QBoardgameDetailDto.*;
-import static com.superboard.onbrd.boardgame.entity.QBoardgameClickLog.*;
-import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
-import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
-import static com.superboard.onbrd.tag.entity.QTag.*;
-import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse.BoardGameResponse;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
-import com.superboard.onbrd.boardgame.entity.QBoardgame;
-import com.superboard.onbrd.tag.entity.QTag;
 import com.superboard.onbrd.tag.entity.Tag;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static com.superboard.onbrd.boardgame.entity.QBoardgame.boardgame;
+import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.nonSearchClickLog;
+import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.searchClickLog;
+import static com.superboard.onbrd.tag.entity.QBoardgameTag.boardgameTag;
+import static com.superboard.onbrd.tag.entity.QTag.tag;
 
 @Repository
 @RequiredArgsConstructor
-public class BoardgameRepositoryImpl implements BoardgameRepository {
+public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository {
 
 	private final JPAQueryFactory queryFactory;
 

@@ -1,29 +1,27 @@
 package com.superboard.onbrd.boardgame.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
 import com.superboard.onbrd.tag.entity.BoardgameTag;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "Boardgame")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SequenceGenerator(
+		name="BOARDGAME_SEQ_GENERATOR",
+		sequenceName = "BOARDGAME_SEQ",
+		initialValue = 1, allocationSize = 1
+)
 public class Boardgame {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator = "BOARDGAME_SEQ_GENERATOR" )
 	private Long id;
 	@Column(nullable = false)
 	private String name;
