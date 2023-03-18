@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -99,9 +100,13 @@ public class OciObjectStorageUtil {
 		FileOutputStream outputStream = null;
 		
 		BufferedOutputStream bos = null;
-		
+
+		List<String> fileExtensionWhiteList = Arrays.asList(".png",".jpg",".jpeg",".gif");
+		String fileExtension =getExtension(file);
+		if(!fileExtensionWhiteList.contains(fileExtension)){
+			return successFlag;
+		}
 		try {
-			getExtension(file);
 			UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
 			UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
 			String namespaceName = getNameSpaceName(client);
