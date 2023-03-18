@@ -1,16 +1,5 @@
 package com.superboard.onbrd.global.util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
 import com.oracle.bmc.Region;
@@ -20,12 +9,7 @@ import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import com.oracle.bmc.objectstorage.model.ListObjects;
 import com.oracle.bmc.objectstorage.model.ObjectSummary;
-import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
-import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
-import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
-import com.oracle.bmc.objectstorage.requests.HeadObjectRequest;
-import com.oracle.bmc.objectstorage.requests.ListObjectsRequest;
-import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.requests.*;
 import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.HeadObjectResponse;
@@ -34,6 +18,13 @@ import com.oracle.bmc.objectstorage.transfer.UploadConfiguration;
 import com.oracle.bmc.objectstorage.transfer.UploadManager;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadRequest;
 import com.oracle.bmc.objectstorage.transfer.UploadManager.UploadResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class OciObjectStorageUtil {
@@ -110,6 +101,7 @@ public class OciObjectStorageUtil {
 		BufferedOutputStream bos = null;
 		
 		try {
+			getExtension(file);
 			UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
 			UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
 			String namespaceName = getNameSpaceName(client);
@@ -120,7 +112,7 @@ public class OciObjectStorageUtil {
 	        Map<String, String> metadata = null;
 	        
 	        String contentType = file.getContentType();
-	        
+
 	        String contentEncoding = null;
 	        String contentLanguage = null;
 	        
@@ -235,5 +227,16 @@ public class OciObjectStorageUtil {
 		return namespaceName;
 	}
 
+	private String getExtension(MultipartFile file){
+		String fileName = file.getName();
+		if (StringUtils.hasText(fileName)) {
+			return "";
+		}
+		int dotIndex = fileName.lastIndexOf(".");
+		if (dotIndex == -1) {
+			return "";
+		}
+		return fileName.substring(dotIndex + 1);
+	}
 	
 }

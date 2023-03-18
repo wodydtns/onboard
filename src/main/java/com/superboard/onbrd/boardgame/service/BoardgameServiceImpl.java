@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +18,7 @@ import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
 import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepository;
 import com.superboard.onbrd.boardgame.repository.BoardSearchClickLogRepository;
-import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
+import com.superboard.onbrd.boardgame.repository.CustomBoardgameRepository;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
@@ -29,7 +27,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
 
 	@Autowired
-	private BoardgameRepository boardgameRepository;
+	private CustomBoardgameRepository customBoardgameRepository;
 	
 	@Autowired
 	private BoardSearchClickLogRepository boardSearchClickLogRepository;
@@ -40,7 +38,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 	@Override
 	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		
-		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = boardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest);
+		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = customBoardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest);
 		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
@@ -50,7 +48,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer) {
-		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
+		BoardgameDetailDto boardgameDetail = customBoardgameRepository.selectBoardgameInfo(boardgameId);
 		String imageName = boardgameDetail.getImage();
 		boardgameDetail.setImage(imagePath + imageName);
 		
@@ -83,7 +81,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
-		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest);
+		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = customBoardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest);
 		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : recommandBoardgameList) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
@@ -93,7 +91,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public Boardgame findVerifiedOneById(Long id) {
-		Optional<Boardgame> boardgameOrNull = boardgameRepository.findById(id);
+		Optional<Boardgame> boardgameOrNull = customBoardgameRepository.findById(id);
 
 		return boardgameOrNull.orElseThrow(() -> {
 			throw new BusinessLogicException(BOARDGAME_NOT_FOUND);
@@ -103,12 +101,12 @@ public class BoardgameServiceImpl implements BoardGameService {
 	@Override
 	@Transactional(readOnly = true)
 	public Long updateFavoriteCount(Long id) {
-		return boardgameRepository.updateFavoriteCount(id);
+		return customBoardgameRepository.updateFavoriteCount(id);
 	}
 
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
-		return boardgameRepository.selectTop10BoardgameList();
+		return customBoardgameRepository.selectTop10BoardgameList();
 	}
 
 	
