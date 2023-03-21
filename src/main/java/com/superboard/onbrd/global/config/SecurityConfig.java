@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.superboard.onbrd.auth.controller.UnauthorizedExceptionEntryPoint;
 import com.superboard.onbrd.auth.filter.JwtAuthenticationFilter;
 import com.superboard.onbrd.auth.util.JwtTokenProvider;
 
@@ -42,6 +43,9 @@ public class SecurityConfig {
 			.headers()
 			.frameOptions()
 			.disable()
+			.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(unauthorizedExceptionEntryPoint())
 			.and()
 			.authorizeRequests()
 			.mvcMatchers("/admin/**").hasRole("ADMIN")
@@ -76,5 +80,10 @@ public class SecurityConfig {
 	@Bean
 	public SecureRandom secureRandom() {
 		return new SecureRandom();
+	}
+
+	@Bean
+	public UnauthorizedExceptionEntryPoint unauthorizedExceptionEntryPoint() {
+		return new UnauthorizedExceptionEntryPoint();
 	}
 }

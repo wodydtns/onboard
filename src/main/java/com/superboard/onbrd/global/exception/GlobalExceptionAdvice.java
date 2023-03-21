@@ -1,7 +1,5 @@
 package com.superboard.onbrd.global.exception;
 
-import static com.superboard.onbrd.global.exception.ExceptionCode.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,7 +21,6 @@ public class GlobalExceptionAdvice {
 	public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
 		e.printStackTrace();
 
-		return ResponseEntity.status(INTERNAL_SERVER_ERROR.getStatus())
-			.body(INTERNAL_SERVER_ERROR.getMessage());
+		return ResponseEntity.internalServerError().body(e.getMessage());
 	}
 }
