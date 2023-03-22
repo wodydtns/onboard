@@ -4,13 +4,13 @@ import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
 import java.util.Optional;
 
+import com.superboard.onbrd.review.entity.Comments;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
-import com.superboard.onbrd.review.entity.Comment;
 import com.superboard.onbrd.review.entity.CommentLike;
 import com.superboard.onbrd.review.repository.CommentLikeRepository;
 
@@ -26,21 +26,21 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
 	@Override
 	public void createCommentLikeOrDeleteIfExist(String email, Long commentId) {
-		Comment comment = commentService.findVerifiedOneById(commentId);
+		Comments comments = commentService.findVerifiedOneById(commentId);
 
-		checkOwnComment(email, comment);
+		checkOwnComment(email, comments);
 
 		Member member = memberService.findVerifiedOneByEmail(email);
 
-		Optional<CommentLike> commentLikeOptional = commentLikeRepository.findByMemberAndComment(member, comment);
+		Optional<CommentLike> commentLikeOptional = commentLikeRepository.findByMemberAndComments(member, comments);
 		commentLikeOptional.ifPresentOrElse(
 			commentLikeRepository::delete,
-			() -> commentLikeRepository.save(CommentLike.of(member, comment))
+			() -> commentLikeRepository.save(CommentLike.of(member, comments))
 		);
 	}
 
-	private void checkOwnComment(String email, Comment comment) {
-		if (comment.getWriter().getEmail().equals(email)) {
+	private void checkOwnComment(String email, Comments comments) {
+		if (comments.getWriter().getEmail().equals(email)) {
 			throw new BusinessLogicException(LIKE_OWN_COMMENT_NOT_PERMITTED);
 		}
 	}
