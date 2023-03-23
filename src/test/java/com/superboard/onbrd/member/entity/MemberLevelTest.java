@@ -21,7 +21,7 @@ class MemberLevelTest {
 	void point() {
 		int expected = 50;
 
-		int actual = REVIEW_WRITING.point();
+		int actual = REVIEW_WRITING.getPoint();
 
 		assertThat(actual).isEqualTo(expected);
 	}

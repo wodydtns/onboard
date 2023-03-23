@@ -10,7 +10,8 @@
     "ROLE"                        VARCHAR(10)      NOT NULL,
     "IS_SOCIAL"                   NUMBER(1)        NOT NULL,
     "PASSWORD_CHANGE_DELAY_COUNT" NUMBER DEFAULT 0 NOT NULL,
-    "LAST_VISIT"                  DATE             NULL,
+    "LAST_VISIT_AT"               DATE             NOT NULL,
+    "SERIAL_VISIT_DAYS"           NUMBER           NOT NULL,
     "CREATED_AT"                  DATE             NOT NULL,
     "MODIFIED_AT"                 DATE             NOT NULL
 );

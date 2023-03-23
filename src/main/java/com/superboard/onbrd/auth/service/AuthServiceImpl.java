@@ -48,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
 		OnbrdAssert.state(member.getStatus() == WITHDRAWN, WITHDRAWN_MEMBER);
 		OnbrdAssert.state(member.getStatus() == KICKED, KICKED_MEMBER);
 
+		member.attendAt(LocalDateTime.now());
 		TokenDto tokens = tokenService.issueTokens(member);
 
 		return new SignInResultDto(member.getId(), tokens);
@@ -65,6 +66,8 @@ public class AuthServiceImpl implements AuthService {
 
 		Token token = tokenService.findVerifiedOneByRefreshToken(refreshToken);
 		Member member = memberService.findVerifiedOneById(token.getId());
+
+		member.attendAt(LocalDateTime.now());
 
 		return tokenService.issueTokens(member);
 	}

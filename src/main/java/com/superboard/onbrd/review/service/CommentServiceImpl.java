@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
 			.content(dto.getContent())
 			.build();
 
-		writer.increasePoint(COMMENT_WRITING.point());
+		writer.increasePoint(COMMENT_WRITING.getPoint());
 		writer.updateLevel(
 			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 
