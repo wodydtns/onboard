@@ -102,7 +102,7 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 
 	private void checkMemberHavingPassword(Member member) {
-		if (member.isSocial()) {
+		if (member.getIsSocial()) {
 			throw new BusinessLogicException(SOCIAL_MEMBER_NOT_HAVING_PASSWORD);
 		}
 	}

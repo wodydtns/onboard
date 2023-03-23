@@ -2,10 +2,8 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -54,11 +50,11 @@ public class ReviewController {
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameIdResponse.class))),
-			@ApiResponse(responseCode = "404") })
+		@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameIdResponse.class))),
+		@ApiResponse(responseCode = "404")})
 	@GetMapping
 	public ResponseEntity<ReviewByBoardgameIdResponse> getReviews(@PathVariable Long boardgameId,
-			@ModelAttribute ReviewGetRequest request) {
+		@ModelAttribute ReviewGetRequest request) {
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
 
 		ReviewByBoardgameIdResponse response = reviewService.getReviewsByBoardgameId(params);
@@ -70,16 +66,17 @@ public class ReviewController {
 	@ApiOperation(value = "리뷰 작성")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "생성 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
-					@ExampleObject(value = "1") })),
-			@ApiResponse(responseCode = "404") })
+		@ApiResponse(responseCode = "201", description = "생성 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
+			@ExampleObject(value = "1")})),
+		@ApiResponse(responseCode = "404")})
 	@ResponseStatus(CREATED)
 	@PostMapping(consumes = {"multipart/form-data"})
 	public ResponseEntity<Long> postReview(@AuthenticationPrincipal MemberDetails memberDetails,
-			@PathVariable Long boardgameId,   @RequestPart ReviewPostRequest request, @RequestPart(required = false) List<MultipartFile> files) {
+		@PathVariable Long boardgameId, @RequestPart ReviewPostRequest request,
+		@RequestPart(required = false) List<MultipartFile> files) {
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
-		
-		Long createdId = reviewService.crewateReview(dto,files).getId();			
+
+		Long createdId = reviewService.crewateReview(dto, files).getId();
 
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
@@ -88,11 +85,12 @@ public class ReviewController {
 	@ApiOperation(value = "리뷰 수정")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
-					@ExampleObject(value = "1") })),
-			@ApiResponse(responseCode = "404") })
+		@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
+			@ExampleObject(value = "1")})),
+		@ApiResponse(responseCode = "404")})
 	@PatchMapping(path = "/{reviewId}", consumes = {"multipart/form-data"})
-	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestPart ReviewPatchRequest request, @RequestPart(required = false) List<MultipartFile> files) {
+	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestPart ReviewPatchRequest request,
+		@RequestPart(required = false) List<MultipartFile> files) {
 		ReviewUpdateDto dto = ReviewUpdateDto.of(reviewId, request);
 
 		Long updatedId = reviewService.updateReview(dto, files).getId();
@@ -103,8 +101,8 @@ public class ReviewController {
 	@Tag(name = "Review")
 	@ApiOperation(value = "리뷰 삭제")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
-	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "리뷰 삭제"),
-			@ApiResponse(responseCode = "404") })
+	@ApiResponses(value = {@ApiResponse(responseCode = "204", description = "리뷰 삭제"),
+		@ApiResponse(responseCode = "404")})
 	@ResponseStatus(NO_CONTENT)
 	@DeleteMapping("/{reviewId}")
 	public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
