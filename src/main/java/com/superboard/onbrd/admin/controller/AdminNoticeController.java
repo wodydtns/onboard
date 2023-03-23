@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/notices")
 @RequiredArgsConstructor
 @Validated
-public class NoticeController {
+public class AdminNoticeController {
 	private final NoticeService noticeService;
 
 	@PostMapping

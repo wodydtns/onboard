@@ -72,7 +72,7 @@ public class OauthServiceImpl implements OauthService {
 	}
 
 	private void checkMemberIsSocial(Member member) {
-		if (!member.isSocial()) {
+		if (!member.getIsSocial()) {
 			throw new BusinessLogicException(OAUTH_MEMBER_NOT_SOCIAL_ALREADY_SIGN_UP);
 		}
 	}

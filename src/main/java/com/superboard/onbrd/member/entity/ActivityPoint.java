@@ -12,7 +12,7 @@ public enum ActivityPoint {
 
 	private final int quantity;
 
-	public int point() {
+	public int getPoint() {
 		return quantity;
 	}
 }

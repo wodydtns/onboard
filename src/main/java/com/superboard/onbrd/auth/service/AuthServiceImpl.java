@@ -1,6 +1,7 @@
 package com.superboard.onbrd.auth.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
+import static com.superboard.onbrd.member.entity.MemberStatus.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,6 +19,7 @@ import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.util.AuthCodeMailProvider;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
+import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.mail.dto.MailSendingEvent;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.Password;
@@ -42,6 +44,11 @@ public class AuthServiceImpl implements AuthService {
 		Password password = passwordService.findVerifiedOneByMember(member);
 		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
 
+		OnbrdAssert.state(member.getStatus() == SUSPENDED, SUSPENDED_MEMBER);
+		OnbrdAssert.state(member.getStatus() == WITHDRAWN, WITHDRAWN_MEMBER);
+		OnbrdAssert.state(member.getStatus() == KICKED, KICKED_MEMBER);
+
+		member.attendAt(LocalDateTime.now());
 		TokenDto tokens = tokenService.issueTokens(member);
 
 		return new SignInResultDto(member.getId(), tokens);
@@ -59,6 +66,8 @@ public class AuthServiceImpl implements AuthService {
 
 		Token token = tokenService.findVerifiedOneByRefreshToken(refreshToken);
 		Member member = memberService.findVerifiedOneById(token.getId());
+
+		member.attendAt(LocalDateTime.now());
 
 		return tokenService.issueTokens(member);
 	}

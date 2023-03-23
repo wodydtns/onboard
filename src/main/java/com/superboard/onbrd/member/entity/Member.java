@@ -1,8 +1,10 @@
 package com.superboard.onbrd.member.entity;
 
+import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 import static com.superboard.onbrd.member.entity.MemberLevel.*;
 import static com.superboard.onbrd.member.entity.MemberRole.*;
 import static com.superboard.onbrd.member.entity.MemberStatus.*;
+import static java.time.temporal.ChronoUnit.*;
 
 import java.time.LocalDateTime;
 
@@ -50,9 +52,13 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isSocial = false;
 	@Column(nullable = false)
-	private int passwordChangeDelayCount = 0;
+	private int passwordChangeDelayCount = 1;
 	@Column
-	private LocalDateTime lastVisitAt;
+	private LocalDateTime lastVisitAt = LocalDateTime.now();
+	@Column
+	private int serialVisitDays = 0;
+	@Column
+	private int totalAttendDays = 0;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
@@ -84,13 +90,40 @@ public class Member extends BaseEntity {
 		passwordChangeDelayCount = 0;
 	}
 
-	public void increasePoint(int point) {
-		this.point += point;
-
-	}
-
 	public void updateLevel(MemberLevel level) {
 		this.level = level;
+	}
+
+	public void increasePoint(int point) {
+		this.point += point;
+	}
+
+	public void attendAt(LocalDateTime dateTime) {
+		if (lastVisitAt.isAfter(dateTime)) {
+			return;
+		}
+
+		int diff = (int)DAYS.between(lastVisitAt, dateTime);
+
+		switch (diff) {
+			case 0:
+				lastVisitAt = dateTime;
+				break;
+
+			case 1:
+				lastVisitAt = dateTime;
+				serialVisitDays++;
+				totalAttendDays++;
+				increasePoint(ATTENDANCE.getPoint());
+				break;
+
+			default:
+				lastVisitAt = dateTime;
+				serialVisitDays = 1;
+				totalAttendDays++;
+				increasePoint(ATTENDANCE.getPoint());
+				break;
+		}
 	}
 
 	public void withdraw() {

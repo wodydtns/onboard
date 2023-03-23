@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.superboard.onbrd.global.entity.BaseEntity;
+import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.AccessLevel;
@@ -30,7 +31,7 @@ public class Inquiry extends BaseEntity {
 	@Column(nullable = false)
 	private String content;
 	@Column(nullable = false)
-	private boolean isAnswered = false;
+	private Boolean isAnswered = false;
 	@Column
 	private String answer;
 	@Column
@@ -41,4 +42,22 @@ public class Inquiry extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "admin_id")
 	private Member admin;
+
+	public void updateTitle(String title) {
+		this.title = title;
+	}
+
+	public void updateContent(String content) {
+		this.content = content;
+	}
+
+	public static Inquiry of(Member member, InquiryCreateCommand command) {
+		Inquiry inquiry = new Inquiry();
+
+		inquiry.title = command.getTitle();
+		inquiry.content = command.getContent();
+		inquiry.member = member;
+
+		return inquiry;
+	}
 }

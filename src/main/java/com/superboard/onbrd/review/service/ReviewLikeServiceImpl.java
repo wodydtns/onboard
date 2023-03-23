@@ -48,7 +48,7 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
 			}
 		);
 
-		writer.increasePoint(REVIEW_LIKED.point());
+		writer.increasePoint(REVIEW_LIKED.getPoint());
 		writer.updateLevel(
 			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 	}

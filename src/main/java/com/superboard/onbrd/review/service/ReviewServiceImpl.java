@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,22 +45,22 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public Review crewateReview(ReviewCreateDto dto, List<MultipartFile> files) {
-		if(!files.isEmpty()) {
+		if (!files.isEmpty()) {
 			List<String> imageList = new ArrayList<>();
 			for (MultipartFile multipartFile : files) {
 				imageList.add(multipartFile.getOriginalFilename());
 				String filePath = "review/";
 				try {
-					ociObjectStorageUtil.UploadObject(multipartFile,filePath);
+					ociObjectStorageUtil.UploadObject(multipartFile, filePath);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			dto.setImages(imageList);	
+			dto.setImages(imageList);
 		}
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
 		Boardgame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
-		
+
 		Review created = Review.builder()
 			.writer(writer)
 			.boardgame(boardgame)
@@ -71,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService {
 			.images(dto.getImages())
 			.build();
 
-		writer.increasePoint(REVIEW_WRITING.point());
+		writer.increasePoint(REVIEW_WRITING.getPoint());
 		writer.updateLevel(
 			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 
@@ -81,12 +79,12 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public Review updateReview(ReviewUpdateDto dto, List<MultipartFile> files) {
 		Review updated = findVerifiedOneById(dto.getReviewId());
-		if(!files.isEmpty()) {
+		if (!files.isEmpty()) {
 			for (MultipartFile file : files) {
 				try {
 					String filePath = "review/";
-					boolean isExist  = ociObjectStorageUtil.getObjectOne(file.getOriginalFilename(), filePath);
-					if(!isExist) {
+					boolean isExist = ociObjectStorageUtil.getObjectOne(file.getOriginalFilename(), filePath);
+					if (!isExist) {
 						ociObjectStorageUtil.UploadObject(file, filePath);
 					}
 				} catch (Exception e) {
@@ -105,10 +103,10 @@ public class ReviewServiceImpl implements ReviewService {
 	public void deleteReviewById(Long id) {
 		Review deleted = findVerifiedOneById(id);
 		List<String> imageList = deleted.getImages();
-		if(!imageList.isEmpty()) {
+		if (!imageList.isEmpty()) {
 			try {
 				String filePath = "review/";
-				ociObjectStorageUtil.deleteObject(imageList,filePath);
+				ociObjectStorageUtil.deleteObject(imageList, filePath);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -120,7 +118,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Transactional(readOnly = true)
 	public Review findVerifiedOneById(Long id) {
 		Optional<Review> reviewOptional = reviewRepository.findById(id);
-		
+
 		return reviewOptional.orElseThrow(() -> {
 			throw new BusinessLogicException(REVIEW_NOT_FOUND);
 		});
