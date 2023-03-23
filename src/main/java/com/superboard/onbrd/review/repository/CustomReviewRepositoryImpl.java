@@ -2,7 +2,7 @@ package com.superboard.onbrd.review.repository;
 
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
-import static com.superboard.onbrd.review.entity.QComment.*;
+import static com.superboard.onbrd.review.entity.QComments.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
 import java.util.List;
@@ -81,23 +81,23 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	private Map<Long, List<ReviewByBoardgameIdResponse.CommentCard>>
 	getReviewIdCommentCardListMap(List<Long> reviewIds) {
 		List<Tuple> tuples = queryFactory
-			.select(comment.review.id, Projections.fields(ReviewByBoardgameIdResponse.CommentCard.class,
-				comment.id,
-				comment.content,
-				comment.createdAt,
+			.select(comments.review.id, Projections.fields(ReviewByBoardgameIdResponse.CommentCard.class,
+				comments.id,
+				comments.content,
+				comments.createdAt,
 				member.id.as("writer_id"),
 				member.nickname,
 				member.profileCharacter
 			))
-			.from(comment)
-			.join(comment.writer, member)
-			.where(comment.review.id.in(reviewIds))
+			.from(comments)
+			.join(comments.writer, member)
+			.where(comments.review.id.in(reviewIds))
 			.fetch();
 
 		return tuples.stream()
 			.collect(
 				Collectors.groupingBy(
-					tuple -> tuple.get(comment.review.id),
+					tuple -> tuple.get(comments.review.id),
 					Collectors.mapping(tuple -> tuple.get(1, ReviewByBoardgameIdResponse.CommentCard.class),
 						Collectors.toList())
 				));

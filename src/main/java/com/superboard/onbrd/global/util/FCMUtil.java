@@ -22,7 +22,8 @@ public class FCMUtil {
  * 			  setDirectBootOk - direct boot mode 시 device에 메시지 전달
 	 * 
 	 */
-	public String sendAndroidMessage(int requestId, String registrationToken,String title, String body) throws FirebaseMessagingException{
+	public String sendAndroidMessage( String registrationToken,String title, String body) throws FirebaseMessagingException{
+	//	public String sendAndroidMessage(int requestId, String registrationToken,String title, String body) throws FirebaseMessagingException{
 		Message message = Message.builder()
 				.setAndroidConfig(AndroidConfig.builder()
 				.setTtl(3600)
@@ -34,7 +35,8 @@ public class FCMUtil {
 				.setBody(body)
 				.setIcon("@drawable/bling")
 				.build()).build())
-				.putData("requestId", Integer.toString(requestId)).setToken(registrationToken).build();
+				//.putData("requestId", Integer.toString(requestId)).setToken(registrationToken).build();
+				.setToken(registrationToken).build();
 		String response = FirebaseMessaging.getInstance().send(message);
 		
 		return response;

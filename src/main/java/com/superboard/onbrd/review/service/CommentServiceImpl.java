@@ -5,6 +5,7 @@ import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
 import java.util.Optional;
 
+import com.superboard.onbrd.review.entity.Comments;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,6 @@ import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
-import com.superboard.onbrd.review.entity.Comment;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.CommentRepository;
 
@@ -29,11 +29,11 @@ public class CommentServiceImpl implements CommentService {
 	private final ReviewService reviewService;
 
 	@Override
-	public Comment createComment(CommentCreateDto dto) {
+	public Comments createComments(CommentCreateDto dto) {
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
 		Review review = reviewService.findVerifiedOneById(dto.getReviewId());
 
-		Comment created = Comment.builder()
+		Comments created = Comments.builder()
 			.writer(writer)
 			.review(review)
 			.content(dto.getContent())
@@ -46,24 +46,27 @@ public class CommentServiceImpl implements CommentService {
 		return commentRepository.save(created);
 	}
 
+
+
+
 	@Override
-	public Comment updateComment(CommentUpdateDto dto) {
-		Comment updated = findVerifiedOneById(dto.getCommentId());
+	public Comments updateComments(CommentUpdateDto dto) {
+		Comments updated = findVerifiedOneById(dto.getCommentId());
 		updated.updateContent(dto.getContent());
 
 		return updated;
 	}
 
 	@Override
-	public void deleteCommentById(Long id) {
-		Comment deleted = findVerifiedOneById(id);
+	public void deleteCommentsById(Long id) {
+		Comments deleted = findVerifiedOneById(id);
 		commentRepository.delete(deleted);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Comment findVerifiedOneById(Long id) {
-		Optional<Comment> commentOptional = commentRepository.findById(id);
+	public Comments findVerifiedOneById(Long id) {
+		Optional<Comments> commentOptional = commentRepository.findById(id);
 
 		return commentOptional
 			.orElseThrow(
