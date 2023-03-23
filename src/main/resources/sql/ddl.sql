@@ -12,6 +12,7 @@
     "PASSWORD_CHANGE_DELAY_COUNT" NUMBER DEFAULT 0 NOT NULL,
     "LAST_VISIT_AT"               DATE             NOT NULL,
     "SERIAL_VISIT_DAYS"           NUMBER           NOT NULL,
+    "TOTAL_ATTEND_DAYS"           NUMBER           NOT NULL,
     "CREATED_AT"                  DATE             NOT NULL,
     "MODIFIED_AT"                 DATE             NOT NULL
 );
@@ -152,4 +153,10 @@ CREATE TABLE "REPORT"
     "RESOLVED_YN"      NUMBER(1)    NOT NULL,
     "CREATED_AT"       DATE         NOT NULL,
     "MODIFIED_AT"      DATE         NOT NULL
+);
+
+CREATE TABLE "BADGE"
+(
+    "ID"         NUMBER        NOT NULL PRIMARY KEY,
+    "BADGE_TYPE" VARCHAR2(100) NOT NULL
 );

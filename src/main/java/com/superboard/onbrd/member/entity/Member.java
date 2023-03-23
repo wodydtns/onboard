@@ -56,7 +56,9 @@ public class Member extends BaseEntity {
 	@Column
 	private LocalDateTime lastVisitAt = LocalDateTime.now();
 	@Column
-	private int serialVisitDays = 1;
+	private int serialVisitDays = 0;
+	@Column
+	private int totalAttendDays = 0;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
@@ -111,12 +113,14 @@ public class Member extends BaseEntity {
 			case 1:
 				lastVisitAt = dateTime;
 				serialVisitDays++;
+				totalAttendDays++;
 				increasePoint(ATTENDANCE.getPoint());
 				break;
 
 			default:
 				lastVisitAt = dateTime;
 				serialVisitDays = 1;
+				totalAttendDays++;
 				increasePoint(ATTENDANCE.getPoint());
 				break;
 		}
