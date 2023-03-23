@@ -52,7 +52,7 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private int passwordChangeDelayCount = 0;
 	@Column
-	private LocalDateTime lastVisit;
+	private LocalDateTime lastVisitAt;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
