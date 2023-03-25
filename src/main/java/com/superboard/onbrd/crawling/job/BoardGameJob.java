@@ -3,6 +3,7 @@ package com.superboard.onbrd.crawling.job;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.superboard.onbrd.crawling.entity.CrawlingData;
+import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
 import com.superboard.onbrd.crawling.repository.CrawlingRepository;
 import com.superboard.onbrd.crawling.repository.CustomCrawlingRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,9 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -77,12 +80,16 @@ public class BoardGameJob {
 
     /*
     * TODO
-     *   1. category 필터링
+     *
      *   2. boardgame insert 문 생성
      *   3. 이미지 업로드 + insert 문에 이미지 파일 이름 추가 - 완료
-     *   4. papago로 번역 생성
+     *   5. 보드게임 좋아요 추가한 사용자에게 push message 보내기
+     *
+     * Done
+     *  4. papago로 번역 생성 - Done
+     *  1. category 필터링
     * */
-    @Scheduled(cron = "0/10 * * * * *")
+    //@Scheduled(cron = "0/10 * * * * *")
     public void insertCrawlingData(){
         // 파일 경로 수정 필요
         ProcessBuilder pb = new ProcessBuilder("python", "D:\\hello2.py");
@@ -110,8 +117,15 @@ public class BoardGameJob {
 
     @Scheduled(cron = "0/10 * * * * *")
     public void translationBoardgameDesc(){
+
+        List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardgameDescription();
+        Gson gson = new Gson();
+        String descriptionJson = gson.toJson(BoardgameDescriptionList);
+        byte[] encodedBytes = Base64.getEncoder().encode(descriptionJson.getBytes(StandardCharsets.UTF_8));
+        String base64Encoded = new String(encodedBytes, StandardCharsets.UTF_8);
+
         // 파일 경로 수정 필요
-        ProcessBuilder pb = new ProcessBuilder("python", "D:\\papago.py");
+        ProcessBuilder pb = new ProcessBuilder("python", "D:\\papago1.py", base64Encoded);
 
         pb.redirectErrorStream(true);
         Process process = null;
@@ -123,12 +137,22 @@ public class BoardGameJob {
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
-            String json = builder.toString();
-            System.out.println(json);
-            Gson gson = new Gson();
+            String returnJson = builder.toString();
+            System.out.println(returnJson);
+
             //Map<String, Object> result_list = gson.fromJson(json, Map.class);
-            List<LinkedTreeMap> resultList = gson.fromJson(json, List.class);
-            System.out.println(resultList.size());
+            List<LinkedTreeMap> resultList = gson.fromJson(returnJson, List.class);
+            List<CrawlingTranslationDto> crawlingTranslationDtoList = new ArrayList<>();
+            for (LinkedTreeMap result : resultList) {
+
+                CrawlingTranslationDto crawlingTranslationDto = new CrawlingTranslationDto();
+                Double id = (Double) result.get("id");
+                crawlingTranslationDto.setId(id.longValue());
+                crawlingTranslationDto.setDescription((String) result.get("description"));
+
+                crawlingTranslationDtoList.add(crawlingTranslationDto);
+            }
+            customCrawlingRepository.updateAllCrawlingTranslationData(crawlingTranslationDtoList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
