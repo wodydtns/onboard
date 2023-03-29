@@ -4,13 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
-import com.superboard.onbrd.crawling.entity.CrawlingBoardgameTagDto;
 import com.superboard.onbrd.crawling.entity.CrawlingData;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
 import com.superboard.onbrd.crawling.repository.CrawlingRepository;
 import com.superboard.onbrd.crawling.repository.CustomCrawlingRepository;
 import com.superboard.onbrd.tag.entity.BoardgameTag;
+import com.superboard.onbrd.tag.entity.Tag;
 import com.superboard.onbrd.tag.repository.BoardgameTagRepository;
+import com.superboard.onbrd.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -35,6 +37,8 @@ public class BoardGameJob {
 
     private final BoardgameRepository boardgameRepository;
 
+    private final TagRepository tagRepository;
+
     private final BoardgameTagRepository boardgameTagRepository;
 
 
@@ -43,7 +47,7 @@ public class BoardGameJob {
     public void createCrawlingBoardgameLog() {
         // Start the process
         try {
-            ProcessBuilder pb = new ProcessBuilder("python", "D:\\getBoardgame.py");
+            ProcessBuilder pb = new ProcessBuilder("python", "E:\\crawling\\getBoardgame.py");
 
             pb.redirectErrorStream(true);
             Process process = pb.start();
@@ -88,27 +92,16 @@ public class BoardGameJob {
     }
 
     /*
-     * TODO
-     **  1. category 필터링
-     *   2. 보드게임 좋아요 추가한 사용자에게 push message 보내기
-     *   3. boardgame tag에 저장 필요
+     * FIXME
+     *  1. category size가 20
 
     * */
 
-    //"title_text": "Brass: Birmingham", "image_url": "Brass: Birmingham.png", "best_player": "— Best: 3–4",
-    // "playing_time": "1시간", "age": "14세이하", "description": "Brass: Birmingham is an economic strategy game sequel to
-    // Martin Wallace' 2007 masterpiece, Brass. Brass: Birmingham tells the story of competing entrepreneurs in Birmingham during the
-    // industrial revolution, between the years of 1770-1870.\nAs in its predecessor, you must develop, build, and establish your
-    // industries and network, in an effort to exploit low or high market demands.\nEach round, players take turns according to the turn order track,
-    // receiving two actions to perform any of the following actions (found in the original game):\n1) Build - Pay required resources and place an industry tile.\n2) N
-    // etwork - Add a rail / canal link, expanding your network.\n3) Develop - Increase the VP value of an industry.\n4) Sell - Sell your cotton, manufactured goods and pottery.\n5) Loan -
-    // Take a £30 loan and reduce your income.\nalso features a new sixth action:"
-    // , "categories": "Economic"}
     @Scheduled(cron = "0/10 * * * * *")
     @Transactional
     public void insertCrawlingData(){
         // 파일 경로 수정 필요
-        ProcessBuilder pb = new ProcessBuilder("python", "D:\\getBoardgame2.py");
+        ProcessBuilder pb = new ProcessBuilder("python", "E:\\crawling\\getBoardgame2.py");
 
         pb.redirectErrorStream(true);
         Process process = null;
@@ -125,30 +118,44 @@ public class BoardGameJob {
             //Map<String, Object> result_list = gson.fromJson(json, Map.class);
             List<LinkedTreeMap> resultList = gson.fromJson(json, List.class);
             List<Boardgame> boardgameList = new ArrayList<>();
-            List<String> categoriesTagList =  new ArrayList<>();
-            //System.out.println(resultList);
+            HashSet<Long> tagHashSet = new HashSet();
+            List<Long> categoriesTagList =  new ArrayList<>();
             for (LinkedTreeMap result : resultList) {
                 CrawlingData crawlingData = new CrawlingData();
                 String boardgameName = (String) result.get("title_text");
                 String description = (String) result.get("description");
                 String imageUrl = (String) result.get("image_url");
                 Boardgame boardgame = new Boardgame(boardgameName,description,imageUrl);
-
+                String categories = (String) result.get("categories");
+                String age = (String) result.get("age");
+                String playing_time = (String) result.get("playing_time");
+                String best_player = (String) result.get("best_player");
+                tagHashSet.add(Long.parseLong(categories));
+                tagHashSet.add(Long.parseLong(age));
+                tagHashSet.add(Long.parseLong(playing_time));
+                tagHashSet.add(Long.parseLong(best_player));
+                categoriesTagList.add(Long.parseLong(categories));
+                categoriesTagList.add(Long.parseLong(age));
+                categoriesTagList.add(Long.parseLong(playing_time));
+                categoriesTagList.add(Long.parseLong(best_player));
                 boardgameList.add(boardgame);
-
-                categoriesTagList.add((String) result.get("categories"));
             }
-
-            customCrawlingRepository.selectOauthIdForPushMessageByFavorite(categoriesTagList);
             List<Boardgame> savedBoardgames = boardgameRepository.saveAll(boardgameList);
 
-            List<CrawlingBoardgameTagDto> boardgameTagList = new ArrayList<>();
+            // tag 저장 로직
+            
             for (Boardgame boardgame: savedBoardgames) {
-                CrawlingBoardgameTagDto crawlingBoardgameTagDto = new CrawlingBoardgameTagDto();
-                crawlingBoardgameTagDto.setBoardgameId(boardgame.getId());
+                for(Long category : categoriesTagList){
+                    Tag tag = tagRepository.findById(category).orElseThrow();
+                    BoardgameTag boardgameTag = BoardgameTag.builder().boardgame(boardgame).tag(tag)
+                            .build();
+                    boardgameTagRepository.saveAndFlush(boardgameTag);
+                }
 
-                boardgameTagList.add(crawlingBoardgameTagDto);
             }
+            customCrawlingRepository.selectOauthIdForPushMessageByFavorite(tagHashSet);
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

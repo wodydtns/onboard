@@ -12,6 +12,7 @@ import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,5 @@ public class FavoriteTag extends BaseEntity {
 
 		return favoriteTag;
 	}
+
 }

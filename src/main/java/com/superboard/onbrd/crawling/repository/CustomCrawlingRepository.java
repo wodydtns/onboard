@@ -5,6 +5,7 @@ import com.superboard.onbrd.crawling.entity.CrawlingData;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
 import com.superboard.onbrd.tag.entity.BoardgameTag;
 
+import java.util.HashSet;
 import java.util.List;
 
 public interface CustomCrawlingRepository {
@@ -17,6 +18,6 @@ public interface CustomCrawlingRepository {
 
     public void updateAllCrawlingTranslationData(List<CrawlingTranslationDto > crawlingTranslationDtoList);
 
-    public void selectOauthIdForPushMessageByFavorite(List<String> categoriesTagList);
+    public void selectOauthIdForPushMessageByFavorite(HashSet<Long> categoriesTagList);
 
 }

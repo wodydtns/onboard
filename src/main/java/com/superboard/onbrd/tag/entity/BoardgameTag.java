@@ -1,21 +1,14 @@
 package com.superboard.onbrd.tag.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardgameTag {
 	@Id
@@ -29,4 +22,12 @@ public class BoardgameTag {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
+
+
+	@Builder
+	public BoardgameTag(Boardgame boardgame, Tag tag){
+		this.boardgame = boardgame;
+		this.tag = tag;
+	}
+
 }
