@@ -10,12 +10,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static com.superboard.onbrd.auth.entity.QToken.token;
 import static com.superboard.onbrd.crawling.entity.QCrawlingData.*;
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
-import static com.superboard.onbrd.boardgame.entity.QFavoriteBoardgame.*;
+import static com.superboard.onbrd.tag.entity.QFavoriteTag.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 
 @Repository
@@ -61,14 +62,23 @@ public class CustomCrawlingRepositoryImpl implements CustomCrawlingRepository{
     * TODO 
     *  1. tag id로 favorite 추가한 사람에게 푸시 메시지 보내기
     *  2.
+    * 수행 순서
+    * 1. BOARDGAME_TAG 저장 -> TAG_ID 가져옴
+    * 2. FAVORITE_TAG에 IN 조건으로 SELECT
+    * 3. MEMBER의 Refresh token 받아서 push
+    *
     * */
     @Override
-    public void selectOauthIdForPushMessageByFavorite(List<String> categoriesTagList) {
-        Long memberId = 1L;
-        String refreshToken = queryFactory.select(token.refreshToken).from(token).where(token.id.eq(memberId)).fetchOne();
+    public void selectOauthIdForPushMessageByFavorite(HashSet<Long> categoriesTagList) {
+
+        List<Long> memberId = queryFactory.select(member.id).from(favoriteTag)
+                .join(favoriteTag.member, member).where(favoriteTag.id.in(categoriesTagList)).groupBy(member.id).fetch();
+        List<String> refreshTokens = queryFactory.select(token.refreshToken).from(token).where(token.id.in(memberId)).fetch();
 
         try {
-            fcmUtil.sendAndroidMessage(refreshToken,"FCM title","fcm Body");
+            for (String refreshToken : refreshTokens){
+                fcmUtil.sendAndroidMessage(refreshToken,"FCM title","fcm Body");
+            }
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
         }
