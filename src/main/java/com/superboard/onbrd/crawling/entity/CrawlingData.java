@@ -1,6 +1,7 @@
 package com.superboard.onbrd.crawling.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
         sequenceName = "CRAWLINGDATA_SEQ",
         initialValue = 1, allocationSize = 1
 )
+@BatchSize(size = 100)
 public class CrawlingData {
 
     @Id

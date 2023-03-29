@@ -1,18 +1,14 @@
 package com.superboard.onbrd.boardgame.entity;
 
 import com.superboard.onbrd.tag.entity.BoardgameTag;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "Boardgame")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(
 		name="BOARDGAME_SEQ_GENERATOR",
@@ -40,4 +36,13 @@ public class Boardgame {
 	
 	@OneToMany(mappedBy = "boardgame")
 	private List<BoardgameTag> boardgameTags = new ArrayList<>();
+
+	@Builder
+	public Boardgame(String name, String description, String image){
+		this.name=name;
+		this.description=description;
+		this.image = image;
+	}
+
+
 }
