@@ -14,4 +14,16 @@ public class OnbrdAssert extends Assert {
 			throw new BusinessLogicException(exceptionCode, msg);
 		}
 	}
+
+	public static void isTrue(boolean expression, ExceptionCode exceptionCode) {
+		if (!expression) {
+			throw new BusinessLogicException(exceptionCode);
+		}
+	}
+
+	public static void isTrue(boolean expression, ExceptionCode exceptionCode, String msg) {
+		if (!expression) {
+			throw new BusinessLogicException(exceptionCode, msg);
+		}
+	}
 }

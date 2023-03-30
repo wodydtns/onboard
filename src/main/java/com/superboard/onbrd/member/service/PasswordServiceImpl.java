@@ -15,6 +15,7 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.ExceptionCode;
 import com.superboard.onbrd.member.dto.password.PasswordChangeDueExtendResponse;
 import com.superboard.onbrd.member.dto.password.PasswordChangeDueResponse;
+import com.superboard.onbrd.member.dto.password.PasswordCreateCommand;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.repository.PasswordRepository;
@@ -29,8 +30,8 @@ public class PasswordServiceImpl implements PasswordService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	public void createPassword(Password password) {
-		passwordRepository.save(password);
+	public void createPassword(PasswordCreateCommand command) {
+		Password password = Password.of(command.getMember(), passwordEncoder.encode(command.getRawPassword()));
 	}
 
 	@Override

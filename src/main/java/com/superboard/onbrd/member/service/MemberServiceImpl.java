@@ -4,7 +4,6 @@ import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
 import java.util.Optional;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -15,10 +14,12 @@ import com.superboard.onbrd.auth.service.TokenService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
+import com.superboard.onbrd.member.dto.password.PasswordCreateCommand;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberStatus;
-import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.repository.MemberRepository;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
+import com.superboard.onbrd.tag.service.FavoriteTagService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,19 +29,32 @@ import lombok.RequiredArgsConstructor;
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordService passwordService;
-	private final PasswordEncoder passwordEncoder;
+	private final FavoriteTagService favoriteTagService;
 	private final TokenService tokenService;
 
 	@Override
 	public Member signUp(SignUpRequest request) {
 		checkEmailDuplicated(request.getEmail());
-		String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-		Member member = memberRepository.save(Member.from(request));
-		passwordService.createPassword(Password.of(member, encodedPassword));
-		tokenService.createToken(Token.from(member));
+		Member created = memberRepository.save(Member.from(request));
 
-		return member;
+		passwordService.createPassword(PasswordCreateCommand.of(created, request.getPassword()));
+		tokenService.createToken(Token.from(created));
+		favoriteTagService.createdFavoriteTags(created, request.getTagIds());
+
+		return created;
+	}
+
+	@Override
+	public Member signUpFromOauth(OauthSignUpRequest request) {
+		checkEmailDuplicated(request.getEmail());
+
+		Member created = memberRepository.save(Member.fromOauth(request));
+
+		tokenService.createToken(Token.from(created));
+		favoriteTagService.createdFavoriteTags(created, request.getTagIds());
+
+		return created;
 	}
 
 	@Override
@@ -96,14 +110,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Optional<Member> findByEmail(String email) {
 		return memberRepository.findByEmail(email);
-	}
-
-	@Override
-	public Member createMember(Member member) {
-		Member created = memberRepository.save(member);
-		tokenService.createToken(Token.from(created));
-
-		return created;
 	}
 
 	@Override

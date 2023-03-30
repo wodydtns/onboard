@@ -1,19 +1,22 @@
 package com.superboard.onbrd.oauth2.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
-
-import java.util.Optional;
+import static com.superboard.onbrd.global.exception.OnbrdAssert.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superboard.onbrd.auth.dto.SignInResultDto;
+import com.superboard.onbrd.auth.dto.SignInResult;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.service.TokenService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.oauth2.dto.OauthIntegrateRequest;
+import com.superboard.onbrd.oauth2.dto.OauthIntegrateResult;
 import com.superboard.onbrd.oauth2.dto.OauthSignInRequest;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpResult;
 import com.superboard.onbrd.oauth2.entity.OauthID;
 import com.superboard.onbrd.oauth2.repository.OauthIDRepository;
 
@@ -28,58 +31,56 @@ public class OauthServiceImpl implements OauthService {
 	private final TokenService tokenService;
 
 	@Override
-	public SignInResultDto signIn(OauthSignInRequest request) {
-		String email = request.getEmail();
+	public SignInResult signIn(OauthSignInRequest request) {
+		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 
-		Optional<Member> memberOptional = memberService.findByEmail(email);
+		checkMemberIsSocial(member);
 
-		if (memberOptional.isPresent()) {
-			Member member = memberOptional.get();
+		OauthID oauthID = findVerifiedOneByMemberId(member.getId());
 
-			checkMemberIsSocial(member);
+		checkOauthIDValid(oauthID, request);
 
-			OauthID oauthID = findVerifiedOauthIdByOauthSignRequest(member, request);
-
-			checkOauthIDValid(oauthID, request.getOauthId());
-
-			TokenDto tokens = tokenService.issueTokens(member);
-
-			return new SignInResultDto(member.getId(), tokens);
-		}
-
-		Member member = createOauthMember(request);
 		TokenDto tokens = tokenService.issueTokens(member);
 
-		return new SignInResultDto(member.getId(), tokens);
+		return new SignInResult(member.getId(), tokens);
 	}
 
 	@Override
-	public Member createOauthMember(OauthSignInRequest request) {
-		Member member = memberService.createMember(Member.fromOauth(request.getEmail()));
+	public OauthSignUpResult signUp(OauthSignUpRequest request) {
+		Member created = memberService.signUpFromOauth(request);
+		OauthID oauthID = oauthIDRepository.save(OauthID.of(created, request.getOauthId(), request.getProvider()));
 
-		OauthID oauthID = OauthID.of(member, request.getOauthId());
-		oauthIDRepository.save(oauthID);
+		TokenDto tokens = tokenService.issueTokens(created);
 
-		return member;
+		return OauthSignUpResult.of(created, tokens);
 	}
 
 	@Override
-	public OauthID findVerifiedOauthIdByOauthSignRequest(Member member, OauthSignInRequest request) {
-		Optional<OauthID> oauthIDOptional = oauthIDRepository.findByMember(member);
+	public OauthIntegrateResult integrate(OauthIntegrateRequest request) {
+		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
+		OauthID oauthID = oauthIDRepository.save(OauthID.of(member, request.getOauthId(), request.getProvider()));
 
-		return oauthIDOptional
-			.orElseGet(() -> oauthIDRepository.save(OauthID.of(member, request.getOauthId())));
+		member.integrate();
+
+		TokenDto tokens = tokenService.issueTokens(member);
+
+		return OauthIntegrateResult.of(member, tokens);
+	}
+
+	@Override
+	public OauthID findVerifiedOneByMemberId(Long memberId) {
+		return oauthIDRepository.findById(memberId)
+			.orElseThrow(() -> new BusinessLogicException(OAUTH_ID_NOT_FOUND));
 	}
 
 	private void checkMemberIsSocial(Member member) {
-		if (!member.getIsSocial()) {
-			throw new BusinessLogicException(OAUTH_MEMBER_NOT_SOCIAL_ALREADY_SIGN_UP);
-		}
+		state(member.getIsSocial(), NOT_SOCIAL_MEMBER);
 	}
 
-	private void checkOauthIDValid(OauthID oauthID, String oauthId) {
-		if (!oauthId.equals(oauthID.getOauthId())) {
-			throw new BusinessLogicException(INVALID_OAUTH_ID);
-		}
+	private void checkOauthIDValid(OauthID oauthID, OauthSignInRequest request) {
+		isTrue(
+			request.getOauthId().equals(oauthID.getOauthId()) &&
+				request.getProvider() == oauthID.getProvider(),
+			INVALID_OAUTH_ID);
 	}
 }

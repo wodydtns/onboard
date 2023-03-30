@@ -5,9 +5,12 @@ import java.util.Optional;
 import com.superboard.onbrd.admin.dto.AdminMemberDetail;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
 
 public interface MemberService {
 	Member signUp(SignUpRequest request);
+
+	Member signUpFromOauth(OauthSignUpRequest request);
 
 	Member findVerifiedOneById(Long id);
 
@@ -22,8 +25,6 @@ public interface MemberService {
 	void deleteMemberById(Long id);
 
 	Optional<Member> findByEmail(String email);
-
-	Member createMember(Member member);
 
 	Member suspendMember(Long id);
 

@@ -29,6 +29,7 @@ public class Password extends BaseEntity {
 
 	public static Password of(Member member, String encodedPassword) {
 		Password password = new Password();
+
 		password.member = member;
 		password.encodedPassword = encodedPassword;
 

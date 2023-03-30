@@ -14,7 +14,7 @@ import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
-import com.superboard.onbrd.auth.dto.SignInResultDto;
+import com.superboard.onbrd.auth.dto.SignInResult;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.util.AuthCodeMailProvider;
@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
-	public SignInResultDto signIn(SignInRequest request) {
+	public SignInResult signIn(SignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);
 		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
 		member.attendAt(LocalDateTime.now());
 		TokenDto tokens = tokenService.issueTokens(member);
 
-		return new SignInResultDto(member.getId(), tokens);
+		return new SignInResult(member.getId(), tokens);
 	}
 
 	@Override

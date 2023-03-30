@@ -20,6 +20,7 @@ import com.superboard.onbrd.global.converter.MemberRoleConverter;
 import com.superboard.onbrd.global.converter.MemberStatusConverter;
 import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -65,10 +66,12 @@ public class Member extends BaseEntity {
 			request.getEmail(), request.getNickname(), request.getProfileCharacter());
 	}
 
-	public static Member fromOauth(String email) {
+	public static Member fromOauth(OauthSignUpRequest request) {
 		Member member = new Member();
-		member.email = email;
-		member.nickname = "default";
+
+		member.email = request.getEmail();
+		member.nickname = request.getNickname();
+		member.profileCharacter = request.getProfileCharacter();
 		member.isSocial = true;
 
 		return member;
@@ -136,6 +139,10 @@ public class Member extends BaseEntity {
 
 	public void kick() {
 		this.status = KICKED;
+	}
+
+	public void integrate() {
+		this.isSocial = true;
 	}
 
 	private Member(String email, String nickname, String profileCharacter) {

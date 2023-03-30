@@ -19,7 +19,7 @@ import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
-import com.superboard.onbrd.auth.dto.SignInResultDto;
+import com.superboard.onbrd.auth.dto.SignInResult;
 import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.auth.service.AuthService;
@@ -58,13 +58,13 @@ public class AuthController {
 	})
 	@PostMapping("/sign-in")
 	public ResponseEntity<Long> signIn(@RequestBody SignInRequest request) {
-		SignInResultDto signInResultDto = authService.signIn(request);
+		SignInResult signInResult = authService.signIn(request);
 
-		HttpHeaders headers = addTokensToHeader(signInResultDto.getTokens());
+		HttpHeaders headers = addTokensToHeader(signInResult.getTokens());
 
 		return ResponseEntity.ok()
 			.headers(headers)
-			.body(signInResultDto.getId());
+			.body(signInResult.getId());
 	}
 
 	@Tag(name = "Authentication")

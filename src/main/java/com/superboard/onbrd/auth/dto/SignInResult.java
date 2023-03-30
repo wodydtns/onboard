@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SignInResultDto {
+public class SignInResult {
 	private Long id;
 	private TokenDto tokens;
 }

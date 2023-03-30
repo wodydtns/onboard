@@ -22,15 +22,19 @@ public class OauthID {
 	private Long id;
 	@Column(nullable = false)
 	private String oauthId;
+	@Column(nullable = false)
+	private OauthProvider provider;
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	public static OauthID of(Member member, String oauthId) {
+	public static OauthID of(Member member, String oauthId, OauthProvider provider) {
 		OauthID oauthID = new OauthID();
+
 		oauthID.member = member;
 		oauthID.oauthId = oauthId;
+		oauthID.provider = provider;
 
 		return oauthID;
 	}

@@ -1,14 +1,19 @@
 package com.superboard.onbrd.oauth2.service;
 
-import com.superboard.onbrd.auth.dto.SignInResultDto;
-import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.auth.dto.SignInResult;
+import com.superboard.onbrd.oauth2.dto.OauthIntegrateRequest;
+import com.superboard.onbrd.oauth2.dto.OauthIntegrateResult;
 import com.superboard.onbrd.oauth2.dto.OauthSignInRequest;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
+import com.superboard.onbrd.oauth2.dto.OauthSignUpResult;
 import com.superboard.onbrd.oauth2.entity.OauthID;
 
 public interface OauthService {
-	SignInResultDto signIn(OauthSignInRequest request);
+	SignInResult signIn(OauthSignInRequest request);
 
-	Member createOauthMember(OauthSignInRequest request);
+	OauthSignUpResult signUp(OauthSignUpRequest request);
 
-	OauthID findVerifiedOauthIdByOauthSignRequest(Member member, OauthSignInRequest request);
+	OauthIntegrateResult integrate(OauthIntegrateRequest request);
+
+	OauthID findVerifiedOneByMemberId(Long memberId);
 }
