@@ -40,6 +40,11 @@ public class Report extends BaseEntity {
 	@JoinColumn(name = "resolver_id")
 	private Member resolver;
 
+	public void resolve(Member resolver) {
+		this.isResolved = true;
+		this.resolver = resolver;
+	}
+
 	public static Report of(Member whistleblower, ReportCreateCommand command) {
 		Report report = new Report();
 

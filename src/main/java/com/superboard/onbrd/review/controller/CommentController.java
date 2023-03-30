@@ -2,7 +2,6 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import com.superboard.onbrd.review.service.CustomCommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +20,7 @@ import com.superboard.onbrd.review.dto.comment.CommentPatchRequest;
 import com.superboard.onbrd.review.dto.comment.CommentPostRequest;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
 import com.superboard.onbrd.review.service.CommentService;
+import com.superboard.onbrd.review.service.CustomCommentService;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -57,7 +57,7 @@ public class CommentController {
 		@PathVariable Long reviewId, @RequestBody CommentPostRequest request) {
 		CommentCreateDto dto = CommentCreateDto.of(memberDetails.getEmail(), reviewId, request);
 
-		Long createdId = commentService.createComments(dto).getId();
+		Long createdId = commentService.createComment(dto).getId();
 
 		customCommentService.selectOauthIdForPushMessage(createdId);
 
@@ -77,7 +77,7 @@ public class CommentController {
 	public ResponseEntity<Long> patchComment(@PathVariable Long commentId, @RequestBody CommentPatchRequest request) {
 		CommentUpdateDto dto = CommentUpdateDto.of(commentId, request);
 
-		Long updatedId = commentService.updateComments(dto).getId();
+		Long updatedId = commentService.updateComment(dto).getId();
 
 		return ResponseEntity.ok(updatedId);
 	}
@@ -92,7 +92,7 @@ public class CommentController {
 	@ResponseStatus(NO_CONTENT)
 	@DeleteMapping("/{commentId}")
 	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-		commentService.deleteCommentsById(commentId);
+		commentService.deleteCommentById(commentId);
 
 		return ResponseEntity.noContent().build();
 	}

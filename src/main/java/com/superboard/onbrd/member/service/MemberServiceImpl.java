@@ -9,11 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.superboard.onbrd.admin.dto.AdminMemberDetail;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.service.TokenService;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
+import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberStatus;
 import com.superboard.onbrd.member.entity.Password;
 import com.superboard.onbrd.member.repository.MemberRepository;
 
@@ -101,6 +104,34 @@ public class MemberServiceImpl implements MemberService {
 		tokenService.createToken(Token.from(created));
 
 		return created;
+	}
+
+	@Override
+	public Member suspendMember(Long id) {
+		Member member = findVerifiedOneById(id);
+		MemberStatus status = member.getStatus();
+
+		OnbrdAssert.state(status != MemberStatus.KICKED, SUSPEND_KICKED_MEMBER_NOT_PERMITTED);
+		OnbrdAssert.state(status != MemberStatus.WITHDRAWN, SUSPEND_WITHDRAWN_MEMBER_NOT_PERMITTED);
+
+		member.suspend();
+
+		return member;
+	}
+
+	@Override
+	public Member kickMember(Long id) {
+		Member member = findVerifiedOneById(id);
+
+		member.kick();
+
+		return member;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public AdminMemberDetail getAdminMemberDetail(Long id) {
+		return memberRepository.getAdminMemberDetail(id);
 	}
 
 	private boolean isEmailExists(String email) {

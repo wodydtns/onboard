@@ -1,5 +1,6 @@
 package com.superboard.onbrd.inquiry.repository;
 
+import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.inquiry.entity.QInquiry.*;
 
 import java.util.List;
@@ -9,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
+import com.superboard.onbrd.global.dto.OnbrdPageInfo;
+import com.superboard.onbrd.global.dto.OnbrdPageRequest;
+import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.entity.OrderBy;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 
@@ -55,5 +61,36 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 			.fetch();
 
 		return InquiryMyListResponse.from(MyInquiries);
+	}
+
+	@Override
+	public OnbrdPageResponse<AdminInquiryDetail> getAdminInquiries(OnbrdPageRequest params) {
+		OrderBy orderBy = INQUIRY_NEWEST;
+
+		List<AdminInquiryDetail> content = queryFactory
+			.select(Projections.fields(AdminInquiryDetail.class,
+				inquiry.id,
+				inquiry.title,
+				inquiry.content,
+				inquiry.member.id.as("memberId"),
+				inquiry.member.nickname,
+				inquiry.createdAt,
+				inquiry.isAnswered,
+				inquiry.answer
+			))
+			.from(inquiry)
+			.orderBy(orderBy.getOrderSpecifiers())
+			.offset(params.getOffset())
+			.limit(params.getPageSize())
+			.fetch();
+
+		long totalElements = queryFactory
+			.select(inquiry.count())
+			.from(inquiry)
+			.fetchFirst();
+
+		OnbrdPageInfo pageInfo = OnbrdPageInfo.of(params, content, totalElements, orderBy);
+
+		return new OnbrdPageResponse<>(pageInfo, content);
 	}
 }

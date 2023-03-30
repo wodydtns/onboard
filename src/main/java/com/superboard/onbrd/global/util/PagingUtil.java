@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SliceUtil {
+public class PagingUtil {
 	public Boolean getHasNext(List<?> cards, int limit) {
 		if (cards.size() > limit) {
 			cards.remove(limit);

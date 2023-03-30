@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.superboard.onbrd.global.util.SliceUtil;
+import com.superboard.onbrd.global.util.PagingUtil;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
 import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameResponse;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MypageRepositoryImpl implements MypageRepository {
 	private final JPAQueryFactory queryFactory;
-	private final SliceUtil sliceUtil;
+	private final PagingUtil pagingUtil;
 
 	@Override
 	public MypageResponse getMypage(MypageGetDto params) {
@@ -62,7 +62,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 			.limit(params.getLimit() + 1)
 			.fetch();
 
-		Boolean hasNext = sliceUtil.getHasNext(myReviews, params.getLimit());
+		Boolean hasNext = pagingUtil.getHasNext(myReviews, params.getLimit());
 
 		return new MypageMoreReviewResponse(hasNext, myReviews);
 	}
@@ -82,7 +82,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 			.limit(params.getLimit() + 1)
 			.fetch();
 
-		Boolean hasNext = sliceUtil.getHasNext(favoriteBoardGames, params.getLimit());
+		Boolean hasNext = pagingUtil.getHasNext(favoriteBoardGames, params.getLimit());
 
 		return new MypageMoreBoardgameResponse(hasNext, favoriteBoardGames);
 	}

@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
+import com.superboard.onbrd.global.dto.OnbrdPageRequest;
+import com.superboard.onbrd.global.dto.OnbrdPageResponse;
 import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.util.OciObjectStorageUtil;
@@ -39,6 +42,13 @@ public class ReviewServiceImpl implements ReviewService {
 	private final OciObjectStorageUtil ociObjectStorageUtil;
 
 	@Override
+	@Transactional(readOnly = true)
+	public OnbrdPageResponse<AdminReviewDetail> getAdminReviews(OnbrdPageRequest params) {
+		return reviewRepository.getAdminReviews(params);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public ReviewByBoardgameIdResponse getReviewsByBoardgameId(ReviewGetParameterDto params) {
 		return reviewRepository.searchReviewsByBoardgameId(params);
 	}
@@ -97,6 +107,14 @@ public class ReviewServiceImpl implements ReviewService {
 		updated.updateImages(dto.getImages());
 
 		return updated;
+	}
+
+	@Override
+	public Review hideReview(Long id) {
+		Review review = findVerifiedOneById(id);
+		review.hide();
+
+		return review;
 	}
 
 	@Override

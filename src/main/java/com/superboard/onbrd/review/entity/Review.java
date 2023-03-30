@@ -38,6 +38,8 @@ public class Review extends BaseEntity {
 	private List<String> images;
 	@Column(nullable = false)
 	private long likeCount = 0;
+	@Column(nullable = false)
+	private Boolean isHidden = false;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id")
 	private Member writer;
@@ -55,6 +57,10 @@ public class Review extends BaseEntity {
 
 	public void updateImages(List<String> images) {
 		this.images = images;
+	}
+
+	public void hide() {
+		this.isHidden = true;
 	}
 
 	public void increaseLikeCountOrDecreaseIfCancelLike(boolean isCancelLike) {

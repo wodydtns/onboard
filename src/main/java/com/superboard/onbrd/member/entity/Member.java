@@ -130,6 +130,14 @@ public class Member extends BaseEntity {
 		this.status = WITHDRAWN;
 	}
 
+	public void suspend() {
+		this.status = SUSPENDED;
+	}
+
+	public void kick() {
+		this.status = KICKED;
+	}
+
 	private Member(String email, String nickname, String profileCharacter) {
 		this.email = email;
 		this.nickname = nickname;

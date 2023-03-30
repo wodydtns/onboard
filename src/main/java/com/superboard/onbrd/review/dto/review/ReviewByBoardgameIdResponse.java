@@ -23,6 +23,7 @@ public class ReviewByBoardgameIdResponse {
 		private String content;
 		private List<String> images;
 		private long likeCount;
+		private Boolean isHidden;
 		private LocalDateTime createdAt;
 		private Long writerId;
 		private String profileCharacter;
@@ -35,6 +36,7 @@ public class ReviewByBoardgameIdResponse {
 	public static class CommentCard {
 		private Long id;
 		private String content;
+		private Boolean isHidden;
 		private LocalDateTime createdAt;
 		private Long writerId;
 		private String profileCharacter;

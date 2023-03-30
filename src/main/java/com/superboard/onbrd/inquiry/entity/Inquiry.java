@@ -51,6 +51,10 @@ public class Inquiry extends BaseEntity {
 		this.content = content;
 	}
 
+	public void answer(String answer) {
+		this.answer = answer;
+	}
+
 	public static Inquiry of(Member member, InquiryCreateCommand command) {
 		Inquiry inquiry = new Inquiry();
 

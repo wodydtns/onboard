@@ -1,17 +1,19 @@
 package com.superboard.onbrd.review.service;
 
-import com.superboard.onbrd.review.repository.CustomCommentRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
+import com.superboard.onbrd.review.repository.CommentRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustomCommentServiceImpl implements CustomCommentService{
+public class CustomCommentServiceImpl implements CustomCommentService {
 
-    private final CustomCommentRepository customCommentRepository;
-    @Override
-    public void selectOauthIdForPushMessage(long createdId) {
-        customCommentRepository.selectOauthIdForPushMessage(createdId);
-    }
+	private final CommentRepository commentRepository;
+
+	@Override
+	public void selectOauthIdForPushMessage(long createdId) {
+		commentRepository.selectOauthIdForPushMessage(createdId);
+	}
 }

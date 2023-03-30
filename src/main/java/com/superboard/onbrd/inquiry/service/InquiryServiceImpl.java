@@ -7,6 +7,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
+import com.superboard.onbrd.admin.dto.InquiryAnswerCommand;
+import com.superboard.onbrd.global.dto.OnbrdPageRequest;
+import com.superboard.onbrd.global.dto.OnbrdPageResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
@@ -27,8 +31,15 @@ public class InquiryServiceImpl implements InquiryService {
 	private final MemberService memberService;
 
 	@Override
+	@Transactional(readOnly = true)
 	public InquiryMyListResponse getMyInquiries(String email) {
 		return inquiryRepository.getMyInquiries(email);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public OnbrdPageResponse<AdminInquiryDetail> getAdminInquiries(OnbrdPageRequest params) {
+		return inquiryRepository.getAdminInquiries(params);
 	}
 
 	@Override
@@ -56,6 +67,16 @@ public class InquiryServiceImpl implements InquiryService {
 	}
 
 	@Override
+	public Inquiry answerInquiry(InquiryAnswerCommand command) {
+		Inquiry inquiry = findVerifiedOneById(command.getId());
+
+		inquiry.answer(command.getAnswer());
+
+		return inquiry;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Inquiry findVerifiedOneById(Long id) {
 		Optional<Inquiry> inquiryOptional = inquiryRepository.findById(id);
 
