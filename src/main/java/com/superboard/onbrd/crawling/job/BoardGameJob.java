@@ -97,7 +97,7 @@ public class BoardGameJob {
 
     * */
 
-    @Scheduled(cron = "0/10 * * * * *")
+    //@Scheduled(cron = "0/10 * * * * *")
     @Transactional
     public void insertCrawlingData(){
         // 파일 경로 수정 필요
