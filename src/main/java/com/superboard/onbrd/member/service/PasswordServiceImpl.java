@@ -32,6 +32,7 @@ public class PasswordServiceImpl implements PasswordService {
 	@Override
 	public void createPassword(PasswordCreateCommand command) {
 		Password password = Password.of(command.getMember(), passwordEncoder.encode(command.getRawPassword()));
+		passwordRepository.save(password);
 	}
 
 	@Override
