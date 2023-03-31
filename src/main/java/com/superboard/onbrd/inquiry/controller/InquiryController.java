@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,7 +72,7 @@ public class InquiryController {
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public ResponseEntity<Long> postInquiry(
-		@AuthenticationPrincipal MemberDetails memberDetails, InquiryPostRequest request) {
+		@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody InquiryPostRequest request) {
 
 		Inquiry created = inquiryService.createInquiry(
 			InquiryCreateCommand.of(memberDetails.getEmail(), request));
@@ -89,7 +90,7 @@ public class InquiryController {
 			@ExampleObject(value = "1")})),
 		@ApiResponse(responseCode = "404")})
 	@PatchMapping("/{id}")
-	public ResponseEntity<Long> patchInquiry(@PathVariable Long id, InquiryPatchRequest request) {
+	public ResponseEntity<Long> patchInquiry(@PathVariable Long id, @RequestBody InquiryPatchRequest request) {
 		Long updatedId = inquiryService.updateInquiry(
 			InquiryUpdateCommand.of(id, request));
 
