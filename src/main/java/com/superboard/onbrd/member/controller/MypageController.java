@@ -20,6 +20,8 @@ import com.superboard.onbrd.member.dto.mypage.MypageRequest;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
 import com.superboard.onbrd.member.dto.password.PasswordChangeRequest;
+import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.member.service.MypageService;
 import com.superboard.onbrd.tag.service.FavoriteTagService;
 
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/members/mypage")
 @RequiredArgsConstructor
 public class MypageController {
+	private final MemberService memberService;
 	private final MypageService mypageService;
 	private final FavoriteTagService favoriteTagService;
 
@@ -103,7 +106,8 @@ public class MypageController {
 	@PatchMapping("/favorite-tags")
 	public ResponseEntity<Void> resetFavoriteTags(
 		@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody FavoriteTagResetRequest request) {
-		favoriteTagService.resetFavoriteTags(memberDetails.getEmail(), request.getTagIds());
+		Member member = memberService.findVerifiedOneByEmail(memberDetails.getEmail());
+		favoriteTagService.resetFavoriteTags(member, request.getTagIds());
 
 		return ResponseEntity.ok().build();
 	}

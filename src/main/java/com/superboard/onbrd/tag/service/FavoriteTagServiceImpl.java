@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.member.entity.Member;
-import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.tag.entity.FavoriteTag;
 import com.superboard.onbrd.tag.entity.Tag;
 import com.superboard.onbrd.tag.repository.FavoriteTagRepository;
@@ -23,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class FavoriteTagServiceImpl implements FavoriteTagService {
 	private final FavoriteTagRepository favoriteTagRepository;
 	private final TagService tagService;
-	private final MemberService memberService;
 
 	@Override
 	public void createdFavoriteTags(Member member, List<Long> tagIds) {
@@ -34,11 +32,10 @@ public class FavoriteTagServiceImpl implements FavoriteTagService {
 	}
 
 	@Override
-	public void resetFavoriteTags(String email, List<Long> tagIds) {
+	public void resetFavoriteTags(Member member, List<Long> tagIds) {
 		List<FavoriteTag> toBeDeleted = new ArrayList<>();
 		List<FavoriteTag> toBeSaved = new ArrayList<>();
 
-		Member member = memberService.findVerifiedOneByEmail(email);
 		List<FavoriteTag> favoriteTags = favoriteTagRepository.findAllByMember(member);
 
 		for (FavoriteTag favoriteTag : favoriteTags) {
