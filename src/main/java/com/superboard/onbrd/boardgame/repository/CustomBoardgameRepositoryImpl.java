@@ -1,6 +1,7 @@
 package com.superboard.onbrd.boardgame.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,21 +33,31 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		
 		JPAQuery<BoardgameSearchByTagResponse.BoardGameResponse> query = queryFactory
 				.select(Projections.fields(BoardgameSearchByTagResponse.BoardGameResponse.class, boardgame.id,
 						boardgame.name, boardgame.image))
 				.from(boardgameTag).join(boardgameTag.boardgame, boardgame).join(boardgameTag.tag, tag)
+				.where(boardgameNameLike(boardgameSearchByTagRequest.getName()))
 				.orderBy(tag.id.asc())
 				.offset(boardgameSearchByTagRequest.getOffset()).limit(boardgameSearchByTagRequest.getLimit());
 		
 		if(!ObjectUtils.isEmpty(boardgameSearchByTagRequest.getTagIds())) {
 			query.where(tag.id.in(boardgameSearchByTagRequest.getTagIds()));
 		}
+
 		List<BoardgameSearchByTagResponse.BoardGameResponse> results = query.fetch();
 			
 		return results;
+	}
+
+	private BooleanExpression tagIsIn(List<Long> tagIds){
+		return tagIds.isEmpty() ? null : tag.id.in(tagIds);
+	}
+
+	private BooleanExpression boardgameNameLike(String boardgameName){
+		return StringUtils.hasText(boardgameName) ? null : boardgame.name.like(boardgameName);
 	}
 
 	@Override

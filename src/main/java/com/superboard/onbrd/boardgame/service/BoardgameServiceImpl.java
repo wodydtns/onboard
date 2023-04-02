@@ -36,9 +36,9 @@ public class BoardgameServiceImpl implements BoardGameService {
 	private BoardNonSearchClickLogRepository boardNonSearchClickLogRepository;
 
 	@Override
-	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		
-		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = customBoardgameRepository.searchBoardgameByRecommand(boardgameSearchByTagRequest);
+		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = customBoardgameRepository.searchBoardgameList(boardgameSearchByTagRequest);
 		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
