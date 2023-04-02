@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CustomBoardgameRepository {
 	
-	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameByRecommand(BoardgameSearchByTagRequest boardgameSearchByTagRequest );
+	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest );
 	
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId); 
 
