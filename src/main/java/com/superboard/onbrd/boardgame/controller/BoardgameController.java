@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,6 @@ import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -48,6 +45,11 @@ public class BoardgameController {
 
 	@ApiOperation(value = "보드게임 상세")
 	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
+	@ApiResponses({
+			@ApiResponse(code = 200,message = "성공"),
+					@ApiResponse(code = 404,message = "잘못된 요청"),
+					@ApiResponse(code = 500,message = "서버 에러")
+	})
 	@GetMapping("/{boardgameId}")
 	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest  request) {
 		String referer = request.getHeader("Referer");
@@ -60,6 +62,11 @@ public class BoardgameController {
 	@ApiOperation(value = "추천 보드게임")
 	@GetMapping("/curation")
 	@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "path")
+	@ApiResponses({
+			@ApiResponse(code=200,message = "추천 보드게임 검색 성공"),
+			@ApiResponse(code=404,message = "잘못된 요청"),
+			@ApiResponse(code=500,message = "서버 에러"),
+	})
 	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 		return boardGameService.selectRecommandBoardgameList(boardgameSearchByTagRequest);
 	}
