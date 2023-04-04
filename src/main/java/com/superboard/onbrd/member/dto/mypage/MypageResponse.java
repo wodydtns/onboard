@@ -21,16 +21,22 @@ public class MypageResponse {
 	private List<ReviewCard> myReviews;
 	private List<BoardgameCard> favoriteBoardgames;
 
+	@Getter
+	@NoArgsConstructor
 	public static class TagCard {
 		private String name;
 		private TagType type;
 	}
 
+	@Getter
+	@NoArgsConstructor
 	public static class ReviewCard {
 		private Long id;
 		private List<String> images;
 	}
 
+	@Getter
+	@NoArgsConstructor
 	public static class BoardgameCard {
 		private Long id;
 		private String image;
