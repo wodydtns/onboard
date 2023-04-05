@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
-import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
+import com.superboard.onbrd.auth.dto.PasswordCheckCommand;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResult;
 import com.superboard.onbrd.auth.dto.TokenDto;
@@ -72,10 +72,10 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public void reconfirmPassword(PasswordCheckRequest request) {
-		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
+	public void reconfirmPassword(PasswordCheckCommand command) {
+		Member member = memberService.findVerifiedOneByEmail(command.getEmail());
 		Password password = passwordService.findVerifiedOneByMember(member);
-		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
+		passwordService.validatePassword(command.getPassword(), password.getEncodedPassword());
 	}
 
 	@Override

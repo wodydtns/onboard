@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
+import com.superboard.onbrd.auth.dto.PasswordCheckCommand;
 import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResult;
@@ -111,8 +112,8 @@ public class AuthController {
 		@AuthenticationPrincipal MemberDetails memberDetails,
 		@RequestBody PasswordCheckRequest request) {
 
-		request.setEmail(memberDetails.getEmail());
-		authService.reconfirmPassword(request);
+		authService.reconfirmPassword(
+			PasswordCheckCommand.of(memberDetails.getEmail(), request));
 
 		return ResponseEntity.ok().build();
 	}

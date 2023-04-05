@@ -2,7 +2,7 @@ package com.superboard.onbrd.auth.service;
 
 import com.superboard.onbrd.auth.dto.AuthCodeCheckRequest;
 import com.superboard.onbrd.auth.dto.AuthCodeSendingResponse;
-import com.superboard.onbrd.auth.dto.PasswordCheckRequest;
+import com.superboard.onbrd.auth.dto.PasswordCheckCommand;
 import com.superboard.onbrd.auth.dto.SignInRequest;
 import com.superboard.onbrd.auth.dto.SignInResult;
 import com.superboard.onbrd.auth.dto.TokenDto;
@@ -14,7 +14,7 @@ public interface AuthService {
 
 	TokenDto reissueTokens(String refreshToken);
 
-	void reconfirmPassword(PasswordCheckRequest request);
+	void reconfirmPassword(PasswordCheckCommand command);
 
 	AuthCodeSendingResponse sendAuthCodeMail(String email);
 

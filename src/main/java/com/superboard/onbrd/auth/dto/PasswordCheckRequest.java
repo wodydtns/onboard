@@ -11,6 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @Valid
 public class PasswordCheckRequest {
-	private String email;
 	private String password;
 }
