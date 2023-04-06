@@ -47,10 +47,7 @@ public class PushToggleController {
             @ApiResponse(code = 500, message = "토큰 생성 실패")
     })
     public ResponseEntity<Void> createPushToken(@RequestBody PushTokenDto pushTokenDto){
-        Token pushToken = Token.builder()
-                .androidPushToken(pushTokenDto.getAndroidPushToken())
-                .applePushToken(pushTokenDto.getApplePushToken())
-                .build();
+        Token pushToken=Token.validateToken(pushTokenDto);
         tokenService.createToken(pushToken);
         return ResponseEntity.ok().build();
     }
