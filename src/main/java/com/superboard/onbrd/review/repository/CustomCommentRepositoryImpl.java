@@ -69,13 +69,13 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 			.join(review.writer, member)
 			.where(comment.id.eq(createdId))
 			.fetchOne();
-		String refreshToken = queryFactory.select(token.refreshToken)
+		String androidPushToken = queryFactory.select(token.androidPushToken)
 			.from(token)
 			.where(token.id.eq(memberId))
 			.fetchOne();
 
 		try {
-			fcmUtil.sendAndroidMessage(refreshToken, "FCM title", "fcm Body");
+			fcmUtil.sendAndroidMessage(androidPushToken, "FCM title", "fcm Body");
 		} catch (FirebaseMessagingException e) {
 			throw new RuntimeException(e);
 		}
