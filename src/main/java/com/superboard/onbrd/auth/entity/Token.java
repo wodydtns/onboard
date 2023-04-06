@@ -9,10 +9,9 @@ import javax.persistence.OneToOne;
 
 import com.superboard.onbrd.member.entity.Member;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,7 +22,18 @@ public class Token {
 	@Column(name = "member_id")
 	private Long id;
 	@Column
+	private String androidPushToken;
+	@Column
+	private String applePushToken;
+	@Column
+	private String signOutAccessToken;
+
+	@Column
 	private String refreshToken;
+	@Column
+	private LocalDateTime refreshTokenExpiredAt = LocalDateTime.now();
+	@Column
+	private String oauthGrantToken;
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "member_id")
@@ -34,5 +44,12 @@ public class Token {
 		token.member = member;
 
 		return token;
+	}
+
+	@Builder
+	private Token(long id, String androidPushToken, String applePushToken){
+		this.id = id;
+		this.androidPushToken=androidPushToken;
+		this.applePushToken=applePushToken;
 	}
 }
