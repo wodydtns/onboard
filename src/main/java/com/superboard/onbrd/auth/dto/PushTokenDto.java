@@ -11,8 +11,9 @@ public class PushTokenDto {
 
     private Long id;
 
-    private String androidPushToken;
+    private String pushTokenValue;
 
-    private String applePushToken;
+    private String deviceName;
+
 }
 

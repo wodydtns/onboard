@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
+import com.superboard.onbrd.auth.dto.PushTokenDto;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.*;
@@ -46,10 +47,14 @@ public class Token {
 		return token;
 	}
 
-	@Builder
-	private Token(long id, String androidPushToken, String applePushToken){
-		this.id = id;
-		this.androidPushToken=androidPushToken;
-		this.applePushToken=applePushToken;
+	public static Token validateToken(PushTokenDto pushTokenDto){
+		Token token = new Token();
+		if("IOS".equals(pushTokenDto.getDeviceName())){
+			token.setApplePushToken(pushTokenDto.getPushTokenValue());
+		}else{
+			token.setAndroidPushToken(pushTokenDto.getPushTokenValue());
+		}
+		return token;
+
 	}
 }
