@@ -2,6 +2,7 @@ package com.superboard.onbrd.review.repository;
 
 import static com.superboard.onbrd.auth.entity.QToken.*;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
+import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
@@ -14,10 +15,9 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageInfo;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
-import com.superboard.onbrd.global.entity.OrderBy;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.util.FCMUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 	private final FCMUtil fcmUtil;
 
 	@Override
-	public OnbrdPageResponse<AdminCommentDetail> getAdminComments(OnbrdPageRequest params) {
-		OrderBy orderBy = COMMENT_NEWEST;
-
+	public OnbrdSliceResponse<AdminCommentDetail> getAdminComments(OnbrdSliceRequest params) {
 		List<AdminCommentDetail> content = queryFactory
 			.select(Projections.fields(AdminCommentDetail.class,
 				comment.id,
@@ -47,19 +45,14 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 				comment.review.boardgame.name.as("boardgameName")
 			))
 			.from(comment)
-			.orderBy(orderBy.getOrderSpecifiers())
+			.orderBy(COMMENT_NEWEST.getOrderSpecifiers())
 			.offset(params.getOffset())
-			.limit(params.getPageSize())
+			.limit(params.getLimit() + 1)
 			.fetch();
 
-		long totalElements = queryFactory
-			.select(comment.count())
-			.from(comment)
-			.fetchFirst();
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
-		OnbrdPageInfo pageInfo = OnbrdPageInfo.of(params, content, totalElements, orderBy);
-
-		return new OnbrdPageResponse<>(pageInfo, content);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override

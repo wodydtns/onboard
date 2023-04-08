@@ -3,10 +3,11 @@ package com.superboard.onbrd.member.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameResponse;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewResponse;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
 import com.superboard.onbrd.member.entity.Member;
@@ -30,13 +31,13 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public MypageMoreReviewResponse getMoreReviews(MypageGetMoreDto params) {
+	public OnbrdSliceResponse<MypageMoreReviewDetail> getMoreReviews(MypageGetMoreDto params) {
 		return mypageRepository.getMoreReviews(params);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public MypageMoreBoardgameResponse getMoreFavoriteBoardgames(MypageGetMoreDto params) {
+	public OnbrdSliceResponse<MypageMoreBoardgameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
 		return mypageRepository.getMoreFavoriteBoardgames(params);
 	}
 

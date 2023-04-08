@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.member.dto.mypage.FavoriteTagResetRequest;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameResponse;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageMoreRequest;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewResponse;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageRequest;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
@@ -56,11 +57,12 @@ public class MypageController {
 	@ApiOperation(value = "작성 리뷰 더보기")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/reviews")
-	public ResponseEntity<MypageMoreReviewResponse> getMoreReviews(
+	public ResponseEntity<OnbrdSliceResponse<MypageMoreReviewDetail>> getMoreReviews(
 		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute MypageMoreRequest request) {
+
 		MypageGetMoreDto params = MypageGetMoreDto.of(memberDetails.getEmail(), request);
 
-		MypageMoreReviewResponse response = mypageService.getMoreReviews(params);
+		OnbrdSliceResponse<MypageMoreReviewDetail> response = mypageService.getMoreReviews(params);
 
 		return ResponseEntity.ok(response);
 	}
@@ -69,11 +71,12 @@ public class MypageController {
 	@ApiOperation(value = "관심 보드게임 더보기")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/favorite-boardgames")
-	public ResponseEntity<MypageMoreBoardgameResponse> getMoreFavoriteBoardGames(
+	public ResponseEntity<OnbrdSliceResponse<MypageMoreBoardgameDetail>> getMoreFavoriteBoardGames(
 		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute MypageMoreRequest request) {
+
 		MypageGetMoreDto params = MypageGetMoreDto.of(memberDetails.getEmail(), request);
 
-		MypageMoreBoardgameResponse response = mypageService.getMoreFavoriteBoardgames(params);
+		OnbrdSliceResponse<MypageMoreBoardgameDetail> response = mypageService.getMoreFavoriteBoardgames(params);
 
 		return ResponseEntity.ok(response);
 	}

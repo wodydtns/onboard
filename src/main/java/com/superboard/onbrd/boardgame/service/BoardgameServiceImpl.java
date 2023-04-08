@@ -11,87 +11,82 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagResponse;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchDetail;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
 import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepository;
 import com.superboard.onbrd.boardgame.repository.BoardSearchClickLogRepository;
-import com.superboard.onbrd.boardgame.repository.CustomBoardgameRepository;
+import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
+@Transactional
 public class BoardgameServiceImpl implements BoardGameService {
-	
+
 	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
 
 	@Autowired
-	private CustomBoardgameRepository customBoardgameRepository;
-	
+	private BoardgameRepository boardgameRepository;
+
 	@Autowired
 	private BoardSearchClickLogRepository boardSearchClickLogRepository;
-	
+
 	@Autowired
 	private BoardNonSearchClickLogRepository boardNonSearchClickLogRepository;
 
 	@Override
-	public List<BoardgameSearchByTagResponse.BoardGameResponse> searchBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
-		
-		List<BoardgameSearchByTagResponse.BoardGameResponse> boardgameList = customBoardgameRepository.searchBoardgameList(boardgameSearchByTagRequest);
-		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : boardgameList) {
-			String imageName = boardgame.getImage();
-			boardgame.setImage(imagePath + imageName);
-		}
-		return boardgameList ;
+	@Transactional(readOnly = true)
+	public OnbrdSliceResponse<BoardgameSearchDetail> searchBoardgameList(
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+
+		return boardgameRepository.searchBoardgameList(boardgameSearchByTagRequest, imagePath);
 	}
 
 	@Override
 	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer) {
-		BoardgameDetailDto boardgameDetail = customBoardgameRepository.selectBoardgameInfo(boardgameId);
+		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
 		String imageName = boardgameDetail.getImage();
 		boardgameDetail.setImage(imagePath + imageName);
-		
-		
+
 		// 추후 refactoring 필요
-		if(referer.contains("searchByRecommand")) {
+		if (referer.contains("searchByRecommand")) {
 			SearchClickLog isExistClickLog = boardSearchClickLogRepository.findByBoardgameId(boardgameId);
-			if(isExistClickLog != null) {
+			if (isExistClickLog != null) {
 				isExistClickLog.setClickCount(isExistClickLog.getClickCount() + 1);
 				boardSearchClickLogRepository.save(isExistClickLog);
-			}else {
+			} else {
 				SearchClickLog createClickLog = new SearchClickLog();
 				createClickLog.setBoardgameId(boardgameId);
 				boardSearchClickLogRepository.save(createClickLog);
 			}
-		}else {
+		} else {
 			NonSearchClickLog isExistNonclickLog = boardNonSearchClickLogRepository.findByBoardgameId(boardgameId);
-			if(isExistNonclickLog != null) {
+			if (isExistNonclickLog != null) {
 				isExistNonclickLog.setClickCount(isExistNonclickLog.getClickCount() + 1);
 				boardNonSearchClickLogRepository.save(isExistNonclickLog);
-			}else {
+			} else {
 				NonSearchClickLog createNonClickLog = new NonSearchClickLog();
 				createNonClickLog.setBoardgameId(boardgameId);
 				boardNonSearchClickLogRepository.save(createNonClickLog);
 			}
 		}
-		
+
 		return boardgameDetail;
 	}
 
 	@Override
-	public List<BoardgameSearchByTagResponse.BoardGameResponse> selectRecommandBoardgameList(BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
-		List<BoardgameSearchByTagResponse.BoardGameResponse> recommandBoardgameList = customBoardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest);
-		for (BoardgameSearchByTagResponse.BoardGameResponse boardgame : recommandBoardgameList) {
-			String imageName = boardgame.getImage();
-			boardgame.setImage(imagePath + imageName);
-		}
-		return recommandBoardgameList;
+	public OnbrdSliceResponse<BoardgameSearchDetail> selectRecommandBoardgameList(
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
+
+		return boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest, imagePath);
 	}
 
 	@Override
 	public Boardgame findVerifiedOneById(Long id) {
-		Optional<Boardgame> boardgameOrNull = customBoardgameRepository.findById(id);
+		Optional<Boardgame> boardgameOrNull = boardgameRepository.findById(id);
 
 		return boardgameOrNull.orElseThrow(() -> {
 			throw new BusinessLogicException(BOARDGAME_NOT_FOUND);
@@ -99,16 +94,13 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Long updateFavoriteCount(Long id) {
-		return customBoardgameRepository.updateFavoriteCount(id);
+		return boardgameRepository.updateFavoriteCount(id);
 	}
 
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
-		return customBoardgameRepository.selectTop10BoardgameList();
+		return boardgameRepository.selectTop10BoardgameList();
 	}
-
-	
 }
 

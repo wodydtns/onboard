@@ -2,6 +2,7 @@ package com.superboard.onbrd.member.repository;
 
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.entity.QFavoriteBoardgame.*;
+import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 import static com.superboard.onbrd.tag.entity.QFavoriteTag.*;
@@ -14,11 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.superboard.onbrd.global.util.PagingUtil;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameResponse;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewResponse;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MypageRepositoryImpl implements MypageRepository {
 	private final JPAQueryFactory queryFactory;
-	private final PagingUtil pagingUtil;
 
 	@Override
 	public MypageResponse getMypage(MypageGetDto params) {
@@ -49,9 +50,9 @@ public class MypageRepositoryImpl implements MypageRepository {
 	}
 
 	@Override
-	public MypageMoreReviewResponse getMoreReviews(MypageGetMoreDto params) {
-		List<MypageMoreReviewResponse.ReviewCard> myReviews = queryFactory
-			.select(Projections.fields(MypageMoreReviewResponse.ReviewCard.class,
+	public OnbrdSliceResponse<MypageMoreReviewDetail> getMoreReviews(MypageGetMoreDto params) {
+		List<MypageMoreReviewDetail> content = queryFactory
+			.select(Projections.fields(MypageMoreReviewDetail.class,
 				review.id,
 				review.images
 			))
@@ -62,15 +63,15 @@ public class MypageRepositoryImpl implements MypageRepository {
 			.limit(params.getLimit() + 1)
 			.fetch();
 
-		Boolean hasNext = pagingUtil.getHasNext(myReviews, params.getLimit());
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
-		return new MypageMoreReviewResponse(hasNext, myReviews);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override
-	public MypageMoreBoardgameResponse getMoreFavoriteBoardgames(MypageGetMoreDto params) {
-		List<MypageMoreBoardgameResponse.BoardGameCard> favoriteBoardGames = queryFactory
-			.select(Projections.fields(MypageMoreBoardgameResponse.BoardGameCard.class,
+	public OnbrdSliceResponse<MypageMoreBoardgameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
+		List<MypageMoreBoardgameDetail> content = queryFactory
+			.select(Projections.fields(MypageMoreBoardgameDetail.class,
 				boardgame.id,
 				boardgame.image
 			))
@@ -82,9 +83,9 @@ public class MypageRepositoryImpl implements MypageRepository {
 			.limit(params.getLimit() + 1)
 			.fetch();
 
-		Boolean hasNext = pagingUtil.getHasNext(favoriteBoardGames, params.getLimit());
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
-		return new MypageMoreBoardgameResponse(hasNext, favoriteBoardGames);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	private MypageResponse getMypageMemberInfo(String email) {

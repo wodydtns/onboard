@@ -1,11 +1,11 @@
 package com.superboard.onbrd.review.repository;
 
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 
 public interface CustomCommentRepository {
-	OnbrdPageResponse<AdminCommentDetail> getAdminComments(OnbrdPageRequest params);
+	OnbrdSliceResponse<AdminCommentDetail> getAdminComments(OnbrdSliceRequest params);
 
 	void selectOauthIdForPushMessage(long createdId);
 }

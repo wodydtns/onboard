@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
 	private final ReviewService reviewService;
 
 	@Override
-	public OnbrdPageResponse<AdminCommentDetail> getAdminComment(OnbrdPageRequest params) {
+	public OnbrdSliceResponse<AdminCommentDetail> getAdminComment(OnbrdSliceRequest params) {
 		return commentRepository.getAdminComments(params);
 	}
 

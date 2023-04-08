@@ -1,14 +1,14 @@
 package com.superboard.onbrd.review.service;
 
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
 import com.superboard.onbrd.review.entity.Comment;
 
 public interface CommentService {
-	OnbrdPageResponse<AdminCommentDetail> getAdminComment(OnbrdPageRequest params);
+	OnbrdSliceResponse<AdminCommentDetail> getAdminComment(OnbrdSliceRequest params);
 
 	Comment createComment(CommentCreateDto dto);
 

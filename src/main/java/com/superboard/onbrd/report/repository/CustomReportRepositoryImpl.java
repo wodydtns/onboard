@@ -1,6 +1,7 @@
 package com.superboard.onbrd.report.repository;
 
 import static com.superboard.onbrd.global.entity.OrderBy.*;
+import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.report.entity.QReport.*;
 import static com.superboard.onbrd.report.entity.ReportType.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
@@ -15,10 +16,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminReportDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageInfo;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
-import com.superboard.onbrd.global.entity.OrderBy;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,9 +29,7 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public OnbrdPageResponse<AdminReportDetail> getAdminReports(OnbrdPageRequest params) {
-		OrderBy orderBy = REPORT_NEWEST;
-
+	public OnbrdSliceResponse<AdminReportDetail> getAdminReports(OnbrdSliceRequest params) {
 		List<AdminReportDetail> content = queryFactory
 			.select(Projections.fields(AdminReportDetail.class,
 				report.id,
@@ -43,10 +41,12 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 				report.createdAt.as("reportedAt")
 			))
 			.from(report)
-			.orderBy(orderBy.getOrderSpecifiers())
+			.orderBy(REPORT_NEWEST.getOrderSpecifiers())
 			.offset(params.getOffset())
-			.limit(params.getPageSize())
+			.limit(params.getLimit() + 1)
 			.fetch();
+
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
 		for (AdminReportDetail reportDetail : content) {
 			if (reportDetail.getType() == REVIEW) {
@@ -90,13 +90,6 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 			reportDetail.setWriterNickname(result.get(comment.writer.nickname));
 		}
 
-		Long totalElements = queryFactory
-			.select(report.count())
-			.from(report)
-			.fetchFirst();
-
-		OnbrdPageInfo pageInfo = OnbrdPageInfo.of(params, content, totalElements, orderBy);
-
-		return new OnbrdPageResponse<>(pageInfo, content);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 }

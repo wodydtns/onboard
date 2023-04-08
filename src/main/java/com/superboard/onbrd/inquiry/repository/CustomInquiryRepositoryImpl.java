@@ -1,6 +1,7 @@
 package com.superboard.onbrd.inquiry.repository;
 
 import static com.superboard.onbrd.global.entity.OrderBy.*;
+import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.inquiry.entity.QInquiry.*;
 
 import java.util.List;
@@ -11,10 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageInfo;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
-import com.superboard.onbrd.global.entity.OrderBy;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 
@@ -64,9 +64,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 	}
 
 	@Override
-	public OnbrdPageResponse<AdminInquiryDetail> getAdminInquiries(OnbrdPageRequest params) {
-		OrderBy orderBy = INQUIRY_NEWEST;
-
+	public OnbrdSliceResponse<AdminInquiryDetail> getAdminInquiries(OnbrdSliceRequest params) {
 		List<AdminInquiryDetail> content = queryFactory
 			.select(Projections.fields(AdminInquiryDetail.class,
 				inquiry.id,
@@ -79,18 +77,13 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 				inquiry.answer
 			))
 			.from(inquiry)
-			.orderBy(orderBy.getOrderSpecifiers())
+			.orderBy(INQUIRY_NEWEST.getOrderSpecifiers())
 			.offset(params.getOffset())
-			.limit(params.getPageSize())
+			.limit(params.getLimit() + 1)
 			.fetch();
 
-		long totalElements = queryFactory
-			.select(inquiry.count())
-			.from(inquiry)
-			.fetchFirst();
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
-		OnbrdPageInfo pageInfo = OnbrdPageInfo.of(params, content, totalElements, orderBy);
-
-		return new OnbrdPageResponse<>(pageInfo, content);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 }

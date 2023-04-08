@@ -2,6 +2,7 @@ package com.superboard.onbrd.review.repository;
 
 import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
+import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
@@ -17,12 +18,10 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageInfo;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
-import com.superboard.onbrd.global.entity.OrderBy;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.entity.PageBasicEntity;
-import com.superboard.onbrd.global.util.PagingUtil;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
 import com.superboard.onbrd.review.dto.review.ReviewHomeByFavoriteCount;
@@ -34,12 +33,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	private final JPAQueryFactory queryFactory;
-	private final PagingUtil pagingUtil;
 
 	@Override
-	public OnbrdPageResponse<AdminReviewDetail> getAdminReviews(OnbrdPageRequest params) {
-		OrderBy orderBy = REVIEW_NEWEST;
-
+	public OnbrdSliceResponse<AdminReviewDetail> getAdminReviews(OnbrdSliceRequest params) {
 		List<AdminReviewDetail> content = queryFactory
 			.select(Projections.fields(AdminReviewDetail.class,
 				review.id,
@@ -52,26 +48,21 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.boardgame.name.as("boardgameName")
 			))
 			.from(review)
-			.orderBy(orderBy.getOrderSpecifiers())
+			.orderBy(REVIEW_NEWEST.getOrderSpecifiers())
 			.offset(params.getOffset())
-			.limit(params.getPageSize())
+			.limit(params.getLimit() + 1)
 			.fetch();
 
-		long totalElements = queryFactory
-			.select(review.count())
-			.from(review)
-			.fetchFirst();
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
-		OnbrdPageInfo pageInfo = OnbrdPageInfo.of(params, content, totalElements, orderBy);
-
-		return new OnbrdPageResponse<>(pageInfo, content);
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override
 	public ReviewByBoardgameIdResponse searchReviewsByBoardgameId(ReviewGetParameterDto params) {
 		List<ReviewByBoardgameIdResponse.ReviewCard> reviewCards = getReviewCards(params);
 
-		Boolean hasNext = pagingUtil.getHasNext(reviewCards, params.getLimit());
+		Boolean hasNext = getHasNext(reviewCards, params.getLimit());
 
 		List<Long> reviewIds = reviewCards.stream()
 			.map(ReviewByBoardgameIdResponse.ReviewCard::getId)

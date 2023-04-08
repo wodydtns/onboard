@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
 import com.superboard.onbrd.admin.dto.InquiryAnswerCommand;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
@@ -38,7 +38,7 @@ public class InquiryServiceImpl implements InquiryService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public OnbrdPageResponse<AdminInquiryDetail> getAdminInquiries(OnbrdPageRequest params) {
+	public OnbrdSliceResponse<AdminInquiryDetail> getAdminInquiries(OnbrdSliceRequest params) {
 		return inquiryRepository.getAdminInquiries(params);
 	}
 

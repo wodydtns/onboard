@@ -1,9 +1,9 @@
 package com.superboard.onbrd.report.repository;
 
 import com.superboard.onbrd.admin.dto.AdminReportDetail;
-import com.superboard.onbrd.global.dto.OnbrdPageRequest;
-import com.superboard.onbrd.global.dto.OnbrdPageResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 
 public interface CustomReportRepository {
-	OnbrdPageResponse<AdminReportDetail> getAdminReports(OnbrdPageRequest params);
+	OnbrdSliceResponse<AdminReportDetail> getAdminReports(OnbrdSliceRequest params);
 }

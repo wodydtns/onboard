@@ -2,16 +2,20 @@ package com.superboard.onbrd.global.util;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 
-@Component
 public class PagingUtil {
-	public Boolean getHasNext(List<?> cards, int limit) {
-		if (cards.size() > limit) {
-			cards.remove(limit);
+	public static Boolean getHasNext(List<?> content, int limit) {
+		if (content.size() > limit) {
+			content.remove(limit);
 			return true;
 		}
 
 		return false;
+	}
+
+	public static OnbrdSliceInfo getSliceInfo(List<?> content, int limit) {
+		return OnbrdSliceInfo.from(
+			getHasNext(content, limit));
 	}
 }
