@@ -1,8 +1,8 @@
 package com.superboard.onbrd.global.exception;
 
-import static org.springframework.http.HttpStatus.*;
+import static com.superboard.onbrd.global.entity.OnbrdStatus.*;
 
-import org.springframework.http.HttpStatus;
+import com.superboard.onbrd.global.entity.OnbrdStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,11 +26,11 @@ public enum ExceptionCode {
 	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "INVALID_REFRESH_TOKEN"),
 	EXPIRED_REFRESH_TOKEN(UNAUTHORIZED, "EXPIRED_REFRESH_TOKEN"),
 	EXPIRED_RESET_TOKEN(UNAUTHORIZED, "EXPIRED_RESET_TOKEN"),
-	FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN"),
+	FORBIDDEN(OnbrdStatus.FORBIDDEN, "FORBIDDEN"),
 	OAUTH_MEMBER_NOT_SOCIAL_ALREADY_SIGN_UP(CONFLICT, "OAUTH_MEMBER_NOT_SOCIAL_ALREADY_SIGN_UP"),
-	SUSPENDED_MEMBER(HttpStatus.FORBIDDEN, "SUSPENDED_MEMBER"),
-	WITHDRAWN_MEMBER(HttpStatus.FORBIDDEN, "WITHDRAWN_MEMBER"),
-	KICKED_MEMBER(HttpStatus.FORBIDDEN, "KICKED_MEMBER"),
+	SUSPENDED_MEMBER(OnbrdStatus.FORBIDDEN, "SUSPENDED_MEMBER"),
+	WITHDRAWN_MEMBER(OnbrdStatus.FORBIDDEN, "WITHDRAWN_MEMBER"),
+	KICKED_MEMBER(OnbrdStatus.FORBIDDEN, "KICKED_MEMBER"),
 
 	OAUTH_ID_NOT_FOUND(NOT_FOUND, "OAUTH_ID_NOT_FOUND"),
 	INVALID_OAUTH_ID(UNAUTHORIZED, "INVALID_OAUTH_ID"),
@@ -57,6 +57,6 @@ public enum ExceptionCode {
 	SUSPEND_WITHDRAWN_MEMBER_NOT_PERMITTED(CONFLICT, "SUSPEND_WITHDRAWN_MEMBER_NOT_PERMITTED"),
 	SUSPEND_KICKED_MEMBER_NOT_PERMITTED(CONFLICT, "SUSPEND_KICKED_MEMBER_NOT_PERMITTED");
 
-	private final HttpStatus status;
+	private final OnbrdStatus status;
 	private final String message;
 }
