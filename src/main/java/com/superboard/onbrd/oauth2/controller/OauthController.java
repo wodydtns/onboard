@@ -1,6 +1,7 @@
 package com.superboard.onbrd.oauth2.controller;
 
 import static com.superboard.onbrd.auth.util.AuthProperties.*;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import com.superboard.onbrd.auth.dto.TokenDto;
 import com.superboard.onbrd.oauth2.dto.OauthIntegrateRequest;
 import com.superboard.onbrd.oauth2.dto.OauthSignInRequest;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
-import com.superboard.onbrd.oauth2.dto.OauthSignUpResult;
 import com.superboard.onbrd.oauth2.service.OauthService;
 
 import lombok.RequiredArgsConstructor;
@@ -42,18 +42,17 @@ public class OauthController {
 
 	@PostMapping("/sign-up")
 	public ResponseEntity<Long> signUp(@RequestBody OauthSignUpRequest request) {
-		OauthSignUpResult result = oauthService.signUp(request);
-		HttpHeaders headers = addTokensToHeader(result.getTokens());
+		Long createdId = oauthService.signUp(request);
 
-		return ResponseEntity.ok()
-			.headers(headers)
-			.body(result.getId());
+		return ResponseEntity.status(CREATED)
+			.body(createdId);
 	}
 
 	@PatchMapping("/integrate")
 	public ResponseEntity<Long> integrateSocial(@RequestBody OauthIntegrateRequest request) {
+		Long integratedId = oauthService.integrate(request);
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(integratedId);
 	}
 
 	private HttpHeaders addTokensToHeader(TokenDto tokens) {

@@ -1,6 +1,6 @@
 package com.superboard.onbrd.global.exception;
 
-import org.springframework.http.HttpStatus;
+import com.superboard.onbrd.global.entity.OnbrdStatus;
 
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ public class BusinessLogicException extends RuntimeException {
 		this.exceptionCode = exceptionCode;
 	}
 
-	public HttpStatus getStatus() {
+	public OnbrdStatus getStatus() {
 		return exceptionCode.getStatus();
 	}
 }

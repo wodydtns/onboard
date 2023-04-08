@@ -13,10 +13,8 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.oauth2.dto.OauthIntegrateRequest;
-import com.superboard.onbrd.oauth2.dto.OauthIntegrateResult;
 import com.superboard.onbrd.oauth2.dto.OauthSignInRequest;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
-import com.superboard.onbrd.oauth2.dto.OauthSignUpResult;
 import com.superboard.onbrd.oauth2.entity.OauthID;
 import com.superboard.onbrd.oauth2.repository.OauthIDRepository;
 
@@ -46,25 +44,21 @@ public class OauthServiceImpl implements OauthService {
 	}
 
 	@Override
-	public OauthSignUpResult signUp(OauthSignUpRequest request) {
+	public Long signUp(OauthSignUpRequest request) {
 		Member created = memberService.signUpFromOauth(request);
 		OauthID oauthID = oauthIDRepository.save(OauthID.of(created, request.getOauthId(), request.getProvider()));
 
-		TokenDto tokens = tokenService.issueTokens(created);
-
-		return OauthSignUpResult.of(created, tokens);
+		return created.getId();
 	}
 
 	@Override
-	public OauthIntegrateResult integrate(OauthIntegrateRequest request) {
+	public Long integrate(OauthIntegrateRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 		OauthID oauthID = oauthIDRepository.save(OauthID.of(member, request.getOauthId(), request.getProvider()));
 
 		member.integrate();
 
-		TokenDto tokens = tokenService.issueTokens(member);
-
-		return OauthIntegrateResult.of(member, tokens);
+		return member.getId();
 	}
 
 	@Override

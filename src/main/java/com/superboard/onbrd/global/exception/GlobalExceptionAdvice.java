@@ -15,7 +15,7 @@ public class GlobalExceptionAdvice {
 	public ResponseEntity<String> handleBusinessLogicException(BusinessLogicException e, HttpServletResponse response) {
 		log.error("BusinessLogicException occurs: {}", e.getExceptionCode());
 
-		return ResponseEntity.status(e.getStatus())
+		return ResponseEntity.status(e.getStatus().value())
 			.body(e.getMessage());
 	}
 

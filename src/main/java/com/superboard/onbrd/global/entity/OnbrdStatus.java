@@ -82,6 +82,7 @@ public enum OnbrdStatus {
 	TOO_MANY_REQUESTS(429, HttpStatus.Series.CLIENT_ERROR, "Too Many Requests"),
 	REQUEST_HEADER_FIELDS_TOO_LARGE(431, HttpStatus.Series.CLIENT_ERROR, "Request Header Fields Too Large"),
 	UNAVAILABLE_FOR_LEGAL_REASONS(451, HttpStatus.Series.CLIENT_ERROR, "Unavailable For Legal Reasons"),
+	NOT_SOCIAL_MEMBER(490, HttpStatus.Series.CLIENT_ERROR, "Not Social Member"),
 
 	// --- 5xx Server Error ---
 
