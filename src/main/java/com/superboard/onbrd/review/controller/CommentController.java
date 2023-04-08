@@ -100,6 +100,11 @@ public class CommentController {
 	}
 
 	@Tag(name = "Comment")
+	@ApiOperation(value = "리뷰별 댓글 목록 조회")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200"),
+		@ApiResponse(responseCode = "404")
+	})
 	public ResponseEntity<OnbrdListResponse<CommentDetail>> getCommentsByReviewId(@PathVariable Long reviewId) {
 		OnbrdListResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId);
 
