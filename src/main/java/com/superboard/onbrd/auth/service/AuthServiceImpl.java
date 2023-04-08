@@ -39,12 +39,11 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public SignInResult signIn(SignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
+
 		Password password = passwordService.findVerifiedOneByMember(member);
 		passwordService.validatePassword(request.getPassword(), password.getEncodedPassword());
 
-		// OnbrdAssert.state(member.getStatus() == SUSPENDED, SUSPENDED_MEMBER);
-		// OnbrdAssert.state(member.getStatus() == WITHDRAWN, WITHDRAWN_MEMBER);
-		// OnbrdAssert.state(member.getStatus() == KICKED, KICKED_MEMBER);
+		memberService.checkMemberStatus(member);
 
 		member.attendAt(LocalDateTime.now());
 		TokenDto tokens = tokenService.issueTokens(member);

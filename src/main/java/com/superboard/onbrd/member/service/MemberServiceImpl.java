@@ -76,6 +76,20 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public void checkMemberStatus(Member member) {
+		switch (member.getStatus()) {
+			case SUSPENDED:
+				throw new BusinessLogicException(SUSPENDED_MEMBER);
+
+			case WITHDRAWN:
+				throw new BusinessLogicException(WITHDRAWN_MEMBER);
+
+			case KICKED:
+				throw new BusinessLogicException(KICKED_MEMBER);
+		}
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedNickname(String nickname) {
 		memberRepository.findByNickname(nickname).ifPresent(

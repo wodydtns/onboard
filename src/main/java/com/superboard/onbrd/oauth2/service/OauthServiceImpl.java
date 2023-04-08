@@ -32,6 +32,8 @@ public class OauthServiceImpl implements OauthService {
 	public SignInResult signIn(OauthSignInRequest request) {
 		Member member = memberService.findVerifiedOneByEmail(request.getEmail());
 
+		memberService.checkMemberStatus(member);
+
 		checkMemberIsSocial(member);
 
 		OauthID oauthID = findVerifiedOneByMemberId(member.getId());

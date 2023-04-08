@@ -16,6 +16,8 @@ public interface MemberService {
 
 	Member findVerifiedOneByEmail(String email);
 
+	void checkMemberStatus(Member member);
+
 	void checkDuplicatedNickname(String nickname);
 
 	void checkDuplicatedEmail(String email);
