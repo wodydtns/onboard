@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetRequest;
@@ -50,14 +51,15 @@ public class ReviewController {
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameIdResponse.class))),
+		@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameDetail.class))),
 		@ApiResponse(responseCode = "404")})
 	@GetMapping
-	public ResponseEntity<ReviewByBoardgameIdResponse> getReviews(@PathVariable Long boardgameId,
-		@ModelAttribute ReviewGetRequest request) {
+	public ResponseEntity<OnbrdSliceResponse<ReviewByBoardgameDetail>> getReviews(
+		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request) {
+
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
 
-		ReviewByBoardgameIdResponse response = reviewService.getReviewsByBoardgameId(params);
+		OnbrdSliceResponse<ReviewByBoardgameDetail> response = reviewService.getReviewsByBoardgameId(params);
 
 		return ResponseEntity.ok(response);
 	}

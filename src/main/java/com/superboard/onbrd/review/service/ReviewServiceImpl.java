@@ -22,10 +22,10 @@ import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
-import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
+import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
-import com.superboard.onbrd.review.dto.review.ReviewHomeByFavoriteCount;
 import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.ReviewRepository;
@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ReviewByBoardgameIdResponse getReviewsByBoardgameId(ReviewGetParameterDto params) {
+	public OnbrdSliceResponse<ReviewByBoardgameDetail> getReviewsByBoardgameId(ReviewGetParameterDto params) {
 		return reviewRepository.searchReviewsByBoardgameId(params);
 	}
 
@@ -143,7 +143,7 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
+	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
 		return reviewRepository.selectRecommandReviewList(pageBasicEntity);
 	}
 }

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.dto.OnbrdListResponse;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
+import com.superboard.onbrd.review.dto.comment.CommentDetail;
 import com.superboard.onbrd.review.dto.comment.CommentPatchRequest;
 import com.superboard.onbrd.review.dto.comment.CommentPostRequest;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
@@ -95,5 +97,12 @@ public class CommentController {
 		commentService.deleteCommentById(commentId);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@Tag(name = "Comment")
+	public ResponseEntity<OnbrdListResponse<CommentDetail>> getCommentsByReviewId(@PathVariable Long reviewId) {
+		OnbrdListResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId);
+
+		return ResponseEntity.ok(response);
 	}
 }

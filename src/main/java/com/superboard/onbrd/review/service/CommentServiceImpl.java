@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
+import com.superboard.onbrd.global.dto.OnbrdListResponse;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
@@ -16,6 +17,7 @@ import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
+import com.superboard.onbrd.review.dto.comment.CommentDetail;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
 import com.superboard.onbrd.review.entity.Comment;
 import com.superboard.onbrd.review.entity.Review;
@@ -88,5 +90,10 @@ public class CommentServiceImpl implements CommentService {
 					throw new BusinessLogicException(COMMENT_NOT_FOUND);
 				}
 			);
+	}
+
+	@Override
+	public OnbrdListResponse<CommentDetail> getCommentsByReviewId(Long reviewId) {
+		return commentRepository.getCommentsByReviewId(reviewId);
 	}
 }

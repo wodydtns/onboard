@@ -8,17 +8,17 @@ import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.entity.PageBasicEntity;
-import com.superboard.onbrd.review.dto.review.ReviewByBoardgameIdResponse;
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
+import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
-import com.superboard.onbrd.review.dto.review.ReviewHomeByFavoriteCount;
 import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
 import com.superboard.onbrd.review.entity.Review;
 
 public interface ReviewService {
 	OnbrdSliceResponse<AdminReviewDetail> getAdminReviews(OnbrdSliceRequest params);
 
-	ReviewByBoardgameIdResponse getReviewsByBoardgameId(ReviewGetParameterDto params);
+	OnbrdSliceResponse<ReviewByBoardgameDetail> getReviewsByBoardgameId(ReviewGetParameterDto params);
 
 	Review crewateReview(ReviewCreateDto dto, List<MultipartFile> files);
 
@@ -30,5 +30,5 @@ public interface ReviewService {
 
 	Review findVerifiedOneById(Long id);
 
-	List<ReviewHomeByFavoriteCount> selectRecommandReviewList(PageBasicEntity pageBasicEntity);
+	OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(PageBasicEntity pageBasicEntity);
 }

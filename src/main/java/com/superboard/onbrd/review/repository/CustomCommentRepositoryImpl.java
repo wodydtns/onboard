@@ -15,10 +15,12 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
+import com.superboard.onbrd.global.dto.OnbrdListResponse;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.util.FCMUtil;
+import com.superboard.onbrd.review.dto.comment.CommentDetail;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,6 +55,26 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
 		return new OnbrdSliceResponse<>(pageInfo, content);
+	}
+
+	@Override
+	public OnbrdListResponse<CommentDetail> getCommentsByReviewId(Long reviewId) {
+		List<CommentDetail> content = queryFactory
+			.select(Projections.fields(CommentDetail.class,
+				comment.id,
+				comment.content,
+				comment.isHidden,
+				comment.createdAt,
+				comment.writer.id.as("writerId"),
+				comment.writer.profileCharacter,
+				comment.writer.nickname
+			))
+			.from(comment)
+			.where(comment.review.id.eq(reviewId))
+			.orderBy(comment.id.desc())
+			.fetch();
+
+		return new OnbrdListResponse<>(content);
 	}
 
 	@Override
