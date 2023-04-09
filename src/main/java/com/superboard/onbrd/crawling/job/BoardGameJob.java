@@ -21,7 +21,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -116,19 +119,17 @@ public class BoardGameJob {
             List<LinkedTreeMap> resultList = gson.fromJson(json, List.class);
             List<Boardgame> boardgameList = new ArrayList<>();
             HashSet<Long> tagHashSet = new HashSet();
-            Map<Integer,List<Long>> categoriesTagMap =  new HashMap<>();
-            int resultIndex = 1;
+            List<Long> categoriesTagList =  new ArrayList<>();
             for (LinkedTreeMap result : resultList) {
-                List<Long> categoriesTagList = new ArrayList<>();
                 CrawlingData crawlingData = new CrawlingData();
                 String boardgameName = (String) result.get("title_text");
                 String description = (String) result.get("description");
                 String imageUrl = (String) result.get("image_url");
                 Boardgame boardgame = new Boardgame(boardgameName,description,imageUrl);
-                String categories =  ("none".equals(result.get("categories")))  ?  "0" : (String) result.get("categories");
-                String age = ("none".equals(result.get("age")))  ?  "0" :  (String) result.get("age");
-                String playing_time = ("none".equals(result.get("playing_time")))  ?  "0": (String) result.get("playing_time") ;
-                String best_player = ("none".equals(result.get("best_player"))) ? "0" : (String) result.get("best_player");
+                String categories = (String) result.get("categories");
+                String age = (String) result.get("age");
+                String playing_time = (String) result.get("playing_time");
+                String best_player = (String) result.get("best_player");
                 tagHashSet.add(Long.parseLong(categories));
                 tagHashSet.add(Long.parseLong(age));
                 tagHashSet.add(Long.parseLong(playing_time));
@@ -137,27 +138,20 @@ public class BoardGameJob {
                 categoriesTagList.add(Long.parseLong(age));
                 categoriesTagList.add(Long.parseLong(playing_time));
                 categoriesTagList.add(Long.parseLong(best_player));
-                categoriesTagMap.put(resultIndex,categoriesTagList);
-
                 boardgameList.add(boardgame);
-
-                resultIndex += 1;
             }
             List<Boardgame> savedBoardgames = boardgameRepository.saveAll(boardgameList);
 
             // tag 저장 로직
-            int tagIndex = 1;
+            
             for (Boardgame boardgame: savedBoardgames) {
-                System.out.println(categoriesTagMap.get(tagIndex));
-                for(Long category : categoriesTagMap.get(tagIndex)){
-                    if(category != 0){
-                        Tag tag = tagRepository.findById(category).orElseThrow();
-                        BoardgameTag boardgameTag = BoardgameTag.builder().boardgame(boardgame).tag(tag)
-                                .build();
-                        boardgameTagRepository.saveAndFlush(boardgameTag);
-                    }
+                for(Long category : categoriesTagList){
+                    Tag tag = tagRepository.findById(category).orElseThrow();
+                    BoardgameTag boardgameTag = BoardgameTag.builder().boardgame(boardgame).tag(tag)
+                            .build();
+                    boardgameTagRepository.saveAndFlush(boardgameTag);
                 }
-                tagIndex += 1;
+
             }
             customCrawlingRepository.selectOauthIdForPushMessageByFavorite(tagHashSet);
 
