@@ -25,7 +25,7 @@ public class AdminReviewController {
 	private final ReviewService reviewService;
 
 	@Tag(name = "Admin")
-	@GetMapping("/reviews")
+	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminReviewDetail>> getReviews(@ModelAttribute OnbrdSliceRequest params) {
 		OnbrdSliceResponse<AdminReviewDetail> response = reviewService.getAdminReviews(params);
 
@@ -33,7 +33,7 @@ public class AdminReviewController {
 	}
 
 	@Tag(name = "Admin")
-	@PatchMapping("/reviews/{id}")
+	@PatchMapping("/{id}")
 	public ResponseEntity<Long> hideReview(@PathVariable Long id) {
 		Review hidden = reviewService.hideReview(id);
 

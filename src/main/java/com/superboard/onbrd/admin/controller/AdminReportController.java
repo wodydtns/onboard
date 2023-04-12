@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Admin")
 @Getter
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/comments")
+@RequestMapping("/api/v1/admin/reports")
 public class AdminReportController {
 	private final ReportService reportService;
 
-	@GetMapping("/reports")
+	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminReportDetail>> getReports(@ModelAttribute OnbrdSliceRequest params) {
 		OnbrdSliceResponse<AdminReportDetail> response = reportService.getAdminReports(params);
 
@@ -34,7 +34,7 @@ public class AdminReportController {
 	}
 
 	@Tag(name = "Admin")
-	@PatchMapping("/reports/{id}")
+	@PatchMapping("/{id}")
 	public ResponseEntity<Long> resolveReport(
 		@AuthenticationPrincipal MemberDetails memberDetails, @PathVariable Long id) {
 		Report resolved = reportService.resolveReport(id, memberDetails.getEmail());

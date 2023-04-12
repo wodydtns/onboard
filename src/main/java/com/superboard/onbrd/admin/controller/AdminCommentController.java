@@ -25,7 +25,7 @@ public class AdminCommentController {
 	private final CommentService commentService;
 
 	@Tag(name = "Admin")
-	@GetMapping("/comments")
+	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminCommentDetail>> getComments(
 		@ModelAttribute OnbrdSliceRequest params) {
 		OnbrdSliceResponse<AdminCommentDetail> response = commentService.getAdminComment(params);
@@ -34,7 +34,7 @@ public class AdminCommentController {
 	}
 
 	@Tag(name = "Admin")
-	@PatchMapping("/comments/{id}")
+	@PatchMapping("/{id}")
 	public ResponseEntity<Long> hideComment(@PathVariable Long id) {
 		Comment hidden = commentService.hideComment(id);
 
