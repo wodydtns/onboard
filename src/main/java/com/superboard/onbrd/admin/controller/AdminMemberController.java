@@ -11,14 +11,17 @@ import com.superboard.onbrd.admin.dto.AdminMemberDetail;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Admin")
 @RestController
 @RequestMapping("/api/v1/admin/members")
 @RequiredArgsConstructor
 public class AdminMemberController {
 	private final MemberService memberService;
 
+	@Tag(name = "Admin")
 	@GetMapping("/{id}")
 	public ResponseEntity<AdminMemberDetail> getMemberDetail(@PathVariable Long id) {
 		AdminMemberDetail response = memberService.getAdminMemberDetail(id);
@@ -26,6 +29,7 @@ public class AdminMemberController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Admin")
 	@PatchMapping("/{id}/suspend")
 	public ResponseEntity<Long> suspendMember(@PathVariable Long id) {
 		Member suspended = memberService.suspendMember(id);
@@ -33,6 +37,7 @@ public class AdminMemberController {
 		return ResponseEntity.ok(suspended.getId());
 	}
 
+	@Tag(name = "Admin")
 	@PatchMapping("/{id}/kick")
 	public ResponseEntity<Long> kickMember(@PathVariable Long id) {
 		Member kicked = memberService.kickMember(id);

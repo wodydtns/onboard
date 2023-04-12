@@ -18,8 +18,10 @@ import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.inquiry.entity.Inquiry;
 import com.superboard.onbrd.inquiry.service.InquiryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Admin")
 @RestController
 @RequestMapping("/api/v1/admin/inquiries")
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminInquiryController {
 	private final InquiryService inquiryService;
 
+	@Tag(name = "Admin")
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminInquiryDetail>> getInquiries(
 		@ModelAttribute OnbrdSliceRequest params) {
@@ -35,6 +38,7 @@ public class AdminInquiryController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Admin")
 	@PatchMapping("/{id}")
 	public ResponseEntity<Long> answerInquiry(@PathVariable Long id, @RequestBody InquiryAnswerRequest request) {
 		Inquiry answered = inquiryService.answerInquiry(

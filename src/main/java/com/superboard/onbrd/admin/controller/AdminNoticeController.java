@@ -20,8 +20,10 @@ import com.superboard.onbrd.admin.dto.NoticeUpdateCommand;
 import com.superboard.onbrd.admin.service.NoticeService;
 import com.superboard.onbrd.auth.entity.MemberDetails;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Admin")
 @RestController
 @RequestMapping("/api/v1/admin/notices")
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminNoticeController {
 	private final NoticeService noticeService;
 
+	@Tag(name = "Admin")
 	@PostMapping
 	public ResponseEntity<Long> postNotice(
 		@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody NoticePostRequest request) {
@@ -38,6 +41,7 @@ public class AdminNoticeController {
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
 
+	@Tag(name = "Admin")
 	@PatchMapping("/{id}")
 	public ResponseEntity<Long> patchNotice(@PathVariable Long id, @RequestBody NoticePatchRequest request) {
 		Long updatedId = noticeService.updateNotice(new NoticeUpdateCommand(id, request)).getId();
@@ -45,6 +49,7 @@ public class AdminNoticeController {
 		return ResponseEntity.ok(updatedId);
 	}
 
+	@Tag(name = "Admin")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
 		noticeService.deleteNotice(id);

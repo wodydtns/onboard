@@ -8,58 +8,23 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.superboard.onbrd.admin.dto.AdminCommentDetail;
 import com.superboard.onbrd.admin.dto.AdminReportDetail;
-import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.report.entity.Report;
 import com.superboard.onbrd.report.service.ReportService;
-import com.superboard.onbrd.review.entity.Comment;
-import com.superboard.onbrd.review.entity.Review;
-import com.superboard.onbrd.review.service.CommentService;
-import com.superboard.onbrd.review.service.ReviewService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Admin")
 @Getter
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin")
-public class AdminController {
-	private final ReviewService reviewService;
-	private final CommentService commentService;
+@RequestMapping("/api/v1/admin/comments")
+public class AdminReportController {
 	private final ReportService reportService;
-
-	@GetMapping("/reviews")
-	public ResponseEntity<OnbrdSliceResponse<AdminReviewDetail>> getReviews(@ModelAttribute OnbrdSliceRequest params) {
-		OnbrdSliceResponse<AdminReviewDetail> response = reviewService.getAdminReviews(params);
-
-		return ResponseEntity.ok(response);
-	}
-
-	@PatchMapping("/reviews/{id}")
-	public ResponseEntity<Long> hideReview(@PathVariable Long id) {
-		Review hidden = reviewService.hideReview(id);
-
-		return ResponseEntity.ok(hidden.getId());
-	}
-
-	@GetMapping("/comments")
-	public ResponseEntity<OnbrdSliceResponse<AdminCommentDetail>> getComments(
-		@ModelAttribute OnbrdSliceRequest params) {
-		OnbrdSliceResponse<AdminCommentDetail> response = commentService.getAdminComment(params);
-
-		return ResponseEntity.ok(response);
-	}
-
-	@PatchMapping("/comments/{id}")
-	public ResponseEntity<Long> hideComment(@PathVariable Long id) {
-		Comment hidden = commentService.hideComment(id);
-
-		return ResponseEntity.ok(hidden.getId());
-	}
 
 	@GetMapping("/reports")
 	public ResponseEntity<OnbrdSliceResponse<AdminReportDetail>> getReports(@ModelAttribute OnbrdSliceRequest params) {
@@ -68,6 +33,7 @@ public class AdminController {
 		return ResponseEntity.ok(response);
 	}
 
+	@Tag(name = "Admin")
 	@PatchMapping("/reports/{id}")
 	public ResponseEntity<Long> resolveReport(
 		@AuthenticationPrincipal MemberDetails memberDetails, @PathVariable Long id) {
