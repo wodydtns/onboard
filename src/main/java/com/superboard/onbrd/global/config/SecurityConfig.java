@@ -49,7 +49,7 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			// .mvcMatchers("/admin/**").hasRole("ADMIN")
-			.mvcMatchers("/api/*/admin/**").permitAll()
+			.mvcMatchers("/api/*/admin/**").authenticated()
 			.mvcMatchers("/h2/**").permitAll()
 			.mvcMatchers("/api/*/auth/token-reissue").permitAll()
 			.mvcMatchers(GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
