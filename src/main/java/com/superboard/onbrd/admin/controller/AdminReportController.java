@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.admin.dto.AdminReportDetail;
 import com.superboard.onbrd.auth.entity.MemberDetails;
@@ -20,6 +21,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Admin")
+@RestController
 @Getter
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/reports")
