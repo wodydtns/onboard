@@ -21,7 +21,7 @@ import com.superboard.onbrd.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/inquiries")
+@RequestMapping("/api/v1/admin/inquiries")
 @RequiredArgsConstructor
 @Validated
 public class AdminInquiryController {

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/api/v1/admin")
 public class AdminController {
 	private final ReviewService reviewService;
 	private final CommentService commentService;

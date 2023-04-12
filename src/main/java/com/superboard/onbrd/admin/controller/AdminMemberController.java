@@ -14,7 +14,7 @@ import com.superboard.onbrd.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/members")
+@RequestMapping("/api/v1/admin/members")
 @RequiredArgsConstructor
 public class AdminMemberController {
 	private final MemberService memberService;

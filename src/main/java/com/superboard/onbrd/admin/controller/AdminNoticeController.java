@@ -23,7 +23,7 @@ import com.superboard.onbrd.auth.entity.MemberDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/notices")
+@RequestMapping("/api/v1/admin/notices")
 @RequiredArgsConstructor
 @Validated
 public class AdminNoticeController {
