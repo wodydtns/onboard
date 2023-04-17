@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "보드게임 상세")
-public class BoardGameDetailDto {
+public class BoardgameDetailDto {
 
 	@ApiModelProperty(notes = "보드게임 상세 아이디", example = "1")
 	private Long id;
@@ -30,7 +30,7 @@ public class BoardGameDetailDto {
 	private List<Tag> tagList = new ArrayList<>();
 
 	@QueryProjection
-	public BoardGameDetailDto(Long id, String name, String description, String image, long favoriteCount) {
+	public BoardgameDetailDto(Long id,String name, String description, String image, long favoriteCount) {
 		this.id = id;
 		this.name = name;
 		this.description = description;

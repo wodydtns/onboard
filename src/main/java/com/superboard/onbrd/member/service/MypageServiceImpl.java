@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardGameDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
@@ -37,8 +37,8 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public OnbrdSliceResponse<MypageMoreBoardGameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
-		return mypageRepository.getMoreFavoriteBoardGames(params);
+	public OnbrdSliceResponse<MypageMoreBoardgameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
+		return mypageRepository.getMoreFavoriteBoardgames(params);
 	}
 
 	@Override

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
+import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchDetail;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -50,29 +50,29 @@ public class BoardgameController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/searchBoardgameList")
-	public ResponseEntity<OnbrdSliceResponse<BoardGameSearchDetail>> searchBoardgameList(
-		BoardgameSearchByTagRequest boardGameSearchByTagRequest) {
+	public ResponseEntity<OnbrdSliceResponse<BoardgameSearchDetail>> searchBoardgameList(
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
-		OnbrdSliceResponse<BoardGameSearchDetail> response =
-			boardGameService.searchBoardgameList(boardGameSearchByTagRequest);
+		OnbrdSliceResponse<BoardgameSearchDetail> response =
+			boardGameService.searchBoardgameList(boardgameSearchByTagRequest);
 
 		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "보드게임 상세")
-	@ApiImplicitParam(name = "boardGameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "query")
+	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "query")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 404, message = "잘못된 요청"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@GetMapping("/{boardGameId}")
-	public BoardGameDetailDto selectBoardgameInfo(@PathVariable Long boardGameId, HttpServletRequest request) {
+	@GetMapping("/{boardgameId}")
+	public BoardgameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest request) {
 		String referer = request.getHeader("Referer");
 		if (ObjectUtils.isEmpty(referer)) {
 			referer = "";
 		}
-		return boardGameService.selectBoardgameInfo(boardGameId, referer);
+		return boardGameService.selectBoardgameInfo(boardgameId, referer);
 	}
 
 	@ApiOperation(value = "추천 보드게임")
@@ -83,11 +83,11 @@ public class BoardgameController {
 		@ApiResponse(code = 404, message = "잘못된 요청"),
 		@ApiResponse(code = 500, message = "서버 에러"),
 	})
-	public ResponseEntity<OnbrdSliceResponse<BoardGameSearchDetail>> selectRecommandBoardgameList(
-		BoardgameSearchByTagRequest boardGameSearchByTagRequest) {
+	public ResponseEntity<OnbrdSliceResponse<BoardgameSearchDetail>> selectRecommandBoardgameList(
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
-		OnbrdSliceResponse<BoardGameSearchDetail> response = boardGameService.selectRecommandBoardgameList(
-			boardGameSearchByTagRequest);
+		OnbrdSliceResponse<BoardgameSearchDetail> response = boardGameService.selectRecommandBoardgameList(
+			boardgameSearchByTagRequest);
 
 		return ResponseEntity.ok(response);
 	}

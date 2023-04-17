@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 public class MypageGetDto {
 	private String email;
 	private int reviewCount;
-	private int boardGameCount;
+	private int boardgameCount;
 
 	public static MypageGetDto of(String email, MypageRequest request) {
 		MypageGetDto dto = new MypageGetDto();
 		dto.email = email;
 		dto.reviewCount = request.getReviewCount();
-		dto.boardGameCount = request.getBoardGameCount();
+		dto.boardgameCount = request.getBoardgameCount();
 
 		return dto;
 	}

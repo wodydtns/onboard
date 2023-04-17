@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.superboard.onbrd.boardgame.entity.BoardGame;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
+import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -69,11 +69,11 @@ public class ReviewServiceImpl implements ReviewService {
 			dto.setImages(imageList);
 		}
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
-		BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
+		Boardgame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
 
 		Review created = Review.builder()
 			.writer(writer)
-			.boardGame(boardgame)
+			.boardgame(boardgame)
 			.grade(dto.getGrade())
 			.content(dto.getContent())
 			.images(dto.getImages())

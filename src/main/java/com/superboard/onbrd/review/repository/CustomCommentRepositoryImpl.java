@@ -43,8 +43,8 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 				comment.writer.id.as("writerId"),
 				comment.writer.nickname,
 				comment.review.id.as("reviewId"),
-				comment.review.boardGame.id.as("boardgameId"),
-				comment.review.boardGame.name.as("boardgameName")
+				comment.review.boardgame.id.as("boardgameId"),
+				comment.review.boardgame.name.as("boardgameName")
 			))
 			.from(comment)
 			.orderBy(COMMENT_NEWEST.getOrderSpecifiers())

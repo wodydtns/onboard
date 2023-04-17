@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MypageRequest {
 	private int reviewCount;
-	private int boardGameCount;
+	private int boardgameCount;
 }

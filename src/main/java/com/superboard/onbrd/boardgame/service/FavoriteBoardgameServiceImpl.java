@@ -3,5 +3,5 @@ package com.superboard.onbrd.boardgame.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FavoriteBoardGameServiceImpl implements FavoriteBoardGameService {
+public class FavoriteBoardgameServiceImpl implements FavoriteBoardGameService {
 }

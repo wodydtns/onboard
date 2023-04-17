@@ -5,15 +5,15 @@ import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 import java.util.List;
 import java.util.Optional;
 
-import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchDetail;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
-import com.superboard.onbrd.boardgame.entity.BoardGame;
+import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
 import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepository;
@@ -24,7 +24,7 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
 @Transactional
-public class BoardGameServiceImpl implements BoardGameService {
+public class BoardgameServiceImpl implements BoardGameService {
 
 	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
 
@@ -39,15 +39,15 @@ public class BoardGameServiceImpl implements BoardGameService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
+	public OnbrdSliceResponse<BoardgameSearchDetail> searchBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
 		return boardgameRepository.searchBoardgameList(boardgameSearchByTagRequest, imagePath);
 	}
 
 	@Override
-	public BoardGameDetailDto selectBoardgameInfo(Long boardgameId, String referer) {
-		BoardGameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
+	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId, String referer) {
+		BoardgameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
 		String imageName = boardgameDetail.getImage();
 		boardgameDetail.setImage(imagePath + imageName);
 
@@ -69,7 +69,7 @@ public class BoardGameServiceImpl implements BoardGameService {
 				boardNonSearchClickLogRepository.save(isExistNonclickLog);
 			} else {
 				NonSearchClickLog createNonClickLog = new NonSearchClickLog();
-				createNonClickLog.setBoardGameId(boardgameId);
+				createNonClickLog.setBoardgameId(boardgameId);
 				boardNonSearchClickLogRepository.save(createNonClickLog);
 			}
 		}
@@ -78,15 +78,15 @@ public class BoardGameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
+	public OnbrdSliceResponse<BoardgameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
 		return boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest, imagePath);
 	}
 
 	@Override
-	public BoardGame findVerifiedOneById(Long id) {
-		Optional<BoardGame> boardgameOrNull = boardgameRepository.findById(id);
+	public Boardgame findVerifiedOneById(Long id) {
+		Optional<Boardgame> boardgameOrNull = boardgameRepository.findById(id);
 
 		return boardgameOrNull.orElseThrow(() -> {
 			throw new BusinessLogicException(BOARDGAME_NOT_FOUND);
