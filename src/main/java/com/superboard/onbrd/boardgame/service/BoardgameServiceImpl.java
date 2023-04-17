@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
+import com.superboard.onbrd.boardgame.entity.BoardGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
-import com.superboard.onbrd.boardgame.entity.Boardgame;
 import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
 import com.superboard.onbrd.boardgame.repository.BoardNonSearchClickLogRepository;
@@ -63,7 +63,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 				boardSearchClickLogRepository.save(createClickLog);
 			}
 		} else {
-			NonSearchClickLog isExistNonclickLog = boardNonSearchClickLogRepository.findByBoardgameId(boardgameId);
+			NonSearchClickLog isExistNonclickLog = boardNonSearchClickLogRepository.findByBoardGameId(boardgameId);
 			if (isExistNonclickLog != null) {
 				isExistNonclickLog.setClickCount(isExistNonclickLog.getClickCount() + 1);
 				boardNonSearchClickLogRepository.save(isExistNonclickLog);
@@ -85,8 +85,8 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public Boardgame findVerifiedOneById(Long id) {
-		Optional<Boardgame> boardgameOrNull = boardgameRepository.findById(id);
+	public BoardGame findVerifiedOneById(Long id) {
+		Optional<BoardGame> boardgameOrNull = boardgameRepository.findById(id);
 
 		return boardgameOrNull.orElseThrow(() -> {
 			throw new BusinessLogicException(BOARDGAME_NOT_FOUND);

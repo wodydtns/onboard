@@ -24,8 +24,8 @@ public class NonSearchClickLog {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "id")
-	private Boardgame boardGame;
+	@JoinColumn(name = "boardgame_id")
+	private BoardGame boardGame;
 
 	@Column(nullable = false)
 	private LocalDateTime clickAt = LocalDateTime.now();

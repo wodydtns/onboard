@@ -1,5 +1,6 @@
 package com.superboard.onbrd.member.controller;
 
+import com.superboard.onbrd.member.dto.mypage.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,15 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
-import com.superboard.onbrd.member.dto.mypage.FavoriteTagResetRequest;
-import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
-import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreRequest;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
-import com.superboard.onbrd.member.dto.mypage.MypageRequest;
-import com.superboard.onbrd.member.dto.mypage.MypageResponse;
-import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardGameDetail;
 import com.superboard.onbrd.member.dto.password.PasswordChangeRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
@@ -71,12 +64,12 @@ public class MypageController {
 	@ApiOperation(value = "관심 보드게임 더보기")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/favorite-boardgames")
-	public ResponseEntity<OnbrdSliceResponse<MypageMoreBoardgameDetail>> getMoreFavoriteBoardGames(
+	public ResponseEntity<OnbrdSliceResponse<MypageMoreBoardGameDetail>> getMoreFavoriteBoardGames(
 		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute MypageMoreRequest request) {
 
 		MypageGetMoreDto params = MypageGetMoreDto.of(memberDetails.getEmail(), request);
 
-		OnbrdSliceResponse<MypageMoreBoardgameDetail> response = mypageService.getMoreFavoriteBoardgames(params);
+		OnbrdSliceResponse<MypageMoreBoardGameDetail> response = mypageService.getMoreFavoriteBoardgames(params);
 
 		return ResponseEntity.ok(response);
 	}

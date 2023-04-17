@@ -2,7 +2,7 @@ package com.superboard.onbrd.tag.entity;
 
 import javax.persistence.*;
 
-import com.superboard.onbrd.boardgame.entity.Boardgame;
+import com.superboard.onbrd.boardgame.entity.BoardGame;
 
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class BoardGameTag {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "boardgame_id")
-	private Boardgame boardGame;
+	private BoardGame boardGame;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
@@ -25,7 +25,7 @@ public class BoardGameTag {
 
 
 	@Builder
-	public BoardGameTag(Boardgame boardGame, Tag tag){
+	public BoardGameTag(BoardGame boardGame, Tag tag){
 		this.boardGame = boardGame;
 		this.tag = tag;
 	}

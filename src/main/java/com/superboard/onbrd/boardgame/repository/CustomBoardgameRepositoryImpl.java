@@ -1,6 +1,6 @@
 package com.superboard.onbrd.boardgame.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
 import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
@@ -39,12 +39,12 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 
 		List<BoardGameSearchDetail> content = queryFactory
 			.select(Projections.fields(BoardGameSearchDetail.class,
-				boardgame.id,
-				boardgame.name,
-				boardgame.image
+				boardGame.id,
+				boardGame.name,
+				boardGame.image
 			))
 			.from(boardGameTag)
-			.join(boardGameTag.boardGame, boardgame)
+			.join(boardGameTag.boardGame, boardGame)
 			.join(boardGameTag.tag, tag)
 			.where(boardgameNameLike(boardgameSearchByTagRequest.getName()),
 				tag.id.in(boardgameSearchByTagRequest.getTagIds()))
@@ -68,16 +68,16 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	private BooleanExpression boardgameNameLike(String boardgameName) {
-		return StringUtils.hasText(boardgameName) ? null : boardgame.name.like(boardgameName);
+		return StringUtils.hasText(boardgameName) ? null : boardGame.name.like(boardgameName);
 	}
 
 	@Override
 	public BoardGameDetailDto selectBoardgameInfo(Long boardgameId) {
 		BoardGameDetailDto boardgameDetail = queryFactory
 			.select(
-				Projections.constructor(BoardGameDetailDto.class, boardgame.id, boardgame.name, boardgame.description,
-					boardgame.image, boardgame.favoriteCount))
-			.from(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
+				Projections.constructor(BoardGameDetailDto.class, boardGame.id, boardGame.name, boardGame.description,
+					boardGame.image, boardGame.favoriteCount))
+			.from(boardGame).where(boardGame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
 			.where(boardGameTag.boardGame.id.eq(boardgameId)).fetch();
 		boardgameDetail.setTagList(tagList);
@@ -87,9 +87,9 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	@Override
 	@Transactional(readOnly = true)
 	public Long updateFavoriteCount(Long id) {
-		long count = queryFactory.update(boardgame)
-			.where(boardgame.id.eq(id))
-			.set(boardgame.favoriteCount, boardgame.favoriteCount.add(1)).execute();
+		long count = queryFactory.update(boardGame)
+			.where(boardGame.id.eq(id))
+			.set(boardGame.favoriteCount, boardGame.favoriteCount.add(1)).execute();
 		return count;
 	}
 
@@ -101,14 +101,14 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 
 		List<BoardGameSearchDetail> content = queryFactory
 			.select(Projections.fields(BoardGameSearchDetail.class,
-				boardgame.id,
-				boardgame.name,
-				boardgame.image
+				boardGame.id,
+				boardGame.name,
+				boardGame.image
 			))
 			.from(nonSearchClickLog)
-			.join(nonSearchClickLog.boardGame, boardgame)
+			.join(nonSearchClickLog.boardGame, boardGame)
 			.where(nonSearchClickLog.clickAt.after(startDate))
-			.orderBy(boardgame.clickCount.desc())
+			.orderBy(boardGame.clickCount.desc())
 			.offset(boardgameSearchByTagRequest.getOffset())
 			.limit(boardgameSearchByTagRequest.getLimit() + 1)
 			.fetch();
@@ -126,15 +126,15 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	@Override
 	@Transactional(readOnly = true)
 	public void updateClickCount(Long id) {
-		queryFactory.update(boardgame).where(boardgame.id.eq(id))
-			.set(boardgame.clickCount, boardgame.clickCount.add(1)).execute();
+		queryFactory.update(boardGame).where(boardGame.id.eq(id))
+			.set(boardGame.clickCount, boardGame.clickCount.add(1)).execute();
 	}
 
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
 		List<TopBoardgameDto> top10BoardgameList = queryFactory.select(
-				Projections.constructor(TopBoardgameDto.class, boardgame.id, boardgame.name)).from(searchClickLog)
-			.join(searchClickLog.boardgame, boardgame)
+				Projections.constructor(TopBoardgameDto.class, boardGame.id, boardGame.name)).from(searchClickLog)
+			.join(searchClickLog.boardgame, boardGame)
 			.orderBy(searchClickLog.clickCount.desc())
 			.limit(10)
 			.fetch();

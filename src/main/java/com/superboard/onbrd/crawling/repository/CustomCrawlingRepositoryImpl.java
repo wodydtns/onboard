@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.superboard.onbrd.auth.entity.QToken.token;
 import static com.superboard.onbrd.crawling.entity.QCrawlingData.*;
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.tag.entity.QFavoriteTag.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 
@@ -41,8 +41,8 @@ public class CustomCrawlingRepositoryImpl implements CustomCrawlingRepository{
     @Override
     public List<CrawlingTranslationDto> selectAllBoardgameDescription() {
         return queryFactory.select(Projections.constructor(CrawlingTranslationDto.class
-                        ,boardgame.id.as("id"),boardgame.description.as("description") ))
-                .from(boardgame).fetch();
+                        ,boardGame.id.as("id"),boardGame.description.as("description") ))
+                .from(boardGame).fetch();
     }
 
     @Override
@@ -50,9 +50,9 @@ public class CustomCrawlingRepositoryImpl implements CustomCrawlingRepository{
     @Modifying
     public void updateAllCrawlingTranslationData(List<CrawlingTranslationDto> crawlingTranslationDtoList) {
         for (CrawlingTranslationDto crawlingTranslationDto: crawlingTranslationDtoList){
-            queryFactory.update(boardgame)
-                    .set(boardgame.description, crawlingTranslationDto.getDescription())
-                    .where(boardgame.id.eq(crawlingTranslationDto.getId())).execute();
+            queryFactory.update(boardGame)
+                    .set(boardGame.description, crawlingTranslationDto.getDescription())
+                    .where(boardGame.id.eq(crawlingTranslationDto.getId())).execute();
 
         }
 
