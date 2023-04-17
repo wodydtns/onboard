@@ -1,6 +1,6 @@
 package com.superboard.onbrd.boardgame.entity;
 
-import com.superboard.onbrd.tag.entity.BoardgameTag;
+import com.superboard.onbrd.tag.entity.BoardGameTag;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,7 +35,7 @@ public class Boardgame {
 	private long clickCount = 0;
 	
 	@OneToMany(mappedBy = "boardgame")
-	private List<BoardgameTag> boardgameTags = new ArrayList<>();
+	private List<BoardGameTag> boardgameTags = new ArrayList<>();
 
 	@Builder
 	public Boardgame(String name, String description, String image){

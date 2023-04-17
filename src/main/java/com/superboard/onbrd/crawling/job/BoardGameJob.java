@@ -8,12 +8,11 @@ import com.superboard.onbrd.crawling.entity.CrawlingData;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
 import com.superboard.onbrd.crawling.repository.CrawlingRepository;
 import com.superboard.onbrd.crawling.repository.CustomCrawlingRepository;
-import com.superboard.onbrd.tag.entity.BoardgameTag;
+import com.superboard.onbrd.tag.entity.BoardGameTag;
 import com.superboard.onbrd.tag.entity.Tag;
 import com.superboard.onbrd.tag.repository.BoardgameTagRepository;
 import com.superboard.onbrd.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -147,7 +146,7 @@ public class BoardGameJob {
             for (Boardgame boardgame: savedBoardgames) {
                 for(Long category : categoriesTagList){
                     Tag tag = tagRepository.findById(category).orElseThrow();
-                    BoardgameTag boardgameTag = BoardgameTag.builder().boardgame(boardgame).tag(tag)
+                    BoardGameTag boardgameTag = BoardGameTag.builder().boardGame(boardgame).tag(tag)
                             .build();
                     boardgameTagRepository.saveAndFlush(boardgameTag);
                 }
