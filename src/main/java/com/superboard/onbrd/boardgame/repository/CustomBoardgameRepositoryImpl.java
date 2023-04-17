@@ -4,7 +4,7 @@ import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
 import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
 import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
-import static com.superboard.onbrd.tag.entity.QBoardgameTag.*;
+import static com.superboard.onbrd.tag.entity.QBoardGameTag.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 
 import java.time.LocalDateTime;
@@ -17,9 +17,9 @@ import org.springframework.util.StringUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.superboard.onbrd.boardgame.dto.BoardgameDetailDto;
+import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
 import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchDetail;
+import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -34,18 +34,18 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public OnbrdSliceResponse<BoardgameSearchDetail> searchBoardgameList(
+	public OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
 
-		List<BoardgameSearchDetail> content = queryFactory
-			.select(Projections.fields(BoardgameSearchDetail.class,
+		List<BoardGameSearchDetail> content = queryFactory
+			.select(Projections.fields(BoardGameSearchDetail.class,
 				boardgame.id,
 				boardgame.name,
 				boardgame.image
 			))
-			.from(boardgameTag)
-			.join(boardgameTag.boardgame, boardgame)
-			.join(boardgameTag.tag, tag)
+			.from(boardGameTag)
+			.join(boardGameTag.boardGame, boardgame)
+			.join(boardGameTag.tag, tag)
 			.where(boardgameNameLike(boardgameSearchByTagRequest.getName()),
 				tag.id.in(boardgameSearchByTagRequest.getTagIds()))
 			.orderBy(tag.id.asc())
@@ -72,14 +72,14 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	@Override
-	public BoardgameDetailDto selectBoardgameInfo(Long boardgameId) {
-		BoardgameDetailDto boardgameDetail = queryFactory
+	public BoardGameDetailDto selectBoardgameInfo(Long boardgameId) {
+		BoardGameDetailDto boardgameDetail = queryFactory
 			.select(
-				Projections.constructor(BoardgameDetailDto.class, boardgame.id, boardgame.name, boardgame.description,
+				Projections.constructor(BoardGameDetailDto.class, boardgame.id, boardgame.name, boardgame.description,
 					boardgame.image, boardgame.favoriteCount))
 			.from(boardgame).where(boardgame.id.eq(boardgameId)).fetchOne();
-		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardgameTag).join(boardgameTag.tag, tag)
-			.where(boardgameTag.boardgame.id.eq(boardgameId)).fetch();
+		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
+			.where(boardGameTag.boardGame.id.eq(boardgameId)).fetch();
 		boardgameDetail.setTagList(tagList);
 		return boardgameDetail;
 	}
@@ -94,19 +94,19 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	@Override
-	public OnbrdSliceResponse<BoardgameSearchDetail> selectRecommandBoardgameList(
+	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
 
 		LocalDateTime startDate = LocalDateTime.now().minusDays(30);
 
-		List<BoardgameSearchDetail> content = queryFactory
-			.select(Projections.fields(BoardgameSearchDetail.class,
+		List<BoardGameSearchDetail> content = queryFactory
+			.select(Projections.fields(BoardGameSearchDetail.class,
 				boardgame.id,
 				boardgame.name,
 				boardgame.image
 			))
 			.from(nonSearchClickLog)
-			.join(nonSearchClickLog.boardgame, boardgame)
+			.join(nonSearchClickLog.boardGame, boardgame)
 			.where(nonSearchClickLog.clickAt.after(startDate))
 			.orderBy(boardgame.clickCount.desc())
 			.offset(boardgameSearchByTagRequest.getOffset())

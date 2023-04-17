@@ -10,14 +10,14 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardgameTag {
+public class BoardGameTag {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "boardgame_id")
-	private Boardgame boardgame;
+	private Boardgame boardGame;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id")
@@ -25,8 +25,8 @@ public class BoardgameTag {
 
 
 	@Builder
-	public BoardgameTag(Boardgame boardgame, Tag tag){
-		this.boardgame = boardgame;
+	public BoardGameTag(Boardgame boardGame, Tag tag){
+		this.boardGame = boardGame;
 		this.tag = tag;
 	}
 
