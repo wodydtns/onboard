@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ReviewGetParameterDto {
-	private Long boardgameId;
+	private Long boardGameId;
 	private long offset;
 	private int limit;
 	private OrderBy orderBy;
 
-	public static ReviewGetParameterDto of(Long boardgameId, ReviewGetRequest request) {
+	public static ReviewGetParameterDto of(Long boardGameId, ReviewGetRequest request) {
 		ReviewGetParameterDto dto = new ReviewGetParameterDto();
-		dto.boardgameId = boardgameId;
+		dto.boardGameId = boardGameId;
 		dto.offset = request.getOffset();
 		dto.limit = request.getLimit();
 		dto.orderBy = request.getOrderBy();

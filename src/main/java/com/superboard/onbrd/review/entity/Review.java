@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.superboard.onbrd.boardgame.entity.Boardgame;
+import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.global.converter.ImagesJsonConverter;
 import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.entity.Member;
@@ -45,7 +45,7 @@ public class Review extends BaseEntity {
 	private Member writer;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "boardgame_id")
-	private Boardgame boardgame;
+	private BoardGame boardGame;
 
 	public void updateGrade(float grade) {
 		this.grade = grade;
@@ -73,11 +73,11 @@ public class Review extends BaseEntity {
 	}
 
 	@Builder
-	private Review(float grade, String content, List<String> images, Member writer, Boardgame boardgame) {
+	private Review(float grade, String content, List<String> images, Member writer, BoardGame boardGame) {
 		this.grade = grade;
 		this.content = content;
 		this.images = images;
 		this.writer = writer;
-		this.boardgame = boardgame;
+		this.boardGame = boardGame;
 	}
 }

@@ -2,13 +2,13 @@ package com.superboard.onbrd.crawling.job;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
-import com.superboard.onbrd.boardgame.entity.Boardgame;
+import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.boardgame.repository.BoardgameRepository;
 import com.superboard.onbrd.crawling.entity.CrawlingData;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
 import com.superboard.onbrd.crawling.repository.CrawlingRepository;
 import com.superboard.onbrd.crawling.repository.CustomCrawlingRepository;
-import com.superboard.onbrd.tag.entity.BoardgameTag;
+import com.superboard.onbrd.tag.entity.BoardGameTag;
 import com.superboard.onbrd.tag.entity.Tag;
 import com.superboard.onbrd.tag.repository.BoardgameTagRepository;
 import com.superboard.onbrd.tag.repository.TagRepository;
@@ -117,7 +117,7 @@ public class BoardGameJob {
             Gson gson = new Gson();
             //Map<String, Object> result_list = gson.fromJson(json, Map.class);
             List<LinkedTreeMap> resultList = gson.fromJson(json, List.class);
-            List<Boardgame> boardgameList = new ArrayList<>();
+            List<BoardGame> boardGameList = new ArrayList<>();
             HashSet<Long> tagHashSet = new HashSet();
             List<Long> categoriesTagList =  new ArrayList<>();
             for (LinkedTreeMap result : resultList) {
@@ -125,7 +125,7 @@ public class BoardGameJob {
                 String boardgameName = (String) result.get("title_text");
                 String description = (String) result.get("description");
                 String imageUrl = (String) result.get("image_url");
-                Boardgame boardgame = new Boardgame(boardgameName,description,imageUrl);
+                BoardGame boardgame = new BoardGame(boardgameName,description,imageUrl);
                 String categories = (String) result.get("categories");
                 String age = (String) result.get("age");
                 String playing_time = (String) result.get("playing_time");
@@ -138,16 +138,16 @@ public class BoardGameJob {
                 categoriesTagList.add(Long.parseLong(age));
                 categoriesTagList.add(Long.parseLong(playing_time));
                 categoriesTagList.add(Long.parseLong(best_player));
-                boardgameList.add(boardgame);
+                boardGameList.add(boardgame);
             }
-            List<Boardgame> savedBoardgames = boardgameRepository.saveAll(boardgameList);
+            List<BoardGame> savedBoardGames = boardgameRepository.saveAll(boardGameList);
 
             // tag 저장 로직
             
-            for (Boardgame boardgame: savedBoardgames) {
+            for (BoardGame boardgame: savedBoardGames) {
                 for(Long category : categoriesTagList){
                     Tag tag = tagRepository.findById(category).orElseThrow();
-                    BoardgameTag boardgameTag = BoardgameTag.builder().boardgame(boardgame).tag(tag)
+                    BoardGameTag boardgameTag = BoardGameTag.builder().boardGame(boardgame).tag(tag)
                             .build();
                     boardgameTagRepository.saveAndFlush(boardgameTag);
                 }
@@ -165,17 +165,17 @@ public class BoardGameJob {
     * FIXME
     *  1. python 에서 크롤링 한 데이터에서 첫번째 번역한 translation 데이터가 없는 문제가 있음
     * */
-    //@Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "0/10 * * * * *")
     public void translationBoardgameDesc(){
 
-        List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardgameDescription();
+        List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardGameDescription();
         Gson gson = new Gson();
         String descriptionJson = gson.toJson(BoardgameDescriptionList);
         byte[] encodedBytes = Base64.getEncoder().encode(descriptionJson.getBytes(StandardCharsets.UTF_8));
         String base64Encoded = new String(encodedBytes, StandardCharsets.UTF_8);
 
         // 파일 경로 수정 필요
-        ProcessBuilder pb = new ProcessBuilder("python", "D:\\papago1.py", base64Encoded);
+        ProcessBuilder pb = new ProcessBuilder("python", "E:/crawling/papago1.py", base64Encoded);
 
         pb.redirectErrorStream(true);
         Process process = null;

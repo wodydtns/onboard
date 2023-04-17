@@ -6,6 +6,6 @@ import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 
 public interface BoardNonSearchClickLogRepository extends JpaRepository<NonSearchClickLog, Long>{
 
-	NonSearchClickLog findByBoardgameId(Long boardgameId);
+	NonSearchClickLog findByBoardgameId(Long boardGameId);
 	
 }

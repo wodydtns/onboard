@@ -1,9 +1,6 @@
 package com.superboard.onbrd.crawling.repository;
 
-import com.superboard.onbrd.boardgame.entity.Boardgame;
-import com.superboard.onbrd.crawling.entity.CrawlingData;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
-import com.superboard.onbrd.tag.entity.BoardgameTag;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +11,7 @@ public interface CustomCrawlingRepository {
 
     public void updateDoneY(List<String> updateList);
 
-    public List<CrawlingTranslationDto> selectAllBoardgameDescription();
+    public List<CrawlingTranslationDto> selectAllBoardGameDescription();
 
     public void updateAllCrawlingTranslationData(List<CrawlingTranslationDto > crawlingTranslationDtoList);
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MypageMoreBoardgameDetail {
+public class MypageMoreBoardGameDetail {
 	private Long id;
 	private String image;
 }

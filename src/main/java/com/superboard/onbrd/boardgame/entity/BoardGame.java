@@ -1,6 +1,6 @@
 package com.superboard.onbrd.boardgame.entity;
 
-import com.superboard.onbrd.tag.entity.BoardgameTag;
+import com.superboard.onbrd.tag.entity.BoardGameTag;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 		sequenceName = "BOARDGAME_SEQ",
 		initialValue = 1, allocationSize = 1
 )
-public class Boardgame {
+public class BoardGame {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO,generator = "BOARDGAME_SEQ_GENERATOR" )
 	private Long id;
@@ -35,10 +35,10 @@ public class Boardgame {
 	private long clickCount = 0;
 	
 	@OneToMany(mappedBy = "boardgame")
-	private List<BoardgameTag> boardgameTags = new ArrayList<>();
+	private List<BoardGameTag> boardGameTags = new ArrayList<>();
 
 	@Builder
-	public Boardgame(String name, String description, String image){
+	public BoardGame(String name, String description, String image){
 		this.name=name;
 		this.description=description;
 		this.image = image;

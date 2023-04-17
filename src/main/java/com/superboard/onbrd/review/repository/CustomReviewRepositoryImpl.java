@@ -1,6 +1,6 @@
 package com.superboard.onbrd.review.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
@@ -40,8 +40,8 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.createdAt,
 				review.writer.id.as("writerId"),
 				review.writer.nickname,
-				review.boardgame.id.as("boardgameId"),
-				review.boardgame.name.as("boardgameName")
+				review.boardGame.id.as("boardgameId"),
+				review.boardGame.name.as("boardgameName")
 			))
 			.from(review)
 			.orderBy(REVIEW_NEWEST.getOrderSpecifiers())
@@ -71,7 +71,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			))
 			.from(review)
 			.join(review.writer, member)
-			.where(review.boardgame.id.eq(params.getBoardgameId()))
+			.where(review.boardGame.id.eq(params.getBoardGameId()))
 			.orderBy(params.getOrderBy().getOrderSpecifiers())
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
@@ -91,12 +91,12 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.content,
 				member.nickname,
 				member.level,
-				boardgame.name,
+				boardGame.name,
 				review.likeCount
 			))
 			.from(review)
 			.join(review.writer, member)
-			.join(review.boardgame, boardgame)
+			.join(review.boardGame, boardGame)
 			.orderBy(review.likeCount.desc())
 			.offset(pageBasicEntity.getOffset())
 			.limit(pageBasicEntity.getLimit() + 1)

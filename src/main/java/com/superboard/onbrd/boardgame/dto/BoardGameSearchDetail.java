@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardgameSearchDetail {
+public class BoardGameSearchDetail {
 	@ApiModelProperty(notes = "boardgame PK")
 	private Long id;
 	@ApiModelProperty(notes = "boardgame 이름")

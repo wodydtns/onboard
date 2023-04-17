@@ -44,8 +44,8 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 				review.id,
 				review.content,
 				review.createdAt,
-				review.boardgame.id.as("boardgameId"),
-				review.boardgame.name.as("boardgameName")
+				review.boardGame.id.as("boardgameId"),
+				review.boardGame.name.as("boardgameName")
 			))
 			.from(review)
 			.where(review.writer.id.eq(id))
@@ -58,8 +58,8 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 				comment.content,
 				comment.createdAt,
 				comment.review.id.as("reviewId"),
-				comment.review.boardgame.id.as("boardgameId"),
-				comment.review.boardgame.name.as("boardgameName")
+				comment.review.boardGame.id.as("boardgameId"),
+				comment.review.boardGame.name.as("boardgameName")
 			))
 			.from(comment)
 			.where(comment.writer.id.eq(id))
