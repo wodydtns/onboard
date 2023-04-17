@@ -15,7 +15,7 @@ import java.util.List;
 		sequenceName = "BOARDGAME_SEQ",
 		initialValue = 1, allocationSize = 1
 )
-public class Boardgame {
+public class BoardGame {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO,generator = "BOARDGAME_SEQ_GENERATOR" )
 	private Long id;
@@ -34,11 +34,11 @@ public class Boardgame {
 	@Column(nullable = false)
 	private long clickCount = 0;
 	
-	@OneToMany(mappedBy = "boardgame")
-	private List<BoardGameTag> boardgameTags = new ArrayList<>();
+	@OneToMany(mappedBy = "boardGame")
+	private List<BoardGameTag> boardGameTags = new ArrayList<>();
 
 	@Builder
-	public Boardgame(String name, String description, String image){
+	public BoardGame(String name, String description, String image){
 		this.name=name;
 		this.description=description;
 		this.image = image;

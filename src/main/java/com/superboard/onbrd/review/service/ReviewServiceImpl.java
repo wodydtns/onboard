@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
-import com.superboard.onbrd.boardgame.entity.Boardgame;
+import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -69,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService {
 			dto.setImages(imageList);
 		}
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
-		Boardgame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
+		BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
 
 		Review created = Review.builder()
 			.writer(writer)

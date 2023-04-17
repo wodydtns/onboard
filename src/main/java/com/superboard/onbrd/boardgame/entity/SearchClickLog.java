@@ -27,7 +27,7 @@ public class SearchClickLog {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id")
-	private Boardgame boardgame;
+	private BoardGame boardgame;
 	
 	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

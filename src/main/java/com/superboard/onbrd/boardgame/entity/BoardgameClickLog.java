@@ -24,7 +24,7 @@ public class BoardgameClickLog {
 	
 	@OneToOne
 	@JoinColumn(name="id")
-	private Boardgame boardgame;
+	private BoardGame boardgame;
 	
 	@Column(nullable = false)
 	private LocalDateTime lastClickAt = LocalDateTime.now();

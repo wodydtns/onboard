@@ -1,6 +1,6 @@
 package com.superboard.onbrd.member.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardgame.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.boardgame.entity.QFavoriteBoardgame.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
@@ -19,7 +19,7 @@ import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
 import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
-import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardgameDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardGameDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
 import com.superboard.onbrd.member.dto.mypage.MypageResponse;
 
@@ -69,14 +69,14 @@ public class MypageRepositoryImpl implements MypageRepository {
 	}
 
 	@Override
-	public OnbrdSliceResponse<MypageMoreBoardgameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
-		List<MypageMoreBoardgameDetail> content = queryFactory
-			.select(Projections.fields(MypageMoreBoardgameDetail.class,
-				boardgame.id,
-				boardgame.image
+	public OnbrdSliceResponse<MypageMoreBoardGameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
+		List<MypageMoreBoardGameDetail> content = queryFactory
+			.select(Projections.fields(MypageMoreBoardGameDetail.class,
+				boardGame.id,
+				boardGame.image
 			))
 			.from(favoriteBoardgame)
-			.join(favoriteBoardgame.boardgame, boardgame)
+			.join(favoriteBoardgame.boardgame, boardGame)
 			.where(favoriteBoardgame.member.email.eq(params.getEmail()))
 			.orderBy(favoriteBoardgame.id.desc())
 			.offset(params.getOffset())
@@ -130,11 +130,11 @@ public class MypageRepositoryImpl implements MypageRepository {
 	private List<MypageResponse.BoardgameCard> getFavoriteBoardgames(String email, int boardgameCount) {
 		return queryFactory
 			.select(Projections.fields(MypageResponse.BoardgameCard.class,
-				boardgame.id,
-				boardgame.image
+				boardGame.id,
+				boardGame.image
 			))
 			.from(favoriteBoardgame)
-			.join(favoriteBoardgame.boardgame, boardgame)
+			.join(favoriteBoardgame.boardgame, boardGame)
 			.where(favoriteBoardgame.member.email.eq(email))
 			.orderBy(favoriteBoardgame.id.desc())
 			.limit(boardgameCount)
