@@ -13,6 +13,7 @@ import com.superboard.onbrd.tag.entity.Tag;
 import com.superboard.onbrd.tag.repository.BoardgameTagRepository;
 import com.superboard.onbrd.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
@@ -160,10 +163,7 @@ public class BoardGameJob {
         }
     }
 
-    /*
-    * FIXME
-    *  1. python 에서 크롤링 한 데이터에서 첫번째 번역한 translation 데이터가 없는 문제가 있음
-    * */
+
     //@Scheduled(cron = "0/10 * * * * *")
     public void translationBoardgameDesc(){
 
@@ -172,12 +172,20 @@ public class BoardGameJob {
         String descriptionJson = gson.toJson(BoardgameDescriptionList);
         byte[] encodedBytes = Base64.getEncoder().encode(descriptionJson.getBytes(StandardCharsets.UTF_8));
         String base64Encoded = new String(encodedBytes, StandardCharsets.UTF_8);
+        // Write the base64Encoded string to a temporary file
+        Path tempFilePath = null;
+        try {
+            tempFilePath = Files.createTempFile("temp_encoded_data",".json");
+            Files.write(tempFilePath, descriptionJson.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        // 파일 경로 수정 필요
-        ProcessBuilder pb = new ProcessBuilder("python", "D:\\papago1.py", base64Encoded);
-
+        // Pass the file path to the Python script
+        ProcessBuilder pb = new ProcessBuilder("python", "E:\\crawling\\papago1.py", tempFilePath.toString());
         pb.redirectErrorStream(true);
         Process process = null;
+
         try {
             process = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -187,9 +195,7 @@ public class BoardGameJob {
                 builder.append(line);
             }
             String returnJson = builder.toString();
-            System.out.println(returnJson);
 
-            //Map<String, Object> result_list = gson.fromJson(json, Map.class);
             List<LinkedTreeMap> resultList = gson.fromJson(returnJson, List.class);
             List<CrawlingTranslationDto> crawlingTranslationDtoList = new ArrayList<>();
             for (LinkedTreeMap result : resultList) {
