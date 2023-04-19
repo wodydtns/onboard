@@ -232,9 +232,12 @@ public class OciObjectStorageUtil {
 		return namespaceName;
 	}
 
+	/* TODO
+	*
+	* */
 	private String getExtension(MultipartFile file){
-		String fileName = file.getName();
-		if (StringUtils.hasText(fileName)) {
+		String fileName = file.getOriginalFilename();
+		if (!StringUtils.hasText(fileName)) {
 			return "";
 		}
 		int dotIndex = fileName.lastIndexOf(".");
