@@ -101,7 +101,7 @@ public class OciObjectStorageUtil {
 		
 		BufferedOutputStream bos = null;
 
-		List<String> fileExtensionWhiteList = Arrays.asList(".png",".jpg",".jpeg",".gif");
+		List<String> fileExtensionWhiteList = Arrays.asList("png","jpg","jpeg","gif");
 		String fileExtension =getExtension(file);
 		if(!fileExtensionWhiteList.contains(fileExtension)){
 			return successFlag;
