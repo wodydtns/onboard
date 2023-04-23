@@ -1,6 +1,7 @@
 package com.superboard.onbrd.member.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
+import static com.superboard.onbrd.member.entity.MemberRole.*;
 
 import java.util.Optional;
 
@@ -152,6 +153,14 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional(readOnly = true)
 	public AdminMemberDetail getAdminMemberDetail(Long id) {
 		return memberRepository.getAdminMemberDetail(id);
+	}
+
+	@Override
+	public Member grantAdminAuthority(Long id) {
+		Member member = findVerifiedOneById(id);
+		member.grantAuthority(ROLE_ADMIN);
+
+		return member;
 	}
 
 	private boolean isEmailExists(String email) {

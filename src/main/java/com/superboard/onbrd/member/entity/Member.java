@@ -129,6 +129,10 @@ public class Member extends BaseEntity {
 		}
 	}
 
+	public void grantAuthority(MemberRole role) {
+		this.role = role;
+	}
+
 	public void withdraw() {
 		this.status = WITHDRAWN;
 	}
