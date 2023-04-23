@@ -15,7 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdListResponse;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -58,7 +57,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 	}
 
 	@Override
-	public OnbrdListResponse<CommentDetail> getCommentsByReviewId(Long reviewId) {
+	public OnbrdSliceResponse<CommentDetail> getCommentsByReviewId(Long reviewId, OnbrdSliceRequest request) {
 		List<CommentDetail> content = queryFactory
 			.select(Projections.fields(CommentDetail.class,
 				comment.id,
@@ -72,9 +71,13 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 			.from(comment)
 			.where(comment.review.id.eq(reviewId))
 			.orderBy(comment.id.desc())
+			.offset(request.getOffset())
+			.limit(request.getLimit() + 1)
 			.fetch();
 
-		return new OnbrdListResponse<>(content);
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, request.getLimit());
+
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override

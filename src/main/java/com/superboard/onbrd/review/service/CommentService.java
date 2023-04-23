@@ -1,7 +1,6 @@
 package com.superboard.onbrd.review.service;
 
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
-import com.superboard.onbrd.global.dto.OnbrdListResponse;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
@@ -22,5 +21,5 @@ public interface CommentService {
 
 	Comment findVerifiedOneById(Long id);
 
-	OnbrdListResponse<CommentDetail> getCommentsByReviewId(Long reviewId);
+	OnbrdSliceResponse<CommentDetail> getCommentsByReviewId(Long reviewId, OnbrdSliceRequest request);
 }

@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.global.dto.OnbrdListResponse;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
 import com.superboard.onbrd.review.dto.comment.CommentDetail;
 import com.superboard.onbrd.review.dto.comment.CommentPatchRequest;
@@ -107,8 +109,9 @@ public class CommentController {
 		@ApiResponse(responseCode = "404")
 	})
 	@GetMapping
-	public ResponseEntity<OnbrdListResponse<CommentDetail>> getCommentsByReviewId(@PathVariable Long reviewId) {
-		OnbrdListResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId);
+	public ResponseEntity<OnbrdSliceResponse<CommentDetail>> getCommentsByReviewId(
+		@PathVariable Long reviewId, @ModelAttribute OnbrdSliceRequest request) {
+		OnbrdSliceResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId, request);
 
 		return ResponseEntity.ok(response);
 	}
