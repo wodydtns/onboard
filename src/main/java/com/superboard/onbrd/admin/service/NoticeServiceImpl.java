@@ -11,9 +11,12 @@ import com.superboard.onbrd.admin.dto.NoticeCreateCommand;
 import com.superboard.onbrd.admin.dto.NoticeUpdateCommand;
 import com.superboard.onbrd.admin.entity.Notice;
 import com.superboard.onbrd.admin.repository.NoticeRepository;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.notice.dto.NoticeDetail;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,5 +60,10 @@ public class NoticeServiceImpl implements NoticeService {
 
 		return noticeOptional
 			.orElseThrow(() -> new BusinessLogicException(NOTICE_NOT_FOUND));
+	}
+
+	@Override
+	public OnbrdSliceResponse<NoticeDetail> getNotices(OnbrdSliceRequest request) {
+		return noticeRepository.getNotices(request);
 	}
 }
