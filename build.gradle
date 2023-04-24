@@ -109,7 +109,10 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
     implementation 'com.google.firebase:firebase-admin:9.1.1'
-	
+
+    // https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
+
 }
 
 bootWar {

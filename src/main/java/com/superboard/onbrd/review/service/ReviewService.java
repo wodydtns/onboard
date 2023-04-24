@@ -20,9 +20,9 @@ public interface ReviewService {
 
 	OnbrdSliceResponse<ReviewByBoardgameDetail> getReviewsByBoardgameId(ReviewGetParameterDto params);
 
-	Review crewateReview(ReviewCreateDto dto, List<MultipartFile> files);
+	Review crewateReview(ReviewCreateDto dto, List<String> images);
 
-	Review updateReview(ReviewUpdateDto dto, List<MultipartFile> files);
+	Review updateReview(ReviewUpdateDto dto, List<String> images);
 
 	Review hideReview(Long id);
 

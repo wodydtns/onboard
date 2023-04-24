@@ -3,10 +3,17 @@ package com.superboard.onbrd.review.service;
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +38,7 @@ import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Service
 @Transactional
@@ -53,21 +61,16 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewRepository.searchReviewsByBoardgameId(params);
 	}
 
+	/* FIXME : 파일 이름에 "" 이 포함됨 | 확장자가 포함되지 않음
+		
+	 */
 	@Override
-	public Review crewateReview(ReviewCreateDto dto, List<MultipartFile> files) {
-		if (!files.isEmpty()) {
-			List<String> imageList = new ArrayList<>();
-			for (MultipartFile multipartFile : files) {
-				imageList.add(multipartFile.getOriginalFilename());
-				String filePath = "review/";
-				try {
-					ociObjectStorageUtil.UploadObject(multipartFile, filePath);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+	public Review crewateReview(ReviewCreateDto dto,  List<String> images) {
+		if(!images.isEmpty()){
+			List<String> imageList = processImages(images);
 			dto.setImages(imageList);
 		}
+
 		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
 		BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
 
@@ -87,26 +90,70 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public Review updateReview(ReviewUpdateDto dto, List<MultipartFile> files) {
+	public Review updateReview(ReviewUpdateDto dto, List<String> images) {
 		Review updated = findVerifiedOneById(dto.getReviewId());
-		if (!files.isEmpty()) {
-			for (MultipartFile file : files) {
-				try {
-					String filePath = "review/";
-					boolean isExist = ociObjectStorageUtil.getObjectOne(file.getOriginalFilename(), filePath);
-					if (!isExist) {
-						ociObjectStorageUtil.UploadObject(file, filePath);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		if (!images.isEmpty()) {
+			List<String> imageList = processImages(images);
+			dto.setImages(imageList);
 		}
 		updated.updateGrade(dto.getGrade());
 		updated.updateContent(dto.getContent());
 		updated.updateImages(dto.getImages());
 
 		return updated;
+	}
+
+	private List<String> processImages(List<String> images) {
+		List<String> imageList = new ArrayList<>();
+		if (!images.isEmpty()) {
+			for (String encodedImageName : images) {
+				byte[] decodedImageName = decodeImage(encodedImageName);
+				String fileName = saveImage(decodedImageName);
+				imageList.add(fileName);
+			}
+		}
+		return imageList;
+	}
+
+	private byte[] decodeImage(String encodedImageName) {
+		if (encodedImageName.startsWith("data:")) {
+			int base64Index = encodedImageName.indexOf("base64,");
+			if (base64Index != -1) {
+				encodedImageName = encodedImageName.substring(base64Index + "base64,".length());
+			}
+		}
+		return Base64.getDecoder().decode(encodedImageName);
+	}
+
+	private String saveImage(byte[] decodedImageName) {
+		String fileName = UUID.randomUUID().toString();
+		String fileExtension = "png";
+		String filePath = "review/";
+
+		try {
+			Path tempFile = Files.createTempFile(fileName, "." + fileExtension);
+			FileUtils.writeByteArrayToFile(tempFile.toFile(), decodedImageName);
+			MultipartFile multipartFile = createMultipartFile(tempFile);
+			fileName = multipartFile.getOriginalFilename();
+			ociObjectStorageUtil.UploadObject(multipartFile, filePath);
+			tempFile.toFile().deleteOnExit();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return fileName;
+	}
+
+	private MultipartFile createMultipartFile(Path tempFile) throws IOException {
+		File file = tempFile.toFile();
+		String fileName = file.getName();
+		String contentType = Files.probeContentType(tempFile);
+		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(), file.getParentFile());
+		InputStream input = new FileInputStream(file);
+		OutputStream os = fileItem.getOutputStream();
+		IOUtils.copy(input, os);
+
+		return new CommonsMultipartFile(fileItem);
 	}
 
 	@Override
