@@ -7,16 +7,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
@@ -72,13 +63,13 @@ public class ReviewController {
 			@ExampleObject(value = "1")})),
 		@ApiResponse(responseCode = "404")})
 	@ResponseStatus(CREATED)
-	@PostMapping(consumes = {"multipart/form-data"})
+	@PostMapping()
 	public ResponseEntity<Long> postReview(@AuthenticationPrincipal MemberDetails memberDetails,
-		@PathVariable Long boardgameId, @RequestPart ReviewPostRequest request,
-		@RequestPart(required = false) List<MultipartFile> files) {
+		@PathVariable Long boardgameId, @RequestBody ReviewPostRequest request) {
+
 		ReviewCreateDto dto = ReviewCreateDto.of(memberDetails.getEmail(), boardgameId, request);
 
-		Long createdId = reviewService.crewateReview(dto, files).getId();
+		Long createdId = reviewService.crewateReview(dto, request.getImages()).getId();
 
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
@@ -90,12 +81,12 @@ public class ReviewController {
 		@ApiResponse(responseCode = "200", description = "수정 리뷰 ID 응답", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Long.class), examples = {
 			@ExampleObject(value = "1")})),
 		@ApiResponse(responseCode = "404")})
-	@PatchMapping(path = "/{reviewId}", consumes = {"multipart/form-data"})
-	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestPart ReviewPatchRequest request,
-		@RequestPart(required = false) List<MultipartFile> files) {
+	@PatchMapping(path = "/{reviewId}")
+	public ResponseEntity<Long> patchReview(@PathVariable Long reviewId, @RequestBody ReviewPatchRequest request) {
+
 		ReviewUpdateDto dto = ReviewUpdateDto.of(reviewId, request);
 
-		Long updatedId = reviewService.updateReview(dto, files).getId();
+		Long updatedId = reviewService.updateReview(dto, request.getImages()).getId();
 
 		return ResponseEntity.ok(updatedId);
 	}
