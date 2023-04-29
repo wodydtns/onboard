@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewRepository.searchReviewsByBoardgameId(params);
 	}
 
-	/* FIXME : 파일 이름에 "" 이 포함됨 | 확장자가 포함되지 않음
+	/* FIXME : 파일 업로드 수행 시 파일 생성하면서
 		
 	 */
 	@Override
@@ -92,9 +92,16 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public Review updateReview(ReviewUpdateDto dto, List<String> images) {
 		Review updated = findVerifiedOneById(dto.getReviewId());
+		List<String> imageList = updated.getImages();
+		String filePath = "review/";
+		try {
+			ociObjectStorageUtil.deleteObject(imageList, filePath);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		if (!images.isEmpty()) {
-			List<String> imageList = processImages(images);
-			dto.setImages(imageList);
+			List<String> updateImageList = processImages(images);
+			dto.setImages(updateImageList);
 		}
 		updated.updateGrade(dto.getGrade());
 		updated.updateContent(dto.getContent());
@@ -126,34 +133,66 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	private String saveImage(byte[] decodedImageName) {
-		String fileName = UUID.randomUUID().toString();
-		String fileExtension = "png";
-		String filePath = "review/";
+		String fileName = null;
 
 		try {
-			Path tempFile = Files.createTempFile(fileName, "." + fileExtension);
-			FileUtils.writeByteArrayToFile(tempFile.toFile(), decodedImageName);
+			fileName =  UUID.randomUUID().toString();
+			String fileExtension = "png";
+			String filePath = "review/";
+			Path tempFile = Files.createTempFile( fileName, "." + fileExtension);
+			Files.write(tempFile, decodedImageName);
+
 			MultipartFile multipartFile = createMultipartFile(tempFile);
 			fileName = multipartFile.getOriginalFilename();
+
 			ociObjectStorageUtil.UploadObject(multipartFile, filePath);
-			tempFile.toFile().deleteOnExit();
+
+			Files.deleteIfExists(tempFile);
+
+		} catch (IOException e) {
+			throw new RuntimeException("Error saving image: " + e.getMessage(), e);
 
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error saving image: " + e.getMessage(), e);
+		}
+		if (fileName == null) {
+			throw new RuntimeException("Error saving image: file name is null");
 		}
 		return fileName;
 	}
 
 	private MultipartFile createMultipartFile(Path tempFile) throws IOException {
 		File file = tempFile.toFile();
+		if (!file.exists() || !file.canRead()) {
+			throw new IOException("File does not exist or is not readable");
+		}
 		String fileName = file.getName();
+
+		// Check if the file name is null or empty
+		if (fileName.isEmpty()) {
+			throw new IOException("File name is null or empty");
+		}
+
 		String contentType = Files.probeContentType(tempFile);
 		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(), file.getParentFile());
-		InputStream input = new FileInputStream(file);
-		OutputStream os = fileItem.getOutputStream();
-		IOUtils.copy(input, os);
 
-		return new CommonsMultipartFile(fileItem);
+		InputStream input = null;
+		OutputStream os = null;
+		try {
+			input = new FileInputStream(file);
+			os = fileItem.getOutputStream();
+			IOUtils.copy(input, os);
+		} finally {
+			IOUtils.closeQuietly(input);
+			IOUtils.closeQuietly(os);
+		}
+
+		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+
+		fileItem.delete();
+		file.deleteOnExit();
+
+		return multipartFile;
 	}
 
 	@Override

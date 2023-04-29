@@ -23,6 +23,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -98,8 +100,9 @@ public class OciObjectStorageUtil {
 		boolean successFlag = false;
 		ObjectStorage client = getObjectStorageClient();
 		FileOutputStream outputStream = null;
-		
+
 		BufferedOutputStream bos = null;
+		InputStream inputStream = null;
 
 		List<String> fileExtensionWhiteList = Arrays.asList("png","jpg","jpeg","gif");
 		String fileExtension =getExtension(file);
@@ -110,31 +113,24 @@ public class OciObjectStorageUtil {
 			UploadConfiguration uploadConfiguration =UploadConfiguration.builder().allowMultipartUploads(true).allowParallelUploads(true).build();
 			UploadManager uploadManager = new UploadManager(client, uploadConfiguration);
 			String namespaceName = getNameSpaceName(client);
-			
+
 			// bucket에 넣을 파일 이름
 			// 경로 추가 필요
 	        String objectName = filePath +file.getOriginalFilename();
 	        Map<String, String> metadata = null;
-	        
-	        String contentType = file.getContentType();
 
+	        String contentType = file.getContentType();
 	        String contentEncoding = null;
 	        String contentLanguage = null;
-	        
+
 	        // 실제 파일
-	        
-	        InputStream inputStream = file.getInputStream();
-	        
-	        File body = new File(file.getName());
+			inputStream = file.getInputStream();
+			Path tempFilePath = Files.createTempFile("upload-", file.getOriginalFilename());
+			File body = tempFilePath.toFile();
 	        outputStream = new FileOutputStream(body);
-	        
 	        bos = new BufferedOutputStream(outputStream);
-	        
 	        bos.write(file.getBytes());
-	        inputStream.close();
-	        outputStream.close();
-	        bos.close();
-	        
+
 	        PutObjectRequest request =
 		                PutObjectRequest.builder()
 		                        .bucketName(bucketName)
@@ -145,17 +141,20 @@ public class OciObjectStorageUtil {
 		                        .contentEncoding(contentEncoding)
 		                        .opcMeta(metadata)
 		                        .build();
-			
-			
+
 			UploadRequest uploadDetails =
 		                UploadRequest.builder(body).allowOverwrite(true).build(request);
-			
+
 			UploadResponse response = uploadManager.upload(uploadDetails);
-			System.out.println(response);
+
 			if(response.getETag() != null) {
 				successFlag = true;
 			}
-			
+			inputStream.close();
+			outputStream.close();
+			bos.close();
+			body.deleteOnExit();
+			Files.deleteIfExists(tempFilePath);
 			client.close();
 		} catch (Exception e) {
 			e.getMessage();
@@ -169,10 +168,14 @@ public class OciObjectStorageUtil {
 			if(bos != null) {
 				bos.close();
 			}
+			if(inputStream != null ){
+				inputStream.close();
+			}
+
 		}
 		return successFlag;
-		
-        
+
+
 	}
 	/**
 	 * @throws Exception
