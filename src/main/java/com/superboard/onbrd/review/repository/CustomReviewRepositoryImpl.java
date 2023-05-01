@@ -6,6 +6,7 @@ import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -76,7 +77,16 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
 			.fetch();
-
+		// Set image path for each image URL in the ReviewByBoardgameDetail objects
+		String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/review";
+		for (ReviewByBoardgameDetail review : content) {
+			List<String> images = review.getImages();
+			List<String> prefixedImages = new ArrayList<>();
+			for (String image : images) {
+				prefixedImages.add(imagePath + image);
+			}
+			review.setImages(prefixedImages);
+		}
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
 
 		return new OnbrdSliceResponse<>(pageInfo, content);
