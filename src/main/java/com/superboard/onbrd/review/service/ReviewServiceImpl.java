@@ -61,9 +61,6 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewRepository.searchReviewsByBoardgameId(params);
 	}
 
-	/* FIXME : 파일 업로드 수행 시 파일 생성하면서
-		
-	 */
 	@Override
 	public Review crewateReview(ReviewCreateDto dto,  List<String> images) {
 		if(!images.isEmpty()){
@@ -92,16 +89,9 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public Review updateReview(ReviewUpdateDto dto, List<String> images) {
 		Review updated = findVerifiedOneById(dto.getReviewId());
-		List<String> imageList = updated.getImages();
-		String filePath = "review/";
-		try {
-			ociObjectStorageUtil.deleteObject(imageList, filePath);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 		if (!images.isEmpty()) {
-			List<String> updateImageList = processImages(images);
-			dto.setImages(updateImageList);
+			List<String> imageList = processImages(images);
+			dto.setImages(imageList);
 		}
 		updated.updateGrade(dto.getGrade());
 		updated.updateContent(dto.getContent());
@@ -133,66 +123,34 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	private String saveImage(byte[] decodedImageName) {
-		String fileName = null;
+		String fileName = UUID.randomUUID().toString();
+		String fileExtension = "png";
+		String filePath = "review/";
 
 		try {
-			fileName =  UUID.randomUUID().toString();
-			String fileExtension = "png";
-			String filePath = "review/";
-			Path tempFile = Files.createTempFile( fileName, "." + fileExtension);
-			Files.write(tempFile, decodedImageName);
-
+			Path tempFile = Files.createTempFile(fileName, "." + fileExtension);
+			FileUtils.writeByteArrayToFile(tempFile.toFile(), decodedImageName);
 			MultipartFile multipartFile = createMultipartFile(tempFile);
 			fileName = multipartFile.getOriginalFilename();
-
 			ociObjectStorageUtil.UploadObject(multipartFile, filePath);
-
-			Files.deleteIfExists(tempFile);
-
-		} catch (IOException e) {
-			throw new RuntimeException("Error saving image: " + e.getMessage(), e);
+			tempFile.toFile().deleteOnExit();
 
 		} catch (Exception e) {
-			throw new RuntimeException("Error saving image: " + e.getMessage(), e);
-		}
-		if (fileName == null) {
-			throw new RuntimeException("Error saving image: file name is null");
+			throw new RuntimeException(e);
 		}
 		return fileName;
 	}
 
 	private MultipartFile createMultipartFile(Path tempFile) throws IOException {
 		File file = tempFile.toFile();
-		if (!file.exists() || !file.canRead()) {
-			throw new IOException("File does not exist or is not readable");
-		}
 		String fileName = file.getName();
-
-		// Check if the file name is null or empty
-		if (fileName.isEmpty()) {
-			throw new IOException("File name is null or empty");
-		}
-
 		String contentType = Files.probeContentType(tempFile);
 		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(), file.getParentFile());
+		InputStream input = new FileInputStream(file);
+		OutputStream os = fileItem.getOutputStream();
+		IOUtils.copy(input, os);
 
-		InputStream input = null;
-		OutputStream os = null;
-		try {
-			input = new FileInputStream(file);
-			os = fileItem.getOutputStream();
-			IOUtils.copy(input, os);
-		} finally {
-			IOUtils.closeQuietly(input);
-			IOUtils.closeQuietly(os);
-		}
-
-		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-
-		fileItem.delete();
-		file.deleteOnExit();
-
-		return multipartFile;
+		return new CommonsMultipartFile(fileItem);
 	}
 
 	@Override
@@ -213,6 +171,7 @@ public class ReviewServiceImpl implements ReviewService {
 				ociObjectStorageUtil.deleteObject(imageList, filePath);
 			} catch (Exception e) {
 				e.printStackTrace();
+				throw new BusinessLogicException(REVIEW_NOT_FOUND);
 			}
 		}
 		reviewRepository.delete(deleted);
