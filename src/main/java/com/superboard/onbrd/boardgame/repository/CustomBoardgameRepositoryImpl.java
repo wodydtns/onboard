@@ -6,10 +6,13 @@ import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.tag.entity.QBoardGameTag.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
+import static com.superboard.onbrd.review.entity.QReview.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,21 +40,23 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	public OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
 
+		BooleanExpression nameExpr = boardgameNameLike(boardgameSearchByTagRequest.getName());
+		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
+
 		List<BoardGameSearchDetail> content = queryFactory
-			.select(Projections.fields(BoardGameSearchDetail.class,
-				boardGame.id,
-				boardGame.name,
-				boardGame.image
-			))
-			.from(boardGameTag)
-			.join(boardGameTag.boardGame, boardGame)
-			.join(boardGameTag.tag, tag)
-			.where(boardgameNameLike(boardgameSearchByTagRequest.getName()),
-				tag.id.in(boardgameSearchByTagRequest.getTagIds()))
-			.orderBy(tag.id.asc())
-			.offset(boardgameSearchByTagRequest.getOffset())
-			.limit(boardgameSearchByTagRequest.getLimit() + 1)
-			.fetch();
+				.select(Projections.fields(BoardGameSearchDetail.class,
+						boardGame.id,
+						boardGame.name,
+						boardGame.image
+				))
+				.from(boardGameTag)
+				.join(boardGameTag.boardGame, boardGame)
+				.join(boardGameTag.tag, tag)
+				.where(nameExpr, tagExpr)
+				.orderBy(tag.id.asc())
+				.offset(boardgameSearchByTagRequest.getOffset())
+				.limit(boardgameSearchByTagRequest.getLimit() + 1)
+				.fetch();
 
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, boardgameSearchByTagRequest.getLimit());
 
@@ -64,11 +69,11 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	private BooleanExpression tagIsIn(List<Long> tagIds) {
-		return tagIds.isEmpty() ? null : tag.id.in(tagIds);
+		return (tagIds != null && !tagIds.isEmpty()) ? tag.id.in(tagIds) : null;
 	}
 
 	private BooleanExpression boardgameNameLike(String boardgameName) {
-		return StringUtils.hasText(boardgameName) ? null : boardGame.name.like(boardgameName);
+		return StringUtils.hasText(boardgameName) ?  boardGame.name.like(boardgameName) : null ;
 	}
 
 	@Override
@@ -97,6 +102,8 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
 
+		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
+
 		LocalDateTime startDate = LocalDateTime.now().minusDays(30);
 
 		List<BoardGameSearchDetail> content = queryFactory
@@ -106,8 +113,8 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 				boardGame.image
 			))
 			.from(nonSearchClickLog)
-			.join(nonSearchClickLog.boardGame, boardGame)
-			.where(nonSearchClickLog.clickAt.after(startDate))
+			.join(nonSearchClickLog.boardgame, boardGame)
+			.where(nonSearchClickLog.clickAt.after(startDate) , tagExpr)
 			.orderBy(boardGame.clickCount.desc())
 			.offset(boardgameSearchByTagRequest.getOffset())
 			.limit(boardgameSearchByTagRequest.getLimit() + 1)
@@ -131,13 +138,17 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	@Override
-	public List<TopBoardgameDto> selectTop10BoardgameList() {
+	public List<TopBoardgameDto> selectTop10BoardgameList(String imagePath) {
 		List<TopBoardgameDto> top10BoardgameList = queryFactory.select(
-				Projections.constructor(TopBoardgameDto.class, boardGame.id, boardGame.name)).from(searchClickLog)
+				Projections.constructor(TopBoardgameDto.class, boardGame.id, boardGame.name,boardGame.image)).from(searchClickLog)
 			.join(searchClickLog.boardgame, boardGame)
 			.orderBy(searchClickLog.clickCount.desc())
 			.limit(10)
 			.fetch();
+		for (var boardgame : top10BoardgameList) {
+			String imageName = boardgame.getImage();
+			boardgame.setImage(imagePath + imageName);
+		}
 		return top10BoardgameList;
 	}
 

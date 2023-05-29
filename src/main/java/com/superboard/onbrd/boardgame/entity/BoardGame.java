@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "Boardgame")
+@Entity(name="boardgame")
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(

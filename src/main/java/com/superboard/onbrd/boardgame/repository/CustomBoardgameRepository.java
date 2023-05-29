@@ -18,7 +18,7 @@ public interface CustomBoardgameRepository {
 	OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath);
 
-	public List<TopBoardgameDto> selectTop10BoardgameList();
+	public List<TopBoardgameDto> selectTop10BoardgameList(String imagePath);
 
 	public Long updateFavoriteCount(Long id);
 

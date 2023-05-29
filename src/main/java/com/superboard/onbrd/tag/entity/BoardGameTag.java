@@ -6,10 +6,11 @@ import com.superboard.onbrd.boardgame.entity.BoardGame;
 
 import lombok.*;
 
-@Entity
+@Entity(name = "boardgameTag")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "boardgame_tag")
 public class BoardGameTag {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
