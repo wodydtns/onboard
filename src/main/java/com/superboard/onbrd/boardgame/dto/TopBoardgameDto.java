@@ -14,10 +14,13 @@ public class TopBoardgameDto {
 	private Long id;
 	
 	private String name;
+
+	private String image;
 	
 	@QueryProjection
-	public TopBoardgameDto(Long id, String name) {
+	public TopBoardgameDto(Long id, String name, String image) {
 		this.id = id;
 		this.name = name;
+		this.image=image;
 	}
 }
