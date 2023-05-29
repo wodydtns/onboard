@@ -59,17 +59,17 @@ public class BoardgameServiceImpl implements BoardGameService {
 				boardSearchClickLogRepository.save(isExistClickLog);
 			} else {
 				SearchClickLog createClickLog = new SearchClickLog();
-				createClickLog.setBoardgameId(boardgameId);
+				createClickLog.setBoardgame(isExistClickLog.getBoardgame());
 				boardSearchClickLogRepository.save(createClickLog);
 			}
 		} else {
-			NonSearchClickLog isExistNonclickLog = boardNonSearchClickLogRepository.findByBoardGameId(boardgameId);
+			NonSearchClickLog isExistNonclickLog = boardNonSearchClickLogRepository.findByBoardgameId(boardgameId);
 			if (isExistNonclickLog != null) {
 				isExistNonclickLog.setClickCount(isExistNonclickLog.getClickCount() + 1);
 				boardNonSearchClickLogRepository.save(isExistNonclickLog);
 			} else {
 				NonSearchClickLog createNonClickLog = new NonSearchClickLog();
-				createNonClickLog.setBoardGameId(boardgameId);
+				createNonClickLog.setBoardgame(isExistNonclickLog.getBoardgame());
 				boardNonSearchClickLogRepository.save(createNonClickLog);
 			}
 		}
@@ -100,7 +100,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
-		return boardgameRepository.selectTop10BoardgameList();
+		return boardgameRepository.selectTop10BoardgameList(imagePath);
 	}
 }
 

@@ -60,7 +60,6 @@ public class BoardgameController {
 	}
 
 	@ApiOperation(value = "보드게임 상세")
-	@ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "query")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 404, message = "잘못된 요청"),
