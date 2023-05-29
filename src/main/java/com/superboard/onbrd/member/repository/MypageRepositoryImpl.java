@@ -54,9 +54,12 @@ public class MypageRepositoryImpl implements MypageRepository {
 		List<MypageMoreReviewDetail> content = queryFactory
 			.select(Projections.fields(MypageMoreReviewDetail.class,
 				review.id,
-				review.images
+				boardGame.id.as("boardGameId"),
+				boardGame.name.as("boardGameName"),
+				boardGame.image.as("boardGameImage")
 			))
 			.from(review)
+			.join(review.boardgame, boardGame)
 			.where(review.writer.email.eq(params.getEmail()))
 			.orderBy(review.id.desc())
 			.offset(params.getOffset())
@@ -73,6 +76,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 		List<MypageMoreBoardGameDetail> content = queryFactory
 			.select(Projections.fields(MypageMoreBoardGameDetail.class,
 				boardGame.id,
+				boardGame.name,
 				boardGame.image
 			))
 			.from(favoriteBoardgame)
@@ -117,11 +121,13 @@ public class MypageRepositoryImpl implements MypageRepository {
 		return queryFactory
 			.select(Projections.fields(MypageResponse.ReviewCard.class,
 				review.id,
-				review.images
+				boardGame.id.as("boardGameId"),
+				boardGame.name.as("boardGameName"),
+				boardGame.image.as("boardGameImage")
 			))
 			.from(review)
-			.join(review.writer, member)
-			.where(member.email.eq(email))
+			.join(review.boardgame, boardGame)
+			.where(review.writer.email.eq(email))
 			.orderBy(review.id.desc())
 			.limit(reviewCount)
 			.fetch();
@@ -131,6 +137,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 		return queryFactory
 			.select(Projections.fields(MypageResponse.BoardgameCard.class,
 				boardGame.id,
+				boardGame.name,
 				boardGame.image
 			))
 			.from(favoriteBoardgame)

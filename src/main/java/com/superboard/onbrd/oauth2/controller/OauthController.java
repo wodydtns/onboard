@@ -6,8 +6,6 @@ import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class OauthController {
 	private final OauthService oauthService;
 
-	@GetMapping("/sign-in")
-	public ResponseEntity<Long> signIn(@ModelAttribute OauthSignInRequest request) {
+	@PostMapping("/sign-in")
+	public ResponseEntity<Long> signIn(@RequestBody OauthSignInRequest request) {
 		SignInResult result = oauthService.signIn(request);
 		HttpHeaders headers = addTokensToHeader(result.getTokens());
 

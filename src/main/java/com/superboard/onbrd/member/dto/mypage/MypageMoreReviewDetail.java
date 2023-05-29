@@ -1,7 +1,5 @@
 package com.superboard.onbrd.member.dto.mypage;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,5 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MypageMoreReviewDetail {
 	private Long id;
-	private List<String> images;
+	private Long boardGameId;
+	private String boardGameName;
+	private String boardGameImage;
 }

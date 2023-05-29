@@ -32,13 +32,16 @@ public class MypageResponse {
 	@NoArgsConstructor
 	public static class ReviewCard {
 		private Long id;
-		private List<String> images;
+		private Long boardGameId;
+		private String boardGameName;
+		private String boardGameImage;
 	}
 
 	@Getter
 	@NoArgsConstructor
 	public static class BoardgameCard {
 		private Long id;
+		private String name;
 		private String image;
 	}
 }
