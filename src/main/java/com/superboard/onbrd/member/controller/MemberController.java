@@ -1,6 +1,5 @@
 package com.superboard.onbrd.member.controller;
 
-import static com.superboard.onbrd.global.exception.ExceptionCode.FORBIDDEN;
 import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
-import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.MemberInfoResponse;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
@@ -83,13 +81,10 @@ public class MemberController {
 		@ApiResponse(responseCode = "403"),
 		@ApiResponse(responseCode = "404")
 	})
-	@GetMapping("/{memberId}")
-	public ResponseEntity<MemberInfoResponse> getMemberLevel(
-		@PathVariable Long memberId, @AuthenticationPrincipal MemberDetails memberDetails) {
+	@GetMapping("/me")
+	public ResponseEntity<MemberInfoResponse> getMemberLevel(@AuthenticationPrincipal MemberDetails memberDetails) {
 		String loginEmail = memberDetails.getEmail();
-		Member member = memberService.findVerifiedOneById(memberId);
-
-		OnbrdAssert.state(member.getEmail().equals(loginEmail), FORBIDDEN);
+		Member member = memberService.findVerifiedOneByEmail(loginEmail);
 
 		return ResponseEntity.ok(MemberInfoResponse.toDto(member));
 	}
