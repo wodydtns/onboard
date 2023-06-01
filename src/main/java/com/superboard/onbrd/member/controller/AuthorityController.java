@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.member.entity.Member;
-import com.superboard.onbrd.member.entity.MemberRole;
 import com.superboard.onbrd.member.service.MemberService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,11 +23,8 @@ public class AuthorityController {
 	@Tag(name = "관리자 권한 부여")
 	@PatchMapping
 	public ResponseEntity<String> grantAdminAuthority(@AuthenticationPrincipal MemberDetails memberDetails) {
-		String loginEmail = memberDetails.getEmail();
-		Member granted = memberService.findVerifiedOneByEmail(loginEmail);
+		Member member = memberService.grantAdminAuthority(memberDetails.getEmail());
 
-		granted.grantAuthority(MemberRole.ROLE_ADMIN);
-
-		return ResponseEntity.ok(loginEmail);
+		return ResponseEntity.ok(member.getEmail());
 	}
 }

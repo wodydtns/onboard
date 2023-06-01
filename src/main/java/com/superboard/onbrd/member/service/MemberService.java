@@ -33,4 +33,6 @@ public interface MemberService {
 	Member kickMember(Long id);
 
 	AdminMemberDetail getAdminMemberDetail(Long id);
+
+	Member grantAdminAuthority(String email);
 }

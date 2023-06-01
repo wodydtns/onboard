@@ -23,6 +23,6 @@ public class NoticeController {
 	public ResponseEntity<OnbrdSliceResponse<NoticeDetail>> getNotices(@ModelAttribute OnbrdSliceRequest request) {
 		OnbrdSliceResponse<NoticeDetail> response = noticeService.getNotices(request);
 
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(response);
 	}
 }

@@ -16,6 +16,7 @@ import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.dto.password.PasswordCreateCommand;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberRole;
 import com.superboard.onbrd.member.entity.MemberStatus;
 import com.superboard.onbrd.member.repository.MemberRepository;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
@@ -152,6 +153,14 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional(readOnly = true)
 	public AdminMemberDetail getAdminMemberDetail(Long id) {
 		return memberRepository.getAdminMemberDetail(id);
+	}
+
+	@Override
+	public Member grantAdminAuthority(String email) {
+		Member member = findVerifiedOneByEmail(email);
+		member.grantAuthority(MemberRole.ROLE_ADMIN);
+
+		return member;
 	}
 
 	private boolean isEmailExists(String email) {
