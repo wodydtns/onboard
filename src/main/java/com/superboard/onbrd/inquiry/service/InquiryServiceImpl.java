@@ -13,8 +13,8 @@ import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
+import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
-import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryUpdateCommand;
 import com.superboard.onbrd.inquiry.entity.Inquiry;
 import com.superboard.onbrd.inquiry.repository.InquiryRepository;
@@ -31,9 +31,8 @@ public class InquiryServiceImpl implements InquiryService {
 	private final MemberService memberService;
 
 	@Override
-	@Transactional(readOnly = true)
-	public InquiryMyListResponse getMyInquiries(String email) {
-		return inquiryRepository.getMyInquiries(email);
+	public OnbrdSliceResponse<InquiryGetResponse> getMyInquiries(InquiryGetQuery query) {
+		return inquiryRepository.getMyInquiries(query);
 	}
 
 	@Override

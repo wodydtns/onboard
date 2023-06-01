@@ -5,13 +5,13 @@ import com.superboard.onbrd.admin.dto.InquiryAnswerCommand;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
+import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
-import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryUpdateCommand;
 import com.superboard.onbrd.inquiry.entity.Inquiry;
 
 public interface InquiryService {
-	InquiryMyListResponse getMyInquiries(String email);
+	OnbrdSliceResponse<InquiryGetResponse> getMyInquiries(InquiryGetQuery query);
 
 	OnbrdSliceResponse<AdminInquiryDetail> getAdminInquiries(OnbrdSliceRequest params);
 

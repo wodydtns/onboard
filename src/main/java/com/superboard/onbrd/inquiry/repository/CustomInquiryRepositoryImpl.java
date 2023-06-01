@@ -15,8 +15,8 @@ import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
+import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
-import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,21 +46,28 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 	}
 
 	@Override
-	public InquiryMyListResponse getMyInquiries(String email) {
-		List<InquiryMyListResponse.InquiryCard> MyInquiries = queryFactory
-			.select(Projections.fields(InquiryMyListResponse.InquiryCard.class,
+	public OnbrdSliceResponse<InquiryGetResponse> getMyInquiries(InquiryGetQuery query) {
+		List<InquiryGetResponse> content = queryFactory
+			.select(Projections.fields(InquiryGetResponse.class,
 				inquiry.id,
 				inquiry.title,
 				inquiry.content,
 				inquiry.isAnswered,
+				inquiry.answer,
+				inquiry.answeredAt,
+				inquiry.admin.nickname.as("adminNickname"),
 				inquiry.createdAt
 			))
 			.from(inquiry)
-			.where(inquiry.member.email.eq(email))
+			.where(inquiry.member.email.eq(query.getEmail()))
 			.orderBy(inquiry.id.desc())
+			.offset(query.getOffset())
+			.limit(query.getLimit() + 1)
 			.fetch();
 
-		return InquiryMyListResponse.from(MyInquiries);
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, query.getLimit());
+
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override

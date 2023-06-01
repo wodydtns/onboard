@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryCreateCommand;
+import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
-import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 import com.superboard.onbrd.inquiry.dto.InquiryPatchRequest;
 import com.superboard.onbrd.inquiry.dto.InquiryPostRequest;
 import com.superboard.onbrd.inquiry.dto.InquiryUpdateCommand;
@@ -46,8 +49,10 @@ public class InquiryController {
 	@ApiOperation(value = "1:1 문의 조회")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping
-	public ResponseEntity<InquiryMyListResponse> getMyInquiries(@AuthenticationPrincipal MemberDetails memberDetails) {
-		InquiryMyListResponse response = inquiryService.getMyInquiries(memberDetails.getEmail());
+	public ResponseEntity<OnbrdSliceResponse<InquiryGetResponse>> getMyInquiries(
+		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute OnbrdSliceRequest request) {
+		OnbrdSliceResponse<InquiryGetResponse> response = inquiryService.getMyInquiries(InquiryGetQuery.of(
+			memberDetails.getEmail(), request.getOffset(), request.getLimit()));
 
 		return ResponseEntity.ok(response);
 	}
