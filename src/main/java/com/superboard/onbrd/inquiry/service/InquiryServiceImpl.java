@@ -69,7 +69,7 @@ public class InquiryServiceImpl implements InquiryService {
 	public Inquiry answerInquiry(InquiryAnswerCommand command) {
 		Inquiry inquiry = findVerifiedOneById(command.getId());
 
-		inquiry.answer(command.getAnswer());
+		inquiry.recieveAnswer(command.getAnswer(), command.getAdminEmail());
 
 		return inquiry;
 	}

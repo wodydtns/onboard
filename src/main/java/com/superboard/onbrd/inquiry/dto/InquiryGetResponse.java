@@ -14,6 +14,6 @@ public class InquiryGetResponse {
 	private Boolean isAnswered;
 	private String answer;
 	private LocalDateTime answeredAt;
-	private String adminNickname;
+	private String adminEmail;
 	private LocalDateTime createdAt;
 }

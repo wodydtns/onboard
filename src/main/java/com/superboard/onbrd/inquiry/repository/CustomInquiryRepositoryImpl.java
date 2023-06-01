@@ -3,6 +3,7 @@ package com.superboard.onbrd.inquiry.repository;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.inquiry.entity.QInquiry.*;
+import static com.superboard.onbrd.member.entity.QMember.*;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 	private final JPAQueryFactory queryFactory;
 
@@ -37,7 +40,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 				inquiry.isAnswered,
 				inquiry.answer,
 				inquiry.answeredAt,
-				inquiry.admin.nickname.as("adminNickname"),
+				inquiry.adminEmail,
 				inquiry.createdAt
 			))
 			.from(inquiry)
@@ -47,6 +50,16 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 
 	@Override
 	public OnbrdSliceResponse<InquiryGetResponse> getMyInquiries(InquiryGetQuery query) {
+		log.error(query.getEmail());
+
+		Long memberId = queryFactory
+			.select(member.id)
+			.from(member)
+			.where(member.email.eq(query.getEmail()))
+			.fetchOne();
+
+		log.error("" + memberId);
+
 		List<InquiryGetResponse> content = queryFactory
 			.select(Projections.fields(InquiryGetResponse.class,
 				inquiry.id,
@@ -54,16 +67,18 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 				inquiry.content,
 				inquiry.isAnswered,
 				inquiry.answer,
+				inquiry.adminEmail,
 				inquiry.answeredAt,
-				inquiry.admin.nickname.as("adminNickname"),
 				inquiry.createdAt
 			))
 			.from(inquiry)
-			.where(inquiry.member.email.eq(query.getEmail()))
+			.where(inquiry.member.id.eq(memberId))
 			.orderBy(inquiry.id.desc())
 			.offset(query.getOffset())
 			.limit(query.getLimit() + 1)
 			.fetch();
+
+		log.error("" + content.size());
 
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, query.getLimit());
 
