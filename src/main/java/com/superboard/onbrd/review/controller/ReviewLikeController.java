@@ -20,14 +20,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Review")
+@Tag(name = "Like")
 @RestController
 @RequestMapping("/api/v1/boardgames/{boardgameId}/reviews/{reviewId}/likes")
 @RequiredArgsConstructor
 public class ReviewLikeController {
 	private final ReviewLikeService reviewLikeService;
 
-	@Tag(name = "Review")
+	@Tag(name = "Like")
 	@ApiOperation(value = "좋아요/좋아요 취소된 리뷰 ID 응답")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {

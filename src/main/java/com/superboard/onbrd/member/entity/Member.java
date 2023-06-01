@@ -71,9 +71,9 @@ public class Member extends BaseEntity {
 	@Column
 	private LocalDateTime lastVisitAt = LocalDateTime.now();
 	@Column
-	private int serialVisitDays = 0;
+	private int serialVisitDays = 1;
 	@Column
-	private int totalAttendDays = 0;
+	private int totalAttendDays = 1;
 
 	@OneToMany
 	@JoinColumn(name = "writer_id")
@@ -218,10 +218,6 @@ public class Member extends BaseEntity {
 		if (likeCount >= 10) {
 			gainBadge(GAIN_TEN_REVIEW_LIKES);
 		}
-	}
-
-	public void loseReviewLike() {
-
 	}
 
 	public void gainAuthority(MemberRole role) {
