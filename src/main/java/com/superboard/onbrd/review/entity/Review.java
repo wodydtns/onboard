@@ -63,13 +63,14 @@ public class Review extends BaseEntity {
 		this.isHidden = true;
 	}
 
-	public void increaseLikeCountOrDecreaseIfCancelLike(boolean isCancelLike) {
-		if (isCancelLike) {
+	public void gainLikeOrLoseIfCanceled(boolean isLikeCanceled) {
+		if (isLikeCanceled) {
 			this.likeCount--;
 			return;
 		}
 
 		this.likeCount++;
+		writer.gainReviewLike(likeCount);
 	}
 
 	@Builder

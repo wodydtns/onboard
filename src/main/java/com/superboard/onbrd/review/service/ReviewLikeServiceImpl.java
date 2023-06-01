@@ -1,7 +1,6 @@
 package com.superboard.onbrd.review.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
-import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
-import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.entity.ReviewLike;
@@ -39,18 +37,14 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
 		reviewLikeOptional.ifPresentOrElse(
 			reviewLike -> {
 				reviewLikeRepository.delete(reviewLike);
-				review.increaseLikeCountOrDecreaseIfCancelLike(true);
+				review.gainLikeOrLoseIfCanceled(true);
 			},
 			() -> {
 				ReviewLike reviewLike = ReviewLike.of(member, review);
 				reviewLikeRepository.save(reviewLike);
-				review.increaseLikeCountOrDecreaseIfCancelLike(false);
+				review.gainLikeOrLoseIfCanceled(false);
 			}
 		);
-
-		writer.increasePoint(REVIEW_LIKED.getPoint());
-		writer.updateLevel(
-			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
 	}
 
 	private void checkOwnReview(String email, Member writer) {

@@ -1,6 +1,7 @@
 package com.superboard.onbrd.member.entity;
 
 import static com.superboard.onbrd.member.entity.ActivityPoint.*;
+import static com.superboard.onbrd.member.entity.Badge.*;
 import static com.superboard.onbrd.member.entity.MemberLevel.*;
 import static com.superboard.onbrd.member.entity.MemberRole.*;
 import static com.superboard.onbrd.member.entity.MemberStatus.*;
@@ -8,6 +9,7 @@ import static java.time.temporal.ChronoUnit.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -18,6 +20,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 import com.superboard.onbrd.global.converter.BadgeSortedSetConverter;
 import com.superboard.onbrd.global.converter.MemberLevelConverter;
@@ -26,6 +30,8 @@ import com.superboard.onbrd.global.converter.MemberStatusConverter;
 import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
+import com.superboard.onbrd.review.entity.Comment;
+import com.superboard.onbrd.review.entity.Review;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -59,7 +65,7 @@ public class Member extends BaseEntity {
 	private Boolean isSocial = false;
 	@Column(nullable = false)
 	@Convert(converter = BadgeSortedSetConverter.class)
-	private SortedSet<Badge> badges = new TreeSet<>(Set.of(Badge.JOIN));
+	private SortedSet<Badge> badges = new TreeSet<>(Set.of(JOIN));
 	@Column(nullable = false)
 	private int passwordChangeDelayCount = 1;
 	@Column
@@ -68,6 +74,13 @@ public class Member extends BaseEntity {
 	private int serialVisitDays = 0;
 	@Column
 	private int totalAttendDays = 0;
+
+	@OneToMany
+	@JoinColumn(name = "writer_id")
+	private List<Review> reviews;
+	@OneToMany
+	@JoinColumn(name = "writer_id")
+	private List<Comment> comments;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
@@ -89,12 +102,30 @@ public class Member extends BaseEntity {
 		return Collections.unmodifiableSet(badges);
 	}
 
+	public List<Review> getReviews() {
+		return Collections.unmodifiableList(reviews);
+	}
+
+	public int getReviewCount() {
+		return reviews.size();
+	}
+
+	public List<Comment> getComments() {
+		return Collections.unmodifiableList(comments);
+	}
+
+	public int getCommentCount() {
+		return comments.size();
+	}
+
 	public void updateNickname(String nickname) {
 		this.nickname = nickname;
 	}
 
 	public void updateProfileCharacter(String profileCharacter) {
 		this.profileCharacter = profileCharacter;
+
+		gainBadge(SET_PROFILE_CHARACTER);
 	}
 
 	public void delayPasswordChange() {
@@ -139,6 +170,58 @@ public class Member extends BaseEntity {
 				increasePoint(ATTENDANCE.getPoint());
 				break;
 		}
+
+		if (totalAttendDays >= 30) {
+			gainBadge(ATTEND_THIRTY_DAYS);
+		} else if (totalAttendDays >= 7) {
+			gainBadge(ATTEND_SEVEN_DAYS);
+		}
+	}
+
+	public void writeReview(Review review) {
+		if (!this.reviews.contains(review)) {
+			this.reviews.add(review);
+		}
+
+		increasePoint(REVIEW_WRITING.getPoint());
+		updateLevel(
+			getLevelCorrespondingPoint(getPoint()));
+
+		gainBadge(POST_FIRST_REVIEW);
+
+		if (getReviewCount() >= 5) {
+			gainBadge(POST_FIVE_REVIEWS);
+		}
+	}
+
+	public void writeComment(Comment comment) {
+		if (!this.comments.contains(comment)) {
+			this.comments.add(comment);
+		}
+
+		increasePoint(COMMENT_WRITING.getPoint());
+		updateLevel(
+			getLevelCorrespondingPoint(getPoint()));
+
+		if (getCommentCount() >= 5) {
+			gainBadge(POST_FIVE_COMMENTS);
+		}
+
+		this.comments.add(comment);
+	}
+
+	public void gainReviewLike(long likeCount) {
+		increasePoint(REVIEW_LIKED.getPoint());
+		updateLevel(
+			MemberLevel.getLevelCorrespondingPoint(getPoint()));
+
+		if (likeCount >= 10) {
+			gainBadge(GAIN_TEN_REVIEW_LIKES);
+		}
+	}
+
+	public void loseReviewLike() {
+
 	}
 
 	public void gainAuthority(MemberRole role) {
