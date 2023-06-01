@@ -7,6 +7,10 @@ import static com.superboard.onbrd.member.entity.MemberStatus.*;
 import static java.time.temporal.ChronoUnit.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -15,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.superboard.onbrd.global.converter.BadgeSortedSetConverter;
 import com.superboard.onbrd.global.converter.MemberLevelConverter;
 import com.superboard.onbrd.global.converter.MemberRoleConverter;
 import com.superboard.onbrd.global.converter.MemberStatusConverter;
@@ -53,6 +58,9 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isSocial = false;
 	@Column(nullable = false)
+	@Convert(converter = BadgeSortedSetConverter.class)
+	private SortedSet<Badge> badges = new TreeSet<>(Set.of(Badge.JOIN));
+	@Column(nullable = false)
 	private int passwordChangeDelayCount = 1;
 	@Column
 	private LocalDateTime lastVisitAt = LocalDateTime.now();
@@ -75,6 +83,10 @@ public class Member extends BaseEntity {
 		member.isSocial = true;
 
 		return member;
+	}
+
+	public Set<Badge> getBadges() {
+		return Collections.unmodifiableSet(badges);
 	}
 
 	public void updateNickname(String nickname) {
@@ -129,8 +141,12 @@ public class Member extends BaseEntity {
 		}
 	}
 
-	public void grantAuthority(MemberRole role) {
+	public void gainAuthority(MemberRole role) {
 		this.role = role;
+	}
+
+	public void gainBadge(Badge badge) {
+		this.badges.add(badge);
 	}
 
 	public void withdraw() {

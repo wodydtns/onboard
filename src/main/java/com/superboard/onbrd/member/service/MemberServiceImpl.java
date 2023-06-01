@@ -158,7 +158,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member grantAdminAuthority(String email) {
 		Member member = findVerifiedOneByEmail(email);
-		member.grantAuthority(MemberRole.ROLE_ADMIN);
+		member.gainAuthority(MemberRole.ROLE_ADMIN);
 
 		return member;
 	}

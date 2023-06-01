@@ -1,24 +1,22 @@
 package com.superboard.onbrd.member.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import com.superboard.onbrd.global.converter.BadgeTypeConverter;
+@Getter
+@RequiredArgsConstructor
+public enum Badge {
+	JOIN("처음이에요!"),
+	POST_FIRST_REVIEW("시작이반이다"),
+	POST_FIVE_REVIEWS("온더보드 홀릭"),
+	ATTEND_FIVE_DAYS("프로출석러"),
+	ATTEND_THIRTY_DAYS("고인물"),
+	SET_PROFILE_CHARACTER("오늘부터 1일"),
+	PUSH_ALARM_ON("놓치지 않을거에요"),
+	POST_FIVE_COMMENTS("무플방위원"),
+	SELECTED_RECOMMENDED_REVIEW("보드게전도사"),
+	GAIN_TEN_REVIEW_LIKES("취향 전도사");
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Badge {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	@Column
-	@Convert(converter = BadgeTypeConverter.class)
-	private BadgeType badgeType;
+	private final String phrase;
 }
+
