@@ -24,6 +24,7 @@ public class MypageResponse {
 	@Getter
 	@NoArgsConstructor
 	public static class TagCard {
+		private Long id;
 		private String name;
 		private TagType type;
 	}
