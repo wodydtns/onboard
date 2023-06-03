@@ -12,7 +12,7 @@ public enum Badge {
 	ATTEND_SEVEN_DAYS("프로출석러"),
 	ATTEND_THIRTY_DAYS("고인물"),
 	SET_PROFILE_CHARACTER("오늘부터 1일"),
-	PUSH_ALARM_ON("놓치지 않을거에요"),
+	SET_PUSH_ALARM_ON("놓치지 않을거에요"),
 	POST_FIVE_COMMENTS("무플방위원회"),
 	SELECTED_RECOMMENDED_REVIEW("보드게전도사"),
 	GAIN_TEN_REVIEW_LIKES("취향 전도사");
