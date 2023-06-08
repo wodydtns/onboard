@@ -2,13 +2,19 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
@@ -19,6 +25,7 @@ import com.superboard.onbrd.review.dto.review.ReviewGetRequest;
 import com.superboard.onbrd.review.dto.review.ReviewPatchRequest;
 import com.superboard.onbrd.review.dto.review.ReviewPostRequest;
 import com.superboard.onbrd.review.dto.review.ReviewUpdateDto;
+import com.superboard.onbrd.review.service.ReviewLikeService;
 import com.superboard.onbrd.review.service.ReviewService;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,6 +45,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class ReviewController {
 	private final ReviewService reviewService;
+	private final ReviewLikeService reviewLikeService;
 
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
@@ -46,11 +54,22 @@ public class ReviewController {
 		@ApiResponse(responseCode = "404")})
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<ReviewByBoardgameDetail>> getReviews(
-		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request) {
+		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request,
+		@AuthenticationPrincipal MemberDetails memberDetails) {
 
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
 
 		OnbrdSliceResponse<ReviewByBoardgameDetail> response = reviewService.getReviewsByBoardgameId(params);
+
+		try {
+			String email = memberDetails.getEmail();
+			response.getContent()
+				.forEach(review -> review.setIsLiked(
+					reviewLikeService.isLikedBy(email, review.getId())));
+		} catch (NullPointerException e) {
+			response.getContent()
+				.forEach(review -> review.setIsLiked(false));
+		}
 
 		return ResponseEntity.ok(response);
 	}

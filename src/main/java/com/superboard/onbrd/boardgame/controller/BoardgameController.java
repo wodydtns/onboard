@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
+import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
 import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
+import com.superboard.onbrd.boardgame.service.FavoriteBoardGameService;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 
 import io.swagger.annotations.Api;
@@ -36,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 @Api(tags = {"BoardGame 정보를 제공하는 Controller"})
 public class BoardgameController {
 	private final BoardGameService boardGameService;
+	private final FavoriteBoardGameService favoriteBoardGameService;
 
 	@ApiOperation(value = "보드게임 검색")
 	@ApiImplicitParams({
@@ -65,13 +69,26 @@ public class BoardgameController {
 		@ApiResponse(code = 404, message = "잘못된 요청"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@GetMapping("/{boardgameId}")
-	public BoardGameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest request) {
+	@GetMapping(value = "/{boardgameId}")
+	public ResponseEntity<BoardGameDetailDto> selectBoardgameInfo(
+		@PathVariable Long boardgameId, HttpServletRequest request,
+		@AuthenticationPrincipal MemberDetails memberDetails) {
+
 		String referer = request.getHeader("Referer");
 		if (ObjectUtils.isEmpty(referer)) {
 			referer = "";
 		}
-		return boardGameService.selectBoardgameInfo(boardgameId, referer);
+
+		BoardGameDetailDto boardGameDetailDto = boardGameService.selectBoardgameInfo(boardgameId, referer);
+
+		try {
+			Boolean isFavorite = favoriteBoardGameService.isFavoriteBy(boardgameId, memberDetails.getEmail());
+			boardGameDetailDto.setIsFavorite(isFavorite);
+		} catch (NullPointerException e) {
+			boardGameDetailDto.setIsFavorite(false);
+		}
+
+		return ResponseEntity.ok(boardGameDetailDto);
 	}
 
 	@ApiOperation(value = "추천 보드게임")

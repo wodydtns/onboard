@@ -29,6 +29,8 @@ public class BoardGameDetailDto {
 	@ApiModelProperty(notes = "보드게임 태그 리스트", example = "신화")
 	private List<Tag> tagList = new ArrayList<>();
 
+	private Boolean isFavorite;
+
 	@QueryProjection
 	public BoardGameDetailDto(Long id, String name, String description, String image, long favoriteCount) {
 		this.id = id;
@@ -37,5 +39,5 @@ public class BoardGameDetailDto {
 		this.image = image;
 		this.favoriteCount = favoriteCount;
 	}
-	
+
 }

@@ -47,6 +47,11 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
 		);
 	}
 
+	@Override
+	public boolean isLikedBy(String email, Long reviewId) {
+		return reviewLikeRepository.existsByMember_EmailAndReview_Id(email, reviewId);
+	}
+
 	private void checkOwnReview(String email, Member writer) {
 		if (writer.getEmail().equals(email)) {
 			throw new BusinessLogicException(LIKE_OWN_REVIEW_NOT_PERMITTED);
