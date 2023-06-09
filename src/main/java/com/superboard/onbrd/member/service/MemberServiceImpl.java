@@ -93,27 +93,24 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedNickname(String nickname) {
-		memberRepository.findByNickname(nickname).ifPresent(
-			member -> {
-				throw new BusinessLogicException(DUPLICATED_NICKNAME,
-					String.format("Nickname %s is duplicated", nickname));
-			});
+		if (memberRepository.existsByNickname(nickname)) {
+			throw new BusinessLogicException(DUPLICATED_NICKNAME,
+				String.format("Nickname %s is duplicated", nickname));
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedEmail(String email) {
-		memberRepository.findByEmail(email).ifPresent(
-			member -> {
-				throw new BusinessLogicException(DUPLICATED_EMAIL,
-					String.format("Email %s is duplicated", email));
-			}
-		);
+		if (memberRepository.existsByEmail(email)) {
+			throw new BusinessLogicException(DUPLICATED_EMAIL,
+				String.format("Email %s is duplicated", email));
+		}
 	}
 
 	@Override
 	public void checkEmailExists(String email) {
-		Assert.isTrue(memberRepository.findByEmail(email).isPresent(), "NOT_SIGNED_EMAIL");
+		Assert.isTrue(memberRepository.existsByEmail(email), "NOT_SIGNED_EMAIL");
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public class ReviewController {
 	@Tag(name = "Review")
 	@ApiOperation(value = "보드게임별 리뷰 목록 조회 / REVIEW_NEWEST: 리뷰 최신순, REVIEW_MOST_LIKE: 리뷰 좋아요 많은순")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewByBoardgameDetail.class))),
+		@ApiResponse(responseCode = "200"),
 		@ApiResponse(responseCode = "404")})
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<ReviewByBoardgameDetail>> getReviews(
