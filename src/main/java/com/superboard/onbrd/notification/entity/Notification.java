@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.superboard.onbrd.global.converter.NotificationTypeConverter;
@@ -36,6 +37,7 @@ public class Notification {
 	private LocalDateTime publishedAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "receiver_id")
 	private Member receiver;
 
 	public void check() {
