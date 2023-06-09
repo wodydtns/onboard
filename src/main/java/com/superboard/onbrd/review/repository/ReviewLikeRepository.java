@@ -10,4 +10,6 @@ import com.superboard.onbrd.review.entity.ReviewLike;
 
 public interface ReviewLikeRepository extends JpaRepository<ReviewLike, Long> {
 	Optional<ReviewLike> findByMemberAndReview(Member member, Review review);
+
+	boolean existsByMember_EmailAndReview_Id(String memberEmail, Long reviewId);
 }

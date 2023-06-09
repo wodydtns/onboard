@@ -20,14 +20,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Comment")
+@Tag(name = "Like")
 @RestController
 @RequestMapping("/api/v1/boardgames/{boardgameId}/reviews/{reviewId}/Comments/{commentId}/likes")
 @RequiredArgsConstructor
 public class CommentLikeController {
 	private final CommentLikeService commentLikeService;
 
-	@Tag(name = "Comment")
+	@Tag(name = "Like")
 	@ApiOperation(value = "댓글 좋아요/좋아요 취소")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@ApiResponses(value = {
@@ -40,7 +40,7 @@ public class CommentLikeController {
 	public ResponseEntity<Long> likeCommentOrCancelLike
 		(@AuthenticationPrincipal MemberDetails memberDetails, @PathVariable Long commentId) {
 		commentLikeService.createCommentLikeOrDeleteIfExist(memberDetails.getEmail(), commentId);
-		
+
 		return ResponseEntity.ok(commentId);
 	}
 }

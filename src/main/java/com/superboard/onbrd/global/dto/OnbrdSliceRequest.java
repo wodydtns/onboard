@@ -10,4 +10,10 @@ import lombok.Setter;
 public class OnbrdSliceRequest {
 	private long offset;
 	private int limit;
+
+	public void rebaseToZero() {
+		if (offset > 0) {
+			offset--;
+		}
+	}
 }

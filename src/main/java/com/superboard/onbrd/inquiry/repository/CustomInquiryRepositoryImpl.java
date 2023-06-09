@@ -3,6 +3,7 @@ package com.superboard.onbrd.inquiry.repository;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.inquiry.entity.QInquiry.*;
+import static com.superboard.onbrd.member.entity.QMember.*;
 
 import java.util.List;
 
@@ -15,14 +16,16 @@ import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
+import com.superboard.onbrd.inquiry.dto.InquiryGetQuery;
 import com.superboard.onbrd.inquiry.dto.InquiryGetResponse;
-import com.superboard.onbrd.inquiry.dto.InquiryMyListResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 	private final JPAQueryFactory queryFactory;
 
@@ -37,7 +40,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 				inquiry.isAnswered,
 				inquiry.answer,
 				inquiry.answeredAt,
-				inquiry.admin.nickname.as("adminNickname"),
+				inquiry.adminEmail,
 				inquiry.createdAt
 			))
 			.from(inquiry)
@@ -46,21 +49,40 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 	}
 
 	@Override
-	public InquiryMyListResponse getMyInquiries(String email) {
-		List<InquiryMyListResponse.InquiryCard> MyInquiries = queryFactory
-			.select(Projections.fields(InquiryMyListResponse.InquiryCard.class,
+	public OnbrdSliceResponse<InquiryGetResponse> getMyInquiries(InquiryGetQuery query) {
+		log.error(query.getEmail());
+
+		Long memberId = queryFactory
+			.select(member.id)
+			.from(member)
+			.where(member.email.eq(query.getEmail()))
+			.fetchOne();
+
+		log.error("" + memberId);
+
+		List<InquiryGetResponse> content = queryFactory
+			.select(Projections.fields(InquiryGetResponse.class,
 				inquiry.id,
 				inquiry.title,
 				inquiry.content,
 				inquiry.isAnswered,
+				inquiry.answer,
+				inquiry.adminEmail,
+				inquiry.answeredAt,
 				inquiry.createdAt
 			))
 			.from(inquiry)
-			.where(inquiry.member.email.eq(email))
+			.where(inquiry.member.id.eq(memberId))
 			.orderBy(inquiry.id.desc())
+			.offset(query.getOffset())
+			.limit(query.getLimit() + 1)
 			.fetch();
 
-		return InquiryMyListResponse.from(MyInquiries);
+		log.error("" + content.size());
+
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, query.getLimit());
+
+		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
 	@Override

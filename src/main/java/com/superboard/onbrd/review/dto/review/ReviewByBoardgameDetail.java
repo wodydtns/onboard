@@ -21,4 +21,5 @@ public class ReviewByBoardgameDetail {
 	private Long writerId;
 	private String profileCharacter;
 	private String nickname;
+	private Boolean isLiked;
 }

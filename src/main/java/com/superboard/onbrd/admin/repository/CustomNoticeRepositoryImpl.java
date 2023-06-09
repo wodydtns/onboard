@@ -30,7 +30,8 @@ public class CustomNoticeRepositoryImpl implements CustomNoticeRepository {
 				notice.id,
 				notice.title,
 				notice.content,
-				notice.admin.nickname.as("admin")
+				notice.admin.nickname.as("admin"),
+				notice.createdAt
 			))
 			.from(notice)
 			.orderBy(notice.id.desc())

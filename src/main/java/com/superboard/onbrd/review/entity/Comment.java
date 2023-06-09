@@ -50,5 +50,9 @@ public class Comment extends BaseEntity {
 		this.content = content;
 		this.writer = writer;
 		this.review = review;
+
+		if (!writer.getComments().contains(this)) {
+			writer.writeComment(this);
+		}
 	}
 }

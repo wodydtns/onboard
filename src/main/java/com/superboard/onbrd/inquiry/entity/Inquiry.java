@@ -35,13 +35,12 @@ public class Inquiry extends BaseEntity {
 	@Column
 	private String answer;
 	@Column
+	private String adminEmail;
+	@Column
 	private LocalDateTime answeredAt;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "admin_id")
-	private Member admin;
 
 	public void updateTitle(String title) {
 		this.title = title;
@@ -51,8 +50,9 @@ public class Inquiry extends BaseEntity {
 		this.content = content;
 	}
 
-	public void answer(String answer) {
+	public void recieveAnswer(String answer, String adminEmail) {
 		this.answer = answer;
+		this.adminEmail = adminEmail;
 	}
 
 	public static Inquiry of(Member member, InquiryCreateCommand command) {

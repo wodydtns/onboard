@@ -108,6 +108,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 	private List<MypageResponse.TagCard> getFavoriteTags(String email) {
 		return queryFactory
 			.select(Projections.fields(MypageResponse.TagCard.class,
+				tag.id,
 				tag.name,
 				tag.type
 			))

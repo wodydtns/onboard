@@ -1,6 +1,7 @@
 package com.superboard.onbrd.admin.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.superboard.onbrd.admin.dto.AdminInquiryDetail;
 import com.superboard.onbrd.admin.dto.InquiryAnswerCommand;
 import com.superboard.onbrd.admin.dto.InquiryAnswerRequest;
+import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.inquiry.entity.Inquiry;
@@ -33,6 +35,8 @@ public class AdminInquiryController {
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminInquiryDetail>> getInquiries(
 		@ModelAttribute OnbrdSliceRequest params) {
+		params.rebaseToZero();
+
 		OnbrdSliceResponse<AdminInquiryDetail> response = inquiryService.getAdminInquiries(params);
 
 		return ResponseEntity.ok(response);
@@ -40,9 +44,13 @@ public class AdminInquiryController {
 
 	@Tag(name = "Admin")
 	@PatchMapping("/{id}")
-	public ResponseEntity<Long> answerInquiry(@PathVariable Long id, @RequestBody InquiryAnswerRequest request) {
+	public ResponseEntity<Long> answerInquiry(
+		@PathVariable Long id,
+		@RequestBody InquiryAnswerRequest request,
+		@AuthenticationPrincipal MemberDetails memberDetails) {
+
 		Inquiry answered = inquiryService.answerInquiry(
-			InquiryAnswerCommand.of(id, request));
+			InquiryAnswerCommand.of(id, request, memberDetails.getEmail()));
 
 		return ResponseEntity.ok(answered.getId());
 	}

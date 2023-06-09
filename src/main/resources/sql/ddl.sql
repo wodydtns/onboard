@@ -1,20 +1,21 @@
 ﻿CREATE TABLE "MEMBER"
 (
-    "ID"                          NUMBER           NOT NULL PRIMARY KEY,
-    "EMAIL"                       VARCHAR2(65)     NOT NULL,
-    "NICKNAME"                    VARCHAR2(20)     NOT NULL,
-    "PROFILE_CHARACTER"           VARCHAR2(100)    NOT NULL,
-    "MEMBER_LEVEL"                VARCHAR2(20)     NOT NULL,
-    "POINT"                       NUMBER           NOT NULL,
-    "STATUS"                      VARCHAR2(10)     NOT NULL,
-    "ROLE"                        VARCHAR(10)      NOT NULL,
-    "IS_SOCIAL"                   NUMBER(1)        NOT NULL,
-    "PASSWORD_CHANGE_DELAY_COUNT" NUMBER DEFAULT 0 NOT NULL,
-    "LAST_VISIT_AT"               DATE             NOT NULL,
-    "SERIAL_VISIT_DAYS"           NUMBER           NOT NULL,
-    "TOTAL_ATTEND_DAYS"           NUMBER           NOT NULL,
-    "CREATED_AT"                  DATE             NOT NULL,
-    "MODIFIED_AT"                 DATE             NOT NULL
+    "ID"                          NUMBER                           NOT NULL PRIMARY KEY,
+    "EMAIL"                       VARCHAR2(65)                     NOT NULL,
+    "NICKNAME"                    VARCHAR2(20)                     NOT NULL,
+    "PROFILE_CHARACTER"           VARCHAR2(100)                    NOT NULL,
+    "MEMBER_LEVEL"                VARCHAR2(20)                     NOT NULL,
+    "POINT"                       NUMBER                           NOT NULL,
+    "STATUS"                      VARCHAR2(10)                     NOT NULL,
+    "ROLE"                        VARCHAR(10)                      NOT NULL,
+    "IS_SOCIAL"                   NUMBER(1)                        NOT NULL,
+    "BADGES"                      VARCHAR2(255) DEFAULT '["JOIN"]' NOT NULL,
+    "PASSWORD_CHANGE_DELAY_COUNT" NUMBER        DEFAULT 0          NOT NULL,
+    "LAST_VISIT_AT"               DATE                             NOT NULL,
+    "SERIAL_VISIT_DAYS"           NUMBER                           NOT NULL,
+    "TOTAL_ATTEND_DAYS"           NUMBER                           NOT NULL,
+    "CREATED_AT"                  DATE                             NOT NULL,
+    "MODIFIED_AT"                 DATE                             NOT NULL
 );
 
 CREATE TABLE "TAG"
@@ -36,8 +37,8 @@ CREATE TABLE "FAVORITE_TAG"
 CREATE TABLE "INQUIRY"
 (
     "ID"          NUMBER         NOT NULL PRIMARY KEY,
-    "MEMBER_ID"   NUMBER         NULL REFERENCES "MEMBER" ("ID") ON DELETE SET NULL,
-    "ADMIN_ID"    NUMBER         NULL REFERENCES "MEMBER" ("ID") ON DELETE SET NULL,
+    "MEMBER_ID"   NUMBER         NOT NULL REFERENCES "MEMBER" ("ID") ON DELETE SET NULL,
+    "ADMIN_EMAIL" VARCHAR2(255)  NULL,
     "TITLE"       VARCHAR2(100)  NOT NULL,
     "CONTENT"     VARCHAR2(4000) NOT NULL,
     "IS_ANSWERED" NUMBER(1)      NOT NULL,
@@ -88,7 +89,7 @@ CREATE TABLE "REVIEW_LIKE"
     "MODIFIED_AT" DATE   NOT NULL
 );
 
-CREATE TABLE "COMMENT"
+CREATE TABLE "COMMENTS"
 (
     "ID"          NUMBER              NOT NULL PRIMARY KEY,
     "WRITER_ID"   NUMBER              NULL REFERENCES "MEMBER" ("ID") ON DELETE SET NULL,
@@ -103,7 +104,7 @@ CREATE TABLE "COMMENT_LIKE"
 (
     "ID"          NUMBER NOT NULL PRIMARY KEY,
     "MEMBER_ID"   NUMBER NOT NULL REFERENCES "MEMBER" ("ID") ON DELETE CASCADE,
-    "COMMENT_ID"  NUMBER NOT NULL REFERENCES "COMMENT" ("ID") ON DELETE CASCADE,
+    "COMMENT_ID"  NUMBER NOT NULL REFERENCES "COMMENTS" ("ID") ON DELETE CASCADE,
     "CREATED_AT"  DATE   NOT NULL,
     "MODIFIED_AT" DATE   NOT NULL
 );
@@ -163,3 +164,13 @@ CREATE TABLE "BADGE"
     "ID"         NUMBER        NOT NULL PRIMARY KEY,
     "BADGE_TYPE" VARCHAR2(100) NOT NULL
 );
+
+CREATE TABLE "NOTIFICATION"
+(
+    "ID"                NUMBER         NOT NULL PRIMARY KEY,
+    "NOTIFICATION_TYPE" VARCHAR2(50)   NOT NULL,
+    "PAYLOAD"           VARCHAR2(4000) NOT NULL,
+    "IS_CHECKED"        NUMBER(1)      NOT NULL,
+    "PUSHED_AT"         DATE           NOT NULL,
+    "RECEIVER_ID"       NUMBER         REFERENCES "MEMBER" ("ID") ON DELETE SET NULL
+)

@@ -16,6 +16,7 @@ import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.dto.password.PasswordCreateCommand;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.entity.MemberRole;
 import com.superboard.onbrd.member.entity.MemberStatus;
 import com.superboard.onbrd.member.repository.MemberRepository;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
@@ -92,27 +93,24 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedNickname(String nickname) {
-		memberRepository.findByNickname(nickname).ifPresent(
-			member -> {
-				throw new BusinessLogicException(DUPLICATED_NICKNAME,
-					String.format("Nickname %s is duplicated", nickname));
-			});
+		if (memberRepository.existsByNickname(nickname)) {
+			throw new BusinessLogicException(DUPLICATED_NICKNAME,
+				String.format("Nickname %s is duplicated", nickname));
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public void checkDuplicatedEmail(String email) {
-		memberRepository.findByEmail(email).ifPresent(
-			member -> {
-				throw new BusinessLogicException(DUPLICATED_EMAIL,
-					String.format("Email %s is duplicated", email));
-			}
-		);
+		if (memberRepository.existsByEmail(email)) {
+			throw new BusinessLogicException(DUPLICATED_EMAIL,
+				String.format("Email %s is duplicated", email));
+		}
 	}
 
 	@Override
 	public void checkEmailExists(String email) {
-		Assert.isTrue(memberRepository.findByEmail(email).isPresent(), "NOT_SIGNED_EMAIL");
+		Assert.isTrue(memberRepository.existsByEmail(email), "NOT_SIGNED_EMAIL");
 	}
 
 	@Override
@@ -152,6 +150,14 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional(readOnly = true)
 	public AdminMemberDetail getAdminMemberDetail(Long id) {
 		return memberRepository.getAdminMemberDetail(id);
+	}
+
+	@Override
+	public Member grantAdminAuthority(String email) {
+		Member member = findVerifiedOneByEmail(email);
+		member.gainAuthority(MemberRole.ROLE_ADMIN);
+
+		return member;
 	}
 
 	private boolean isEmailExists(String email) {

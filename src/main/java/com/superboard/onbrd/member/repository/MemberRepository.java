@@ -9,5 +9,7 @@ import com.superboard.onbrd.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long>, CustomMemberRepository {
 	Optional<Member> findByEmail(String email);
 
-	Optional<Member> findByNickname(String nickname);
+	boolean existsByEmail(String email);
+
+	boolean existsByNickname(String nickname);
 }

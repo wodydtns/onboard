@@ -1,22 +1,27 @@
 package com.superboard.onbrd.review.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
-import static com.superboard.onbrd.member.entity.ActivityPoint.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.boardgame.entity.BoardGame;
@@ -27,7 +32,6 @@ import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.member.entity.Member;
-import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
@@ -38,7 +42,6 @@ import com.superboard.onbrd.review.entity.Review;
 import com.superboard.onbrd.review.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Service
 @Transactional
@@ -62,8 +65,8 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public Review crewateReview(ReviewCreateDto dto,  List<String> images) {
-		if(!images.isEmpty()){
+	public Review crewateReview(ReviewCreateDto dto, List<String> images) {
+		if (!images.isEmpty()) {
 			List<String> imageList = processImages(images);
 			dto.setImages(imageList);
 		}
@@ -79,9 +82,7 @@ public class ReviewServiceImpl implements ReviewService {
 			.images(dto.getImages())
 			.build();
 
-		writer.increasePoint(REVIEW_WRITING.getPoint());
-		writer.updateLevel(
-			MemberLevel.getLevelCorrespondingPoint(writer.getPoint()));
+		writer.writeReview(created);
 
 		return reviewRepository.save(created);
 	}
@@ -145,7 +146,8 @@ public class ReviewServiceImpl implements ReviewService {
 		File file = tempFile.toFile();
 		String fileName = file.getName();
 		String contentType = Files.probeContentType(tempFile);
-		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(), file.getParentFile());
+		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int)file.length(),
+			file.getParentFile());
 		InputStream input = new FileInputStream(file);
 		OutputStream os = fileItem.getOutputStream();
 		IOUtils.copy(input, os);
