@@ -98,6 +98,10 @@ public class Member extends BaseEntity {
 		return member;
 	}
 
+	public boolean hasEmail(String email) {
+		return this.email.equals(email);
+	}
+
 	public Set<Badge> getBadges() {
 		return Collections.unmodifiableSet(badges);
 	}
