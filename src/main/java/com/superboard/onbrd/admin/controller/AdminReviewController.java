@@ -29,6 +29,8 @@ public class AdminReviewController {
 	@Tag(name = "Admin")
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminReviewDetail>> getReviews(@ModelAttribute OnbrdSliceRequest params) {
+		params.rebaseToZero();
+
 		OnbrdSliceResponse<AdminReviewDetail> response = reviewService.getAdminReviews(params);
 
 		return ResponseEntity.ok(response);

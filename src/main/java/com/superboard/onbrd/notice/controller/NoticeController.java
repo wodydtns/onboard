@@ -21,6 +21,8 @@ public class NoticeController {
 
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<NoticeDetail>> getNotices(@ModelAttribute OnbrdSliceRequest request) {
+		request.rebaseToZero();
+
 		OnbrdSliceResponse<NoticeDetail> response = noticeService.getNotices(request);
 
 		return ResponseEntity.ok(response);

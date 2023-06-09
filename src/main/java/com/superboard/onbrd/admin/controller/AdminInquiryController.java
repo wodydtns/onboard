@@ -35,6 +35,8 @@ public class AdminInquiryController {
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminInquiryDetail>> getInquiries(
 		@ModelAttribute OnbrdSliceRequest params) {
+		params.rebaseToZero();
+
 		OnbrdSliceResponse<AdminInquiryDetail> response = inquiryService.getAdminInquiries(params);
 
 		return ResponseEntity.ok(response);

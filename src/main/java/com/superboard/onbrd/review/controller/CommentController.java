@@ -111,6 +111,8 @@ public class CommentController {
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<CommentDetail>> getCommentsByReviewId(
 		@PathVariable Long reviewId, @ModelAttribute OnbrdSliceRequest request) {
+		request.rebaseToZero();
+
 		OnbrdSliceResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId, request);
 
 		return ResponseEntity.ok(response);

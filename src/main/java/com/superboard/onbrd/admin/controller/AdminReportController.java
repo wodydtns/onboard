@@ -30,6 +30,8 @@ public class AdminReportController {
 
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminReportDetail>> getReports(@ModelAttribute OnbrdSliceRequest params) {
+		params.rebaseToZero();
+
 		OnbrdSliceResponse<AdminReportDetail> response = reportService.getAdminReports(params);
 
 		return ResponseEntity.ok(response);

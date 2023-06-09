@@ -51,6 +51,8 @@ public class InquiryController {
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<InquiryGetResponse>> getMyInquiries(
 		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute OnbrdSliceRequest request) {
+		request.rebaseToZero();
+
 		OnbrdSliceResponse<InquiryGetResponse> response = inquiryService.getMyInquiries(InquiryGetQuery.of(
 			memberDetails.getEmail(), request.getOffset(), request.getLimit()));
 

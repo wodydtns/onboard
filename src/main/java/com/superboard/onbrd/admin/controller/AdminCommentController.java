@@ -30,6 +30,8 @@ public class AdminCommentController {
 	@GetMapping
 	public ResponseEntity<OnbrdSliceResponse<AdminCommentDetail>> getComments(
 		@ModelAttribute OnbrdSliceRequest params) {
+		params.rebaseToZero();
+
 		OnbrdSliceResponse<AdminCommentDetail> response = commentService.getAdminComment(params);
 
 		return ResponseEntity.ok(response);
