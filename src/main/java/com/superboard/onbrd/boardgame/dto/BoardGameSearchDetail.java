@@ -15,4 +15,8 @@ public class BoardGameSearchDetail {
 	private String name;
 	@ApiModelProperty(notes = "boardgame 이미지")
 	private String image;
+
+	private float grade;
+
+
 }

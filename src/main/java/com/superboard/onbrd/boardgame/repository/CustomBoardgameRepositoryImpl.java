@@ -4,6 +4,7 @@ import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.boardgame.entity.QNonSearchClickLog.*;
 import static com.superboard.onbrd.boardgame.entity.QSearchClickLog.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
+import static com.superboard.onbrd.member.entity.QMember.member;
 import static com.superboard.onbrd.tag.entity.QBoardGameTag.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
@@ -11,8 +12,11 @@ import static com.superboard.onbrd.review.entity.QReview.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.superboard.onbrd.boardgame.dto.*;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
+import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -20,10 +24,6 @@ import org.springframework.util.StringUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
-import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.tag.entity.Tag;
@@ -43,6 +43,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		BooleanExpression nameExpr = boardgameNameLike(boardgameSearchByTagRequest.getName());
 		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
 
+		// FIXME : boardgame : boardgameTag  - 1 : N -> groupby로 해결했으므로 제대로 수정 필요
 		List<BoardGameSearchDetail> content = queryFactory
 				.select(Projections.fields(BoardGameSearchDetail.class,
 						boardGame.id,
@@ -53,19 +54,41 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 				.join(boardGameTag.boardGame, boardGame)
 				.join(boardGameTag.tag, tag)
 				.where(nameExpr, tagExpr)
-				.orderBy(tag.id.asc())
+				.groupBy(boardGame.id,boardGame.name,boardGame.image)
+				.orderBy(boardGame.id.asc())
 				.offset(boardgameSearchByTagRequest.getOffset())
 				.limit(boardgameSearchByTagRequest.getLimit() + 1)
 				.fetch();
 
-		OnbrdSliceInfo pageInfo = getSliceInfo(content, boardgameSearchByTagRequest.getLimit());
+		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
+				.select(Projections.constructor(BoardGameGroupByGrade.class,
+						boardGame.id.as("id"),
+						review.grade.avg().round().as("grade")
+				))
+				.from(review)
+				.join(review.boardgame, boardGame)
+				.groupBy(boardGame.id)
+				.orderBy(boardGame.id.asc())
+				.fetch();
+		// FIXME : 임시 코드 - getSliceInfo 메서드 return 시 content 내용이 사라짐 - 임시로 list를 복사하는 형태로 구현
+		List<BoardGameSearchDetail> pageContent =  new ArrayList<>(content);
+		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
 			String imageName = boardgame.getImage();
+
 			boardgame.setImage(imagePath + imageName);
+
+			// Compare id and set the grade
+			for (var boardGameGrade : boardGameGroupByGrades) {
+				if (boardgame.getId().equals(boardGameGrade.getId())) {
+					boardgame.setGrade((float) boardGameGrade.getGrade());
+					break;
+				}
+			}
 		}
 
-		return new OnbrdSliceResponse<>(pageInfo, content);
+		return new OnbrdSliceResponse<BoardGameSearchDetail>(pageInfo, content);
 	}
 
 	private BooleanExpression tagIsIn(List<Long> tagIds) {
@@ -120,11 +143,32 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.limit(boardgameSearchByTagRequest.getLimit() + 1)
 			.fetch();
 
-		OnbrdSliceInfo pageInfo = getSliceInfo(content, boardgameSearchByTagRequest.getLimit());
+		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
+				.select(Projections.constructor(BoardGameGroupByGrade.class,
+						boardGame.id.as("id"),
+						review.grade.avg().round().as("grade")
+				))
+				.from(review)
+				.join(review.boardgame, boardGame)
+				.groupBy(boardGame.id)
+				.orderBy(boardGame.id.asc())
+				.fetch();
+
+		// FIXME : 임시 코드 - getSliceInfo 메서드 return 시 content 내용이 사라짐 - 임시로 list를 복사하는 형태로 구현
+		List<BoardGameSearchDetail> pageContent =  new ArrayList<>(content);
+		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
 			String imageName = boardgame.getImage();
 			boardgame.setImage(imagePath + imageName);
+
+			// Compare id and set the grade
+			for (var boardGameGrade : boardGameGroupByGrades) {
+				if (boardgame.getId().equals(boardGameGrade.getId())) {
+					boardgame.setGrade((float) boardGameGrade.getGrade());
+					break;
+				}
+			}
 		}
 
 		return new OnbrdSliceResponse<>(pageInfo, content);

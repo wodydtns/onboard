@@ -16,13 +16,16 @@ public class BoardGameDetailDto {
 
 	@ApiModelProperty(notes = "보드게임 상세 아이디", example = "1")
 	private Long id;
+
 	@ApiModelProperty(notes = "보드게임 이름", example = "Bramlisim")
 	private String name;
-	@ApiModelProperty(notes = "보드게임 설명", example = "Bramlisim is ....")
 
+	@ApiModelProperty(notes = "보드게임 설명", example = "Bramlisim is ....")
 	private String description;
+
 	@ApiModelProperty(notes = "보드게임 이미지", example = "Bramlisim.png")
 	private String image;
+
 	@ApiModelProperty(notes = "보드게임 좋아요 수", example = "1")
 	private long favoriteCount = 0;
 
@@ -37,5 +40,4 @@ public class BoardGameDetailDto {
 		this.image = image;
 		this.favoriteCount = favoriteCount;
 	}
-	
 }
