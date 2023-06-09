@@ -107,11 +107,4 @@ public class BoardgameController {
         return boardGameService.selectTop10BoardgameList();
     }
 
-    @ApiOperation(value = "보드게임 좋아요 증가")
-    @PatchMapping("/{boardgameId}/likes")
-    @ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
-    public ResponseEntity<Void> updateBoardGameLikes(@RequestBody FavoriteBoardGameRequest request) {
-        favoriteBoardGameService.updateBoardGameLikes(request);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 }
