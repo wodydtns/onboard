@@ -68,6 +68,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 				))
 				.from(review)
 				.join(review.boardgame, boardGame)
+				.where(nameExpr, tagExpr)
 				.groupBy(boardGame.id)
 				.orderBy(boardGame.id.asc())
 				.fetch();
@@ -93,7 +94,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	private BooleanExpression boardgameNameLike(String boardgameName) {
-		return StringUtils.hasText(boardgameName) ?  boardGame.name.like(boardgameName) : null ;
+		return StringUtils.hasText(boardgameName) ?  boardGame.name.like('%' + boardgameName + '%') : null ;
 	}
 
 	@Override
