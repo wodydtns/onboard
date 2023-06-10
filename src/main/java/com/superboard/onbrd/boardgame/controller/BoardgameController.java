@@ -1,13 +1,18 @@
 package com.superboard.onbrd.boardgame.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.boardgame.dto.*;
 import com.superboard.onbrd.boardgame.service.FavoriteBoardGameService;
+import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +37,8 @@ public class BoardgameController {
     private final BoardGameService boardGameService;
 
     private final FavoriteBoardGameService favoriteBoardGameService;
+
+    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "보드게임 검색")
     @ApiImplicitParams({
@@ -88,7 +95,7 @@ public class BoardgameController {
     }
 
     @ApiOperation(value = "보드게임 좋아요 증가")
-    @PatchMapping("/updateFavorite")
+    @PatchMapping("/updateFavoriteCount")
     @ApiImplicitParam(name = "boardgameId", value = "보드게임 id", required = true, dataType = "Long", paramType = "path")
     public ResponseEntity<Void> updateFavoriteCount(Long id) {
         long count = boardGameService.updateFavoriteCount(id);
@@ -107,4 +114,16 @@ public class BoardgameController {
         return boardGameService.selectTop10BoardgameList();
     }
 
+    @ApiOperation(value = "보드게임 좋아요 여부")
+    @PatchMapping("/{boardGameId}/updateFavoriteBoardgameLikes")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "boardGameId", value = "보드게임 id", required = false, dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "favoriteBoardGameLikesYn", value = "보드게임 좋아요 toggle", required = false, dataType = "String", paramType = "query"),
+    })
+    public ResponseEntity<Void> updateFavoriteBoardgameLikes(@PathVariable Long boardGameId, @RequestParam String favoriteBoardGameLikesYn,
+                                                             @AuthenticationPrincipal MemberDetails memberDetails){
+        Optional<Member> member = memberRepository.findByEmail(memberDetails.getEmail());
+        boardGameService.updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand.of(member.get().getId(), boardGameId,favoriteBoardGameLikesYn));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

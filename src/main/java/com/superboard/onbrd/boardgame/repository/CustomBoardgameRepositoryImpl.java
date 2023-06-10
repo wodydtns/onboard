@@ -8,6 +8,7 @@ import static com.superboard.onbrd.member.entity.QMember.member;
 import static com.superboard.onbrd.tag.entity.QBoardGameTag.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
+import static com.superboard.onbrd.boardgame.entity.QFavoriteBoardgame.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -183,6 +184,14 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	public void updateClickCount(Long id) {
 		queryFactory.update(boardGame).where(boardGame.id.eq(id))
 			.set(boardGame.clickCount, boardGame.clickCount.add(1)).execute();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand command) {
+		return queryFactory.update(favoriteBoardgame)
+				.set(favoriteBoardgame.favoriteBoardgameLikesYn, command.getFavoriteBoardGameLikesYn())
+				.where(favoriteBoardgame.boardgame.id.eq(command.getBoardGameId()).and(favoriteBoardgame.member.id.eq(command.getMemberId()))).execute();
 	}
 
 	@Override

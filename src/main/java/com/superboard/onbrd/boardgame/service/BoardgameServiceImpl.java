@@ -5,14 +5,11 @@ import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 import java.util.List;
 import java.util.Optional;
 
+import com.superboard.onbrd.boardgame.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
 import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.boardgame.entity.NonSearchClickLog;
 import com.superboard.onbrd.boardgame.entity.SearchClickLog;
@@ -97,6 +94,11 @@ public class BoardgameServiceImpl implements BoardGameService {
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
 		return boardgameRepository.selectTop10BoardgameList();
+	}
+
+	@Override
+	public Long updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand command) {
+		return boardgameRepository.updateFavoriteBoardgameLikes(command);
 	}
 }
 

@@ -1,12 +1,6 @@
 package com.superboard.onbrd.boardgame.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.entity.Member;
@@ -28,4 +22,8 @@ public class FavoriteBoardgame extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "boardgame_id")
 	private BoardGame boardgame;
+
+	@Column
+	private String favoriteBoardgameLikesYn;
+
 }
