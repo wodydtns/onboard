@@ -26,8 +26,6 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 @Transactional
 public class BoardgameServiceImpl implements BoardGameService {
 
-	private final String imagePath = "https://objectstorage.ap-seoul-1.oraclecloud.com/n/cnjolvapcoti/b/onboard/o/";
-
 	@Autowired
 	private BoardgameRepository boardgameRepository;
 
@@ -42,14 +40,12 @@ public class BoardgameServiceImpl implements BoardGameService {
 	public OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
-		return boardgameRepository.searchBoardgameList(boardgameSearchByTagRequest, imagePath);
+		return boardgameRepository.searchBoardgameList(boardgameSearchByTagRequest);
 	}
 
 	@Override
 	public BoardGameDetailDto selectBoardgameInfo(Long boardgameId, String referer) {
 		BoardGameDetailDto boardgameDetail = boardgameRepository.selectBoardgameInfo(boardgameId);
-		String imageName = boardgameDetail.getImage();
-		boardgameDetail.setImage(imagePath + imageName);
 
 		// 추후 refactoring 필요
 		if (referer.contains("searchByRecommand")) {
@@ -81,7 +77,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
-		return boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest, imagePath);
+		return boardgameRepository.selectRecommandBoardgameList(boardgameSearchByTagRequest);
 	}
 
 	@Override
@@ -100,7 +96,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public List<TopBoardgameDto> selectTop10BoardgameList() {
-		return boardgameRepository.selectTop10BoardgameList(imagePath);
+		return boardgameRepository.selectTop10BoardgameList();
 	}
 }
 

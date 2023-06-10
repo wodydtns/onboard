@@ -38,7 +38,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 
 	@Override
 	public OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
-		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
 		BooleanExpression nameExpr = boardgameNameLike(boardgameSearchByTagRequest.getName());
 		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
@@ -75,10 +75,6 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
-			String imageName = boardgame.getImage();
-
-			boardgame.setImage(imagePath + imageName);
-
 			// Compare id and set the grade
 			for (var boardGameGrade : boardGameGroupByGrades) {
 				if (boardgame.getId().equals(boardGameGrade.getId())) {
@@ -108,6 +104,17 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.from(boardGame).where(boardGame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
 			.where(boardGameTag.boardGame.id.eq(boardgameId)).fetch();
+		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
+				.select(Projections.constructor(BoardGameGroupByGrade.class,
+						boardGame.id.as("id"),
+						review.grade.avg().round().as("grade")
+				))
+				.from(review)
+				.join(review.boardgame, boardGame)
+				.where(boardGame.id.eq(boardgameId))
+				.groupBy(boardGame.id)
+				.orderBy(boardGame.id.asc())
+				.fetch();
 		boardgameDetail.setTagList(tagList);
 		return boardgameDetail;
 	}
@@ -123,7 +130,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 
 	@Override
 	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
-		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath) {
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
 		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
 
@@ -159,9 +166,6 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
-			String imageName = boardgame.getImage();
-			boardgame.setImage(imagePath + imageName);
-
 			// Compare id and set the grade
 			for (var boardGameGrade : boardGameGroupByGrades) {
 				if (boardgame.getId().equals(boardGameGrade.getId())) {
@@ -182,17 +186,13 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	}
 
 	@Override
-	public List<TopBoardgameDto> selectTop10BoardgameList(String imagePath) {
+	public List<TopBoardgameDto> selectTop10BoardgameList() {
 		List<TopBoardgameDto> top10BoardgameList = queryFactory.select(
 				Projections.constructor(TopBoardgameDto.class, boardGame.id, boardGame.name,boardGame.image)).from(searchClickLog)
 			.join(searchClickLog.boardgame, boardGame)
 			.orderBy(searchClickLog.clickCount.desc())
 			.limit(10)
 			.fetch();
-		for (var boardgame : top10BoardgameList) {
-			String imageName = boardgame.getImage();
-			boardgame.setImage(imagePath + imageName);
-		}
 		return top10BoardgameList;
 	}
 
