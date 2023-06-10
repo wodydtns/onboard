@@ -11,14 +11,14 @@ import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 public interface CustomBoardgameRepository {
 
 	OnbrdSliceResponse<BoardGameSearchDetail> searchBoardgameList(
-		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath);
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest);
 
 	public BoardGameDetailDto selectBoardgameInfo(Long boardgameId);
 
 	OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
-		BoardgameSearchByTagRequest boardgameSearchByTagRequest, String imagePath);
+		BoardgameSearchByTagRequest boardgameSearchByTagRequest);
 
-	public List<TopBoardgameDto> selectTop10BoardgameList(String imagePath);
+	public List<TopBoardgameDto> selectTop10BoardgameList();
 
 	public Long updateFavoriteCount(Long id);
 
