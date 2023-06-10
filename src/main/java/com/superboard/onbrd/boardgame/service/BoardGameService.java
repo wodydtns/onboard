@@ -2,10 +2,7 @@ package com.superboard.onbrd.boardgame.service;
 
 import java.util.List;
 
-import com.superboard.onbrd.boardgame.dto.BoardGameDetailDto;
-import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
-import com.superboard.onbrd.boardgame.dto.BoardgameSearchByTagRequest;
-import com.superboard.onbrd.boardgame.dto.TopBoardgameDto;
+import com.superboard.onbrd.boardgame.dto.*;
 import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 
@@ -23,4 +20,6 @@ public interface BoardGameService {
 	BoardGame findVerifiedOneById(Long id);
 
 	Long updateFavoriteCount(Long id);
+
+	public Long updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand command);
 }
