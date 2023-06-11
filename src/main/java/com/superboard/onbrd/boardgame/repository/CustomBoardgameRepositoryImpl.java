@@ -45,6 +45,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
 
 		// FIXME : boardgame : boardgameTag  - 1 : N -> groupby로 해결했으므로 제대로 수정 필요
+		// FIXME : selectRecommandBoardgameList 참조 - root path가 달라도 join하는 방법을 찾았음
 		List<BoardGameSearchDetail> content = queryFactory
 				.select(Projections.fields(BoardGameSearchDetail.class,
 						boardGame.id,
@@ -146,12 +147,18 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			))
 			.from(nonSearchClickLog)
 			.join(nonSearchClickLog.boardgame, boardGame)
-			.where(nonSearchClickLog.clickAt.after(startDate) , tagExpr)
-			.orderBy(boardGame.clickCount.desc())
+			.leftJoin(boardGame.boardGameTags, boardGameTag)
+			.leftJoin(boardGameTag.tag, tag)
+				.groupBy(boardGame.id,boardGame.name,boardGame.image)
+				.where(nonSearchClickLog.clickAt.after(startDate) , tagExpr)
+			//.orderBy(boardGame.clickCount.desc())
 			.offset(boardgameSearchByTagRequest.getOffset())
 			.limit(boardgameSearchByTagRequest.getLimit() + 1)
 			.fetch();
 
+		/* FIXME : boardgame 숫자를 제한하기 위해 .where(nonSearchClickLog.clickAt.after(startDate) , tagExpr) 조건을 걸 수없음
+			위의 코드와 통합하는 방법도 있어보임    
+		 */
 		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
 				.select(Projections.constructor(BoardGameGroupByGrade.class,
 						boardGame.id.as("id"),
