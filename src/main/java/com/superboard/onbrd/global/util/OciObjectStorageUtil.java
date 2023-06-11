@@ -186,14 +186,17 @@ public class OciObjectStorageUtil {
 		
 		String namespaceName = getNameSpaceName(client);
 		for (String imageName : imageList) {
+			if(imageName == null ){
+				return ;
+			}
 			String objectName = filePath + imageName;
-			DeleteObjectRequest request = 
+			DeleteObjectRequest request =
 					DeleteObjectRequest.builder()
 					.bucketName(bucketName)
 					.namespaceName(namespaceName)
 					.objectName(objectName)
 					.build();
-			
+
 			client.deleteObject(request);
 		}
         client.close();

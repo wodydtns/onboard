@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -166,9 +167,9 @@ public class ReviewServiceImpl implements ReviewService {
 	public void deleteReviewById(Long id) {
 		Review deleted = findVerifiedOneById(id);
 		List<String> imageList = deleted.getImages();
-		if (!imageList.isEmpty()) {
+		if (!CollectionUtils.isEmpty(imageList) ) {
+			String filePath = "review/";
 			try {
-				String filePath = "review/";
 				ociObjectStorageUtil.deleteObject(imageList, filePath);
 			} catch (Exception e) {
 				e.printStackTrace();
