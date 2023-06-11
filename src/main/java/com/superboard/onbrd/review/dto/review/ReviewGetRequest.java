@@ -18,7 +18,7 @@ public class ReviewGetRequest {
 	private OrderBy orderBy;
 
 	public void rebaseToZero() {
-		if (offset > 1) {
+		if (offset > 0) {
 			offset--;
 		}
 	}

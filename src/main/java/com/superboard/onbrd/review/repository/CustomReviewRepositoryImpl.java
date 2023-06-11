@@ -3,13 +3,17 @@ package com.superboard.onbrd.review.repository;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
+import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
@@ -54,6 +58,9 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 
 	@Override
 	public OnbrdSliceResponse<ReviewByBoardgameDetail> searchReviewsByBoardgameId(ReviewGetParameterDto params) {
+		System.out.println("params.getLimit() = " + params.getLimit());
+		System.out.println("params.getOffset() = " + params.getOffset());
+
 		List<ReviewByBoardgameDetail> content = queryFactory
 			.select(Projections.fields(ReviewByBoardgameDetail.class,
 				review.id,
@@ -75,7 +82,29 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
 			.fetch();
+
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
+
+		List<Long> reviewIds = content.stream()
+			.map(review -> review.getId())
+			.collect(Collectors.toList());
+
+		List<Tuple> result = queryFactory
+			.select(comment.review.id, comment.count())
+			.from(comment)
+			.where(comment.review.id.in(reviewIds))
+			.groupBy(comment.review.id)
+			.fetch();
+
+		Map<Long, Long> reviewIdCommentCountMap = result.stream()
+			.collect(Collectors.toMap(
+				tuple -> tuple.get(comment.review.id),
+				tuple -> tuple.get(comment.count())
+			));
+
+		content.forEach(review ->
+			review.setCommentCount(
+				reviewIdCommentCountMap.get(review.getId())));
 
 		return new OnbrdSliceResponse<>(pageInfo, content);
 	}

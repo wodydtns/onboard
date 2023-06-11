@@ -37,12 +37,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "Review")
 @RestController
 @RequestMapping("/api/v1/boardgames/{boardgameId}/reviews")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class ReviewController {
 	private final ReviewService reviewService;
 	private final ReviewLikeService reviewLikeService;
@@ -57,7 +59,11 @@ public class ReviewController {
 		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request,
 		@AuthenticationPrincipal MemberDetails memberDetails) {
 
+		log.error("" + request.getOffset());
+
 		request.rebaseToZero();
+
+		log.error("" + request.getOffset());
 
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
 

@@ -18,6 +18,7 @@ public class ReviewByBoardgameDetail {
 	private String content;
 	private List<String> images;
 	private long likeCount;
+	private long commentCount;
 	private Boolean isHidden;
 	private LocalDateTime createdAt;
 	private Long writerId;
@@ -25,4 +26,13 @@ public class ReviewByBoardgameDetail {
 	private String nickname;
 	private MemberLevel writerLevel;
 	private Boolean isLiked;
+
+	public void setCommentCount(Long count) {
+		if (count == null) {
+			commentCount = 0;
+			return;
+		}
+
+		this.commentCount = count;
+	}
 }
