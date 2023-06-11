@@ -63,9 +63,10 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.likeCount,
 				review.isHidden,
 				review.createdAt,
-				member.id.as("writer_id"),
+				member.id.as("writerId"),
 				member.nickname,
-				member.profileCharacter
+				member.profileCharacter,
+				member.level.as("writerLevel")
 			))
 			.from(review)
 			.join(review.writer, member)

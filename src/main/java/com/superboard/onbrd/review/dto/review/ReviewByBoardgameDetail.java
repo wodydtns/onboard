@@ -3,6 +3,8 @@ package com.superboard.onbrd.review.dto.review;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.superboard.onbrd.member.entity.MemberLevel;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,5 +23,6 @@ public class ReviewByBoardgameDetail {
 	private Long writerId;
 	private String profileCharacter;
 	private String nickname;
+	private MemberLevel writerLevel;
 	private Boolean isLiked;
 }
