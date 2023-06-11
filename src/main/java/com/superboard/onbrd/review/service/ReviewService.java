@@ -2,12 +2,9 @@ package com.superboard.onbrd.review.service;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
-import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
@@ -30,5 +27,5 @@ public interface ReviewService {
 
 	Review findVerifiedOneById(Long id);
 
-	OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(PageBasicEntity pageBasicEntity);
+	OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(OnbrdSliceRequest request);
 }

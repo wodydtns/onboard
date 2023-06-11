@@ -28,7 +28,6 @@ import com.superboard.onbrd.boardgame.entity.BoardGame;
 import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
-import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.member.entity.Member;
@@ -190,7 +189,7 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
-		return reviewRepository.selectRecommandReviewList(pageBasicEntity);
+	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(OnbrdSliceRequest request) {
+		return reviewRepository.selectRecommandReviewList(request);
 	}
 }

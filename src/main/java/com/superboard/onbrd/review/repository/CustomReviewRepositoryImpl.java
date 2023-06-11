@@ -17,7 +17,6 @@ import com.superboard.onbrd.admin.dto.AdminReviewDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceInfo;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
-import com.superboard.onbrd.global.entity.PageBasicEntity;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import com.superboard.onbrd.review.dto.review.ReviewGetParameterDto;
@@ -82,7 +81,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 	}
 
 	@Override
-	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(PageBasicEntity pageBasicEntity) {
+	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(OnbrdSliceRequest request) {
 		List<ReviewByFavoriteCountDetail> content = queryFactory
 			.select(Projections.fields(ReviewByFavoriteCountDetail.class,
 				review.id,
@@ -97,11 +96,11 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.join(review.writer, member)
 			.join(review.boardgame, boardGame)
 			.orderBy(review.likeCount.desc())
-			.offset(pageBasicEntity.getOffset())
-			.limit(pageBasicEntity.getLimit() + 1)
+			.offset(request.getOffset())
+			.limit(request.getLimit() + 1)
 			.fetch();
 
-		OnbrdSliceInfo pageInfo = getSliceInfo(content, pageBasicEntity.getLimit());
+		OnbrdSliceInfo pageInfo = getSliceInfo(content, request.getLimit());
 
 		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
