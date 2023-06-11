@@ -19,7 +19,6 @@ public class ReviewByBoardgameDetail {
 	private List<String> images;
 	private long likeCount;
 	private long commentCount;
-	private Boolean isHidden;
 	private LocalDateTime createdAt;
 	private Long writerId;
 	private String profileCharacter;

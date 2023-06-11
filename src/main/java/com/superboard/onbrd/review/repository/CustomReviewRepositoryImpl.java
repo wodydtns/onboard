@@ -68,7 +68,6 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.content,
 				review.images,
 				review.likeCount,
-				review.isHidden,
 				review.createdAt,
 				member.id.as("writerId"),
 				member.nickname,
@@ -77,7 +76,8 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			))
 			.from(review)
 			.join(review.writer, member)
-			.where(review.boardgame.id.eq(params.getBoardgameId()))
+			.where(review.boardgame.id.eq(params.getBoardgameId()),
+				review.isHidden.isFalse())
 			.orderBy(params.getOrderBy().getOrderSpecifiers())
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
@@ -123,6 +123,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.boardgame.image.as("boardgameImage")
 			))
 			.from(review)
+			.where(review.isHidden.isFalse())
 			.orderBy(review.likeCount.desc())
 			.offset(request.getOffset())
 			.limit(request.getLimit() + 1)
