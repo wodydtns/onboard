@@ -6,7 +6,6 @@ import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -89,9 +88,9 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.id,
 				review.images,
 				review.content,
-				member.nickname,
-				member.level,
-				boardGame.name,
+				member.nickname.as("writerNickname"),
+				member.level.as("writerLevel"),
+				boardGame.name.as("boardGameTitle"),
 				review.likeCount
 			))
 			.from(review)
