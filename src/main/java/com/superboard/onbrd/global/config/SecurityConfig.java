@@ -71,6 +71,7 @@ public class SecurityConfig {
 			.mvcMatchers(GET, "/api/*/boardgames/curation").permitAll()
 			.mvcMatchers(GET, "/api/*/boardgames/searchBoardgameList").permitAll()
 			.mvcMatchers(GET, "/api/*/boardgames/top10").permitAll()
+			.mvcMatchers(GET, "/api/*/reviews/**").permitAll()
 			.and()
 			.authorizeRequests()
 			.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
