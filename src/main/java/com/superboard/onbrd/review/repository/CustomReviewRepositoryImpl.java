@@ -1,6 +1,5 @@
 package com.superboard.onbrd.review.repository;
 
-import static com.superboard.onbrd.boardgame.entity.QBoardGame.*;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.member.entity.QMember.*;
@@ -87,14 +86,12 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.id,
 				review.images,
 				review.content,
-				member.nickname.as("writerNickname"),
-				member.level.as("writerLevel"),
-				boardGame.name.as("boardGameTitle"),
-				review.likeCount
+				review.likeCount,
+				review.writer.nickname.as("writerNickname"),
+				review.writer.level.as("writerLevel"),
+				review.boardgame.name.as("boardgameTitle")
 			))
 			.from(review)
-			.join(review.writer, member)
-			.join(review.boardgame, boardGame)
 			.orderBy(review.likeCount.desc())
 			.offset(request.getOffset())
 			.limit(request.getLimit() + 1)

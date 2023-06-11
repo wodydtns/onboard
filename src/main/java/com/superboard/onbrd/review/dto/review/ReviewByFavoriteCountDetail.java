@@ -1,15 +1,17 @@
 package com.superboard.onbrd.review.dto.review;
 
+import java.util.List;
+
 import com.superboard.onbrd.member.entity.MemberLevel;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class ReviewByFavoriteCountDetail {
 	private Long id;
-	private String images;
+	private List<String> images;
 	private String content;
 	private String writerNickname;
 	private MemberLevel writerLevel;
