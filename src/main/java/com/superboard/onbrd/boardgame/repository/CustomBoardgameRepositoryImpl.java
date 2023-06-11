@@ -69,7 +69,6 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 				))
 				.from(review)
 				.join(review.boardgame, boardGame)
-				.where(nameExpr, tagExpr)
 				.groupBy(boardGame.id)
 				.orderBy(boardGame.id.asc())
 				.fetch();
@@ -157,7 +156,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.fetch();
 
 		/* FIXME : boardgame 숫자를 제한하기 위해 .where(nonSearchClickLog.clickAt.after(startDate) , tagExpr) 조건을 걸 수없음
-			위의 코드와 통합하는 방법도 있어보임    
+			위의 코드와 통합하는 방법도 있어보임
 		 */
 		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
 				.select(Projections.constructor(BoardGameGroupByGrade.class,
