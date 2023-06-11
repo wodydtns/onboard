@@ -27,4 +27,10 @@ public class BoardgameSearchByTagRequest {
 	private int limit;
 	@ApiModelProperty(notes = "보드게임 이름", example = "brims")
 	private String name;
+
+	public void rebaseToZero() {
+		if (offset > 0) {
+			offset--;
+		}
+	}
 }

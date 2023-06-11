@@ -57,6 +57,8 @@ public class ReviewController {
 		@PathVariable Long boardgameId, @ModelAttribute ReviewGetRequest request,
 		@AuthenticationPrincipal MemberDetails memberDetails) {
 
+		request.rebaseToZero();
+
 		ReviewGetParameterDto params = ReviewGetParameterDto.of(boardgameId, request);
 
 		OnbrdSliceResponse<ReviewByBoardgameDetail> response = reviewService.getReviewsByBoardgameId(params);

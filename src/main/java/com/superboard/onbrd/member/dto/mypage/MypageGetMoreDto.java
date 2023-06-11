@@ -1,5 +1,7 @@
 package com.superboard.onbrd.member.dto.mypage;
 
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,7 @@ public class MypageGetMoreDto {
 	private long offset;
 	private int limit;
 
-	public static MypageGetMoreDto of(String email, MypageMoreRequest request) {
+	public static MypageGetMoreDto of(String email, OnbrdSliceRequest request) {
 		MypageGetMoreDto dto = new MypageGetMoreDto();
 		dto.email = email;
 		dto.offset = request.getOffset();

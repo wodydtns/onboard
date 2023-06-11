@@ -1,6 +1,5 @@
 package com.superboard.onbrd.member.controller;
 
-import com.superboard.onbrd.member.dto.mypage.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
+import com.superboard.onbrd.member.dto.mypage.FavoriteTagResetRequest;
+import com.superboard.onbrd.member.dto.mypage.MypageGetDto;
+import com.superboard.onbrd.member.dto.mypage.MypageGetMoreDto;
 import com.superboard.onbrd.member.dto.mypage.MypageMoreBoardGameDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageMoreReviewDetail;
+import com.superboard.onbrd.member.dto.mypage.MypageRequest;
+import com.superboard.onbrd.member.dto.mypage.MypageResponse;
+import com.superboard.onbrd.member.dto.mypage.ProfileUpdateRequest;
 import com.superboard.onbrd.member.dto.password.PasswordChangeRequest;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
@@ -51,7 +58,8 @@ public class MypageController {
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/reviews")
 	public ResponseEntity<OnbrdSliceResponse<MypageMoreReviewDetail>> getMoreReviews(
-		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute MypageMoreRequest request) {
+		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute OnbrdSliceRequest request) {
+		request.rebaseToZero();
 
 		MypageGetMoreDto params = MypageGetMoreDto.of(memberDetails.getEmail(), request);
 
@@ -65,7 +73,8 @@ public class MypageController {
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	@GetMapping("/favorite-boardgames")
 	public ResponseEntity<OnbrdSliceResponse<MypageMoreBoardGameDetail>> getMoreFavoriteBoardGames(
-		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute MypageMoreRequest request) {
+		@AuthenticationPrincipal MemberDetails memberDetails, @ModelAttribute OnbrdSliceRequest request) {
+		request.rebaseToZero();
 
 		MypageGetMoreDto params = MypageGetMoreDto.of(memberDetails.getEmail(), request);
 
