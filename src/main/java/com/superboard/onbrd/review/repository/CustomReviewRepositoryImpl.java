@@ -84,12 +84,13 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 		List<ReviewByFavoriteCountDetail> content = queryFactory
 			.select(Projections.fields(ReviewByFavoriteCountDetail.class,
 				review.id,
-				review.images,
 				review.content,
+				review.grade,
 				review.likeCount,
 				review.writer.nickname.as("writerNickname"),
 				review.writer.level.as("writerLevel"),
-				review.boardgame.name.as("boardgameTitle")
+				review.boardgame.name.as("boardgameTitle"),
+				review.boardgame.image.as("boardgameImage")
 			))
 			.from(review)
 			.orderBy(review.likeCount.desc())
