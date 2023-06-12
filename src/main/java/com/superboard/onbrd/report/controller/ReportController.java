@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,7 +45,7 @@ public class ReportController {
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public ResponseEntity<Long> postReport(
-		@AuthenticationPrincipal MemberDetails memberDetails, ReportPostRequest request) {
+		@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody ReportPostRequest request) {
 		Report created = reportService.createReport(
 			ReportCreateCommand.of(memberDetails.getEmail(), request));
 
