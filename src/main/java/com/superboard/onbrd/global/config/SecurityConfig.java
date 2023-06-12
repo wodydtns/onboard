@@ -54,6 +54,7 @@ public class SecurityConfig {
 			.mvcMatchers("/h2/**").permitAll()
 			.mvcMatchers("/api/*/auth/token-reissue").permitAll()
 			.mvcMatchers(GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews").permitAll()
+			.mvcMatchers(GET, "/api/*/boardgames/{boardgameId:[0-9]+}/reviews/{reviewId:[0-9]+}/comments").permitAll()
 			.mvcMatchers(GET, "/api/*/tags").permitAll()
 			.mvcMatchers(DELETE, "/api/*/members/{memberId:[0-9]+}").permitAll()
 			.mvcMatchers(POST, "/api/*/members/sign-up").permitAll()
