@@ -6,10 +6,12 @@ import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.superboard.onbrd.boardgame.dto.BoardGameSearchDetail;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,7 +130,9 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 			.limit(request.getLimit() + 1)
 			.fetch();
 
-		OnbrdSliceInfo pageInfo = getSliceInfo(content, request.getLimit());
+		// FIXME : 임시 코드 - getSliceInfo 메서드 return 시 content 내용이 사라짐 - 임시로 list를 복사하는 형태로 구현
+		List<ReviewByFavoriteCountDetail> pageContent =  new ArrayList<>(content);
+		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, request.getLimit());
 
 		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
