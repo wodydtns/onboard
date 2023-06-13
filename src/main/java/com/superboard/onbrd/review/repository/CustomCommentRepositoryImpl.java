@@ -66,7 +66,8 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 				comment.createdAt,
 				comment.writer.id.as("writerId"),
 				comment.writer.profileCharacter,
-				comment.writer.nickname
+				comment.writer.nickname,
+				comment.writer.level.as("writerLevel")
 			))
 			.from(comment)
 			.where(comment.review.id.eq(reviewId))
