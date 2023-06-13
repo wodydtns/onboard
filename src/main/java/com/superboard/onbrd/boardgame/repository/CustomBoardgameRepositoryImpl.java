@@ -209,6 +209,25 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.orderBy(searchClickLog.clickCount.desc())
 			.limit(10)
 			.fetch();
+		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
+				.select(Projections.constructor(BoardGameGroupByGrade.class,
+						boardGame.id.as("id"),
+						review.grade.avg().round().as("grade")
+				))
+				.from(review)
+				.join(review.boardgame, boardGame)
+				.groupBy(boardGame.id)
+				.orderBy(boardGame.id.asc())
+				.fetch();
+		for (var boardgame : top10BoardgameList) {
+			// Compare id and set the grade
+			for (var boardGameGrade : boardGameGroupByGrades) {
+				if (boardgame.getId().equals(boardGameGrade.getId())) {
+					boardgame.setGrade((float) boardGameGrade.getGrade());
+					break;
+				}
+			}
+		}
 		return top10BoardgameList;
 	}
 
