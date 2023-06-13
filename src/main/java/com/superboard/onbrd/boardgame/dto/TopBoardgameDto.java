@@ -16,6 +16,8 @@ public class TopBoardgameDto {
 	private String name;
 
 	private String image;
+
+	private float grade;
 	
 	@QueryProjection
 	public TopBoardgameDto(Long id, String name, String image) {
