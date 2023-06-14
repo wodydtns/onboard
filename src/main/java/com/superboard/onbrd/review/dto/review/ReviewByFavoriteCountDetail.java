@@ -16,4 +16,5 @@ public class ReviewByFavoriteCountDetail {
 	private String boardGameTitle;
 	private String boardgameImage;
 	private long likeCount;
+	private String profileCharacter;
 }
