@@ -122,9 +122,11 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.writer.nickname.as("writerNickname"),
 				review.writer.level.as("writerLevel"),
 				review.boardgame.name.as("boardGameTitle"),
-				review.boardgame.image.as("boardgameImage")
+				review.boardgame.image.as("boardgameImage"),
+				member.profileCharacter
 			))
 			.from(review)
+			.join(review.writer, member)
 			.where(review.isHidden.isFalse())
 			.orderBy(review.likeCount.desc())
 			.offset(request.getOffset())
