@@ -64,7 +64,7 @@ public class CommentController {
 
 		Long createdId = commentService.createComment(dto).getId();
 
-		customCommentService.selectOauthIdForPushMessage(createdId);
+		// customCommentService.selectOauthIdForPushMessage(createdId);
 
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
