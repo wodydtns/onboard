@@ -70,7 +70,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 				comment.writer.level.as("writerLevel")
 			))
 			.from(comment)
-			.where(comment.review.id.eq(reviewId))
+			.where(comment.review.id.eq(reviewId), comment.isHidden.isFalse())
 			.orderBy(comment.id.desc())
 			.offset(request.getOffset())
 			.limit(request.getLimit() + 1)
