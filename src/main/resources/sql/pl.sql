@@ -80,3 +80,23 @@ begin
         exit when review_num > 96;
     end loop;
 end;
+
+-- insert to inquiry
+
+declare
+    row_num number := 1;
+    writer_num number := 3834;
+    email varchar2(100) := 'wodydtns@naver.com';
+    default_title varchar2(100) := '제목';
+    default_content varchar2(100) := '본문';
+    now date := sysdate;
+
+begin
+    loop
+        insert into inquiry
+            values (row_num, writer_num, email, concat(default_title, row_num), concat(default_content, row_num), 0, null, null, now, now);
+
+        row_num := row_num + 1;
+        exit when row_num > 15;
+    end loop;
+end;
