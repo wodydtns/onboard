@@ -89,7 +89,6 @@ public class BoardgameController {
 
 	@ApiOperation(value = "추천 보드게임")
 	@GetMapping("/curation")
-	@ApiImplicitParam(name = "page", value = "페이지번호", required = true, dataType = "int", paramType = "query")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "추천 보드게임 검색 성공"),
 		@ApiResponse(code = 404, message = "잘못된 요청"),
