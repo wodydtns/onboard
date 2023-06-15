@@ -50,9 +50,10 @@ public class Inquiry extends BaseEntity {
 		this.content = content;
 	}
 
-	public void recieveAnswer(String answer, String adminEmail) {
+	public void receiveAnswer(String answer, String adminEmail) {
 		this.answer = answer;
 		this.adminEmail = adminEmail;
+		this.isAnswered = true;
 	}
 
 	public static Inquiry of(Member member, InquiryCreateCommand command) {
