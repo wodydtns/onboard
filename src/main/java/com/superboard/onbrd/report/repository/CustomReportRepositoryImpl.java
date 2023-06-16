@@ -56,7 +56,9 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 						review.isHidden,
 						review.createdAt,
 						review.writer.id,
-						review.writer.nickname
+						review.writer.nickname,
+						review.boardgame.id,
+						review.boardgame.name
 					)
 					.from(review)
 					.where(review.id.eq(reportDetail.getPostId()))
@@ -67,6 +69,8 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 				reportDetail.setCreatedAt(result.get(review.createdAt));
 				reportDetail.setWriterId(result.get(review.writer.id));
 				reportDetail.setWriterNickname(result.get(review.writer.nickname));
+				reportDetail.setBoardGameId(result.get(review.boardgame.id));
+				reportDetail.setBoardGameTitle(result.get(review.boardgame.name));
 
 				continue;
 			}
@@ -77,7 +81,9 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 					comment.isHidden,
 					comment.createdAt,
 					comment.writer.id,
-					comment.writer.nickname
+					comment.writer.nickname,
+					comment.review.boardgame.id,
+					comment.review.boardgame.name
 				)
 				.from(comment)
 				.where(comment.id.eq(reportDetail.getPostId()))
@@ -88,6 +94,8 @@ public class CustomReportRepositoryImpl implements CustomReportRepository {
 			reportDetail.setCreatedAt(result.get(comment.createdAt));
 			reportDetail.setWriterId(result.get(comment.writer.id));
 			reportDetail.setWriterNickname(result.get(comment.writer.nickname));
+			reportDetail.setBoardGameId(result.get(comment.review.boardgame.id));
+			reportDetail.setBoardGameTitle(result.get(comment.review.boardgame.name));
 		}
 
 		return new OnbrdSliceResponse<>(pageInfo, content);

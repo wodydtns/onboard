@@ -18,6 +18,8 @@ public class AdminReportDetail {
 	private String content;
 	private Boolean isHidden;
 	private LocalDateTime createdAt;
+	private Long boardGameId;
+	private String boardGameTitle;
 	private Long writerId;
 	private String writerNickname;
 	private Long whistleblowerId;

@@ -1,7 +1,6 @@
 package com.superboard.onbrd.report.service;
 
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
-import static com.superboard.onbrd.report.entity.ReportType.*;
 
 import java.util.Optional;
 
@@ -49,12 +48,6 @@ public class ReportServiceImpl implements ReportService {
 	public Report resolveReport(Long id, String email) {
 		Report report = findVerifiedOneById(id);
 		Member admin = memberService.findVerifiedOneByEmail(email);
-
-		if (report.getType() == REVIEW) {
-			reviewService.hideReview(report.getPostId());
-		} else {
-			commentService.hideComment(report.getPostId());
-		}
 
 		report.resolve(admin);
 
