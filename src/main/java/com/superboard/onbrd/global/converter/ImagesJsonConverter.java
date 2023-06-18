@@ -28,6 +28,7 @@ public class ImagesJsonConverter implements AttributeConverter<List<String>, Str
 
 	@Override
 	public List<String> convertToEntityAttribute(String dbData) {
+		/*
 		try {
 			return objectMapper.readValue(dbData, new TypeReference<>() {
 			});
@@ -35,5 +36,16 @@ public class ImagesJsonConverter implements AttributeConverter<List<String>, Str
 			e.printStackTrace();
 			return null;
 		}
+*/
+		// Check for null을 통한 해소
+		List<String> attribute = null;
+		if (dbData != null) {  
+			try {
+				attribute = objectMapper.readValue(dbData, new TypeReference<List<String>>() {});
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}
+		return attribute;
 	}
 }
