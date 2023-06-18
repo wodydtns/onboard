@@ -32,7 +32,12 @@ public class BoardgameLikeServiceImpl implements BoardgameLikeService {
         Optional<BoardgameLike> boardgameLikeOptional = boardgameLikeRepository.findByMemberAndBoardGame(member, boardGame);
         boardgameLikeOptional.ifPresentOrElse(
                 boardgameLikeRepository::delete,
-                () -> boardgameLikeRepository.save(BoardgameLike.of(member,boardGame))
+                () -> boardgameLikeRepository.save(BoardgameLike.of(member, boardGame))
         );
+    }
+
+    @Override
+    public boolean isLikedBy(String email, Long boardGameId) {
+        return boardgameLikeRepository.existsByMember_EmailAndBoardGame_Id(email, boardGameId);
     }
 }
