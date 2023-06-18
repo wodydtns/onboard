@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.superboard.onbrd.boardgame.service.BoardgameLikeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,6 +50,8 @@ public class BoardgameController {
 
 	private final MemberRepository memberRepository;
 
+	private final BoardgameLikeService boardgameLikeService;
+
 	@ApiOperation(value = "보드게임 검색")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "tagIds", value = "태그 ID 리스트", required = false, dataType = "List", paramType = "query"),
@@ -79,12 +82,21 @@ public class BoardgameController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/{boardgameId}")
-	public BoardGameDetailDto selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest request) {
+	public ResponseEntity<BoardGameDetailDto> selectBoardgameInfo(@PathVariable Long boardgameId, HttpServletRequest request,
+												  @AuthenticationPrincipal MemberDetails memberDetails) {
 		String referer = request.getHeader("Referer");
 		if (ObjectUtils.isEmpty(referer)) {
 			referer = "";
 		}
-		return boardGameService.selectBoardgameInfo(boardgameId, referer);
+		BoardGameDetailDto response = boardGameService.selectBoardgameInfo(boardgameId, referer);
+		try {
+			String email = memberDetails.getEmail();
+			response.setIsLiked(boardgameLikeService.isLikedBy(email, response.getId()));
+		}catch(NullPointerException e) {
+			response.setIsLiked(false);
+		}
+
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "추천 보드게임")

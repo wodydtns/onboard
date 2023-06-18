@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface BoardgameLikeRepository extends JpaRepository<BoardgameLike, Long> {
 
     Optional<BoardgameLike> findByMemberAndBoardGame(Member member, BoardGame boardGame);
+
+    boolean existsByMember_EmailAndBoardGame_Id(String memberEmail, Long boardGameId);
 }
