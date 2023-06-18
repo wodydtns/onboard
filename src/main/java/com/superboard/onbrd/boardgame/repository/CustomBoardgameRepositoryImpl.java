@@ -78,6 +78,9 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		OnbrdSliceInfo pageInfo = getSliceInfo(pageContent, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
+			List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
+					.where(boardGameTag.boardGame.id.eq(boardgame.getId())).fetch();
+			boardgame.setTagList(tagList);
 			// Compare id and set the grade
 			for (var boardGameGrade : boardGameGroupByGrades) {
 				if (boardgame.getId().equals(boardGameGrade.getId())) {
@@ -175,6 +178,9 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, boardgameSearchByTagRequest.getLimit());
 
 		for (var boardgame : content) {
+			List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
+					.where(boardGameTag.boardGame.id.eq(boardgame.getId())).fetch();
+			boardgame.setTagList(tagList);
 			// Compare id and set the grade
 			for (var boardGameGrade : boardGameGroupByGrades) {
 				if (boardgame.getId().equals(boardGameGrade.getId())) {
@@ -223,6 +229,9 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.orderBy(boardGame.id.asc())
 			.fetch();
 		for (var boardgame : top10BoardgameList) {
+			List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
+					.where(boardGameTag.boardGame.id.eq(boardgame.getId())).fetch();
+			boardgame.setTagList(tagList);
 			// Compare id and set the grade
 			for (var boardGameGrade : boardGameGroupByGrades) {
 				if (boardgame.getId().equals(boardGameGrade.getId())) {

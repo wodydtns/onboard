@@ -1,9 +1,13 @@
 package com.superboard.onbrd.boardgame.dto;
 
+import com.superboard.onbrd.tag.entity.Tag;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,5 +22,5 @@ public class BoardGameSearchDetail {
 
 	private float grade;
 
-
+	private List<Tag> tagList = new ArrayList<>();
 }
