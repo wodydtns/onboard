@@ -103,11 +103,14 @@ public class ReviewServiceImpl implements ReviewService {
 
 	private List<String> processImages(List<String> images) {
 		List<String> imageList = new ArrayList<>();
+		String fileName = "[]";
 		if (!images.isEmpty()) {
 			for (String encodedImageName : images) {
-				byte[] decodedImageName = decodeImage(encodedImageName);
-				String fileName = saveImage(decodedImageName);
-				imageList.add(fileName);
+				if(encodedImageName != null ){
+					byte[] decodedImageName = decodeImage(encodedImageName);
+					fileName = "review/" +  saveImage(decodedImageName);
+					imageList.add(fileName);
+				}
 			}
 		}
 		return imageList;
