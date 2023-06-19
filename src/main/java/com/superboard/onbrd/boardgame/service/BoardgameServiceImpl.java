@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.superboard.onbrd.boardgame.dto.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +22,14 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class BoardgameServiceImpl implements BoardGameService {
 
-	@Autowired
-	private BoardgameRepository boardgameRepository;
+	private final BoardgameRepository boardgameRepository;
 
-	@Autowired
-	private BoardSearchClickLogRepository boardSearchClickLogRepository;
+	private final BoardSearchClickLogRepository boardSearchClickLogRepository;
 
-	@Autowired
-	private BoardNonSearchClickLogRepository boardNonSearchClickLogRepository;
+	private final BoardNonSearchClickLogRepository boardNonSearchClickLogRepository;
 
 	@Override
 	@Transactional(readOnly = true)
