@@ -37,6 +37,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+import java.util.concurrent.CompletableFuture;
+
 @Tag(name = "Comment")
 @RestController
 @RequestMapping("/api/v1/boardgames/{boardgameId}/reviews/{reviewId}/comments")
@@ -64,8 +66,10 @@ public class CommentController {
 
 		Long createdId = commentService.createComment(dto).getId();
 
-		// customCommentService.selectOauthIdForPushMessage(createdId);
-
+		// Run the method asynchronously
+		CompletableFuture.runAsync(() -> {
+			customCommentService.selectOauthIdForPushMessage(createdId);
+		});
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
 
