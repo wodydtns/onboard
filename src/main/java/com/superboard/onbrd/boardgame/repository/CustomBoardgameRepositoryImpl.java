@@ -12,6 +12,7 @@ import static com.superboard.onbrd.tag.entity.QTag.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +111,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.from(boardGame).where(boardGame.id.eq(boardgameId)).fetchOne();
 		List<Tag> tagList = queryFactory.select(tag).distinct().from(boardGameTag).join(boardGameTag.tag, tag)
 			.where(boardGameTag.boardGame.id.eq(boardgameId)).fetch();
-		List<BoardGameGroupByGrade> boardGameGroupByGrades = queryFactory
+		BoardGameGroupByGrade boardGameGroupByGrades = queryFactory
 			.select(Projections.constructor(BoardGameGroupByGrade.class,
 				boardGame.id.as("id"),
 				review.grade.avg().round().as("grade")
@@ -120,8 +121,9 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.where(boardGame.id.eq(boardgameId))
 			.groupBy(boardGame.id)
 			.orderBy(boardGame.id.asc())
-			.fetch();
-		boardgameDetail.setTagList(tagList);
+			.fetchOne();
+		Objects.requireNonNull(boardgameDetail).setTagList(tagList);
+		boardgameDetail.setGrade((float) (boardGameGroupByGrades != null ? boardGameGroupByGrades.getGrade() : 0));
 		return boardgameDetail;
 	}
 

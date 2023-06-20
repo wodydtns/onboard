@@ -34,6 +34,7 @@ public class BoardGameDetailDto {
 
 	private Boolean isLiked;
 
+	private float grade;
 
 	@QueryProjection
 	public BoardGameDetailDto(Long id, String name, String description, String image, long favoriteCount) {
