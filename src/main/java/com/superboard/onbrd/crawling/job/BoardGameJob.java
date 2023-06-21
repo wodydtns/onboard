@@ -23,10 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -71,21 +68,21 @@ public class BoardGameJob {
 
                 CrawlingData crawlingData = new CrawlingData();
                 crawlingData.setBoardgameName((String) result.get("boardGameName"));
-                crawlingData.setPageNum((Double) result.get("pageNum") );
+                crawlingData.setPageNum((Double) result.get("pageNum"));
                 crawlingData.setGameNumber((Double) result.get("gameNumber"));
                 crawlingData.setDoneYn("N");
                 crawlingDataList.add(crawlingData);
             }
             List<String> updateList = customCrawlingRepository.ifExistUpdateList(compareExistList);
-            for (CrawlingData crawlingData : crawlingDataList){
+            for (CrawlingData crawlingData : crawlingDataList) {
                 String crawlingDataName = crawlingData.getBoardgameName();
-                if(!updateList.contains(crawlingDataName)) {
+                if (!updateList.contains(crawlingDataName)) {
                     insertDataList.add(crawlingData);
                 }
             }
-            if(!insertDataList.isEmpty()){
+            if (!insertDataList.isEmpty()) {
                 crawlingRepository.saveAll(insertDataList);
-            }else{
+            } else {
                 customCrawlingRepository.updateDoneY(updateList);
             }
         } catch (IOException e) {
@@ -97,11 +94,11 @@ public class BoardGameJob {
      * FIXME
      *  1. category size가 20
 
-    * */
+     * */
 
-    //@Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "0/10 * * * * *")
     @Transactional
-    public void insertCrawlingData(){
+    public void insertCrawlingData() {
         // 파일 경로 수정 필요
         ProcessBuilder pb = new ProcessBuilder("python", "E:\\crawling\\getBoardgame2.py");
 
@@ -121,13 +118,15 @@ public class BoardGameJob {
             List<LinkedTreeMap> resultList = gson.fromJson(json, List.class);
             List<BoardGame> boardGameList = new ArrayList<>();
             HashSet<Long> tagHashSet = new HashSet();
-            List<Long> categoriesTagList =  new ArrayList<>();
+            Map<Integer, List<Long>> categoriesTagListMap = new HashMap<>();
+            int boardgameCount = 1;
             for (LinkedTreeMap result : resultList) {
+                List<Long> categoriesTagList = new ArrayList<>();
                 CrawlingData crawlingData = new CrawlingData();
                 String boardgameName = (String) result.get("title_text");
                 String description = (String) result.get("description");
                 String imageUrl = (String) result.get("image_url");
-                BoardGame boardgame = new BoardGame(boardgameName,description,imageUrl);
+                BoardGame boardgame = new BoardGame(boardgameName, description, imageUrl);
                 String categories = (String) result.get("categories");
                 String age = (String) result.get("age");
                 String playing_time = (String) result.get("playing_time");
@@ -140,32 +139,32 @@ public class BoardGameJob {
                 categoriesTagList.add(Long.parseLong(age));
                 categoriesTagList.add(Long.parseLong(playing_time));
                 categoriesTagList.add(Long.parseLong(best_player));
+                categoriesTagListMap.put(boardgameCount, categoriesTagList);
                 boardGameList.add(boardgame);
+                boardgameCount++;
             }
             List<BoardGame> savedBoardGames = boardgameRepository.saveAll(boardGameList);
 
             // tag 저장 로직
-            
-            for (BoardGame boardgame: savedBoardGames) {
-                for(Long category : categoriesTagList){
-                    Tag tag = tagRepository.findById(category).orElseThrow();
-                    BoardGameTag boardgameTag = BoardGameTag.builder().boardGame(boardgame).tag(tag)
-                            .build();
+            int tagNum = 1;
+            for (BoardGame boardgame : savedBoardGames) {
+                List<Long> crawlingTagList = categoriesTagListMap.get(tagNum);
+                List<Tag> tagList = tagRepository.findByIdIn(crawlingTagList);
+                for (Tag tag : tagList) {
+                    BoardGameTag boardgameTag = BoardGameTag.builder().boardGame(boardgame).tag(tag).build();
                     boardgameTagRepository.saveAndFlush(boardgameTag);
                 }
-
             }
             customCrawlingRepository.selectOauthIdForPushMessageByFavorite(tagHashSet);
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
 
     //@Scheduled(cron = "0/10 * * * * *")
-    public void translationBoardgameDesc(){
+    public void translationBoardgameDesc() {
 
         List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardgameDescription();
         Gson gson = new Gson();
@@ -175,7 +174,7 @@ public class BoardGameJob {
         // Write the base64Encoded string to a temporary file
         Path tempFilePath = null;
         try {
-            tempFilePath = Files.createTempFile("temp_encoded_data",".json");
+            tempFilePath = Files.createTempFile("temp_encoded_data", ".json");
             Files.write(tempFilePath, descriptionJson.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
