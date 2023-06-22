@@ -13,7 +13,6 @@ public class PushTokenDto {
 
     private String pushTokenValue;
 
-    private String deviceName;
 
 }
 

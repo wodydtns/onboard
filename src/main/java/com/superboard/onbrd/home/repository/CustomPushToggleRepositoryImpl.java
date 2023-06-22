@@ -31,7 +31,7 @@ public class CustomPushToggleRepositoryImpl implements CustomPushToggleRepositor
 		return queryFactory.update(pushToggle)
 			.set(pushToggle.commentYn, dto.getCommentYn())
 			.set(pushToggle.favoriteTagYn, dto.getFavoriteTagYn())
-			.where(member.id.eq(dto.getId()))
+			.where(pushToggle.member.id.eq(dto.getMemberId()))
 			.execute();
 
 	}
