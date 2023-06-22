@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.superboard.onbrd.auth.dto.PushTokenDto;
+import com.superboard.onbrd.auth.dto.PushTokenPostRequest;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.*;
@@ -19,42 +19,39 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Token {
-	@Id
-	@Column(name = "member_id")
-	private Long id;
-	@Column
-	private String androidPushToken;
-	@Column
-	private String applePushToken;
-	@Column
-	private String signOutAccessToken;
+    @Id
+    @Column(name = "member_id")
+    private Long id;
+    @Column
+    private String androidPushToken;
+    @Column
+    private String applePushToken;
+    @Column
+    private String signOutAccessToken;
 
-	@Column
-	private String refreshToken;
-	@Column
-	private LocalDateTime refreshTokenExpiredAt = LocalDateTime.now();
-	@Column
-	private String oauthGrantToken;
-	@OneToOne
-	@MapsId
-	@JoinColumn(name = "member_id")
-	private Member member;
+    @Column
+    private String refreshToken;
+    @Column
+    private LocalDateTime refreshTokenExpiredAt = LocalDateTime.now();
+    @Column
+    private String oauthGrantToken;
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-	public static Token from(Member member) {
-		Token token = new Token();
-		token.member = member;
+    public static Token from(Member member) {
+        Token token = new Token();
+        token.member = member;
 
-		return token;
-	}
+        return token;
+    }
 
-	public static Token validateToken(PushTokenDto pushTokenDto){
-		Token token = new Token();
-		if("IOS".equals(pushTokenDto.getDeviceName())){
-			token.setApplePushToken(pushTokenDto.getPushTokenValue());
-		}else{
-			token.setAndroidPushToken(pushTokenDto.getPushTokenValue());
-		}
-		return token;
+    public static Token validateToken(PushTokenPostRequest pushTokenPostRequest) {
+        Token token = new Token();
+        token.setId(pushTokenPostRequest.getMemberId());
+        token.setAndroidPushToken(pushTokenPostRequest.getPushTokenValue());
+        return token;
 
-	}
+    }
 }
