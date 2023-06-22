@@ -92,7 +92,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 		List<Tuple> result = queryFactory
 			.select(comment.review.id, comment.count())
 			.from(comment)
-			.where(comment.review.id.in(reviewIds))
+			.where(comment.review.id.in(reviewIds), comment.isHidden.isFalse())
 			.groupBy(comment.review.id)
 			.fetch();
 
