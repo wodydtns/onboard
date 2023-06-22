@@ -84,7 +84,7 @@ public class Member extends BaseEntity {
 	private List<Comment> comments;
 
 	@Transient
-	private SortedSet<Badge> preBadges = badges;
+	private SortedSet<Badge> preBadges = new TreeSet<>();
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
@@ -253,7 +253,7 @@ public class Member extends BaseEntity {
 	}
 
 	public void loadPreBadges() {
-		this.preBadges = badges;
+		this.preBadges = new TreeSet<>(badges);
 	}
 
 	public boolean checkBadgeGain() {
