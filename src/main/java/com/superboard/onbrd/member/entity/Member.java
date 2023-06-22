@@ -22,6 +22,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.superboard.onbrd.global.converter.BadgeSortedSetConverter;
 import com.superboard.onbrd.global.converter.MemberLevelConverter;
@@ -82,6 +83,9 @@ public class Member extends BaseEntity {
 	@JoinColumn(name = "writer_id")
 	private List<Comment> comments;
 
+	@Transient
+	private SortedSet<Badge> preBadges;
+
 	public static Member from(SignUpRequest request) {
 		return new Member(
 			request.getEmail(), request.getNickname(), request.getProfileCharacter());
@@ -102,8 +106,8 @@ public class Member extends BaseEntity {
 		return this.email.equals(email);
 	}
 
-	public Set<Badge> getBadges() {
-		return Collections.unmodifiableSet(badges);
+	public SortedSet<Badge> getBadges() {
+		return Collections.unmodifiableSortedSet(badges);
 	}
 
 	public List<Review> getReviews() {
@@ -246,6 +250,14 @@ public class Member extends BaseEntity {
 
 	public void integrate() {
 		this.isSocial = true;
+	}
+
+	public void loadPreBadges() {
+		this.preBadges = badges;
+	}
+
+	public boolean checkBadgeGain() {
+		return !preBadges.containsAll(badges);
 	}
 
 	private Member(String email, String nickname, String profileCharacter) {
