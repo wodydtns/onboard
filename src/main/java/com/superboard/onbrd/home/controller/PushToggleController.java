@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.superboard.onbrd.auth.dto.PushTokenDto;
+import com.superboard.onbrd.auth.dto.PushTokenPostRequest;
 import com.superboard.onbrd.auth.entity.Token;
 import com.superboard.onbrd.auth.service.TokenService;
 import com.superboard.onbrd.home.dto.PushToggleDto;
@@ -57,14 +57,18 @@ public class PushToggleController {
 		return ResponseEntity.ok(updateId);
 	}
 
+	
+	// FIXME : 로그인 시 자동으로 token row가 추가됨 -> token 생성은 update로 처리해야함
 	@PostMapping("/createPushToken")
 	@ApiOperation(value = "사용자 푸시 토큰 생성")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "토큰 생성 성공"),
 		@ApiResponse(code = 500, message = "토큰 생성 실패")
 	})
-	public ResponseEntity<Void> createPushToken(@RequestBody PushTokenDto pushTokenDto) {
-		Token pushToken = Token.validateToken(pushTokenDto);
+	public ResponseEntity<Void> createPushToken(@RequestBody PushTokenPostRequest pushTokenPostRequest, @AuthenticationPrincipal MemberDetails memberDetails) {
+		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
+		pushTokenPostRequest.setMemberId(member.get().getId());
+		Token pushToken = Token.validateToken(pushTokenPostRequest);
 		tokenService.createToken(pushToken);
 		return ResponseEntity.ok().build();
 	}

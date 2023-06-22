@@ -2,17 +2,17 @@ package com.superboard.onbrd.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class PushTokenDto {
+@NoArgsConstructor
+public class PushTokenPostRequest {
 
-    private Long id;
+    private Long memberId;
 
     private String pushTokenValue;
-
 
 }
 
