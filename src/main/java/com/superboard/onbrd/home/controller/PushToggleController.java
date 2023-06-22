@@ -1,6 +1,10 @@
 package com.superboard.onbrd.home.controller;
 
+import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +26,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/v1/pushToggle")
 @RequiredArgsConstructor
@@ -30,20 +36,22 @@ public class PushToggleController {
 
 	private final TokenService tokenService;
 	private final PushToggleService pushToggleService;
+	private final MemberService memberService;
 
 	@GetMapping
 	@ApiOperation(value = "사용자 푸시 알림 사용 여부")
-	public ResponseEntity<PushToggleDto> getPushToggle(long id) {
-		PushToggleDto response = pushToggleService.getPushToggle(id);
+	public ResponseEntity<PushToggleDto> getPushToggle(@AuthenticationPrincipal MemberDetails memberDetails) {
+		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
+		PushToggleDto response = pushToggleService.getPushToggle(member.get().getId());
 
 		return ResponseEntity.ok(response);
 	}
 
 	@PatchMapping
 	@ApiOperation(value = "사용자 푸시 알림 사용 여부 업데이트")
-	public ResponseEntity<Long> patchPushToggle(@RequestPart PushTogglePatchRequest request) {
-
-		PushToggleDto params = PushToggleDto.of(request);
+	public ResponseEntity<Long> patchPushToggle(@RequestPart PushTogglePatchRequest request,@AuthenticationPrincipal MemberDetails memberDetails) {
+		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
+		PushToggleDto params = PushToggleDto.of(request, member.get().getId());
 		Long updateId = pushToggleService.updatePushToggle(params);
 
 		return ResponseEntity.ok(updateId);

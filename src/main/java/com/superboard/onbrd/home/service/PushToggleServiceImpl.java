@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class PushToggleServiceImpl implements PushToggleService {
 
-	private CustomPushToggleRepository customPushToggleRepository;
+	private final CustomPushToggleRepository customPushToggleRepository;
 
 	@Override
 	public PushToggleDto getPushToggle(long id) {
