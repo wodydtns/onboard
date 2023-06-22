@@ -178,4 +178,4 @@ CREATE TABLE "BADGE_HISTORY"
     "CHECKED_YN"     NUMBER(1)      NOT NULL,
     "CREATED_AT"     DATE           NOT NULL,
     "MODIFIED_AT"    DATE           NOT NULL
-)
+);

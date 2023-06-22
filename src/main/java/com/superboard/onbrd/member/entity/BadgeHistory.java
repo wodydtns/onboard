@@ -1,6 +1,10 @@
 package com.superboard.onbrd.member.entity;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -46,5 +50,22 @@ public class BadgeHistory extends BaseEntity {
 
 	public static BadgeHistory from(Member member) {
 		return new BadgeHistory(member);
+	}
+
+	public SortedSet<Badge> getCurrentBadges() {
+
+		return Collections.unmodifiableSortedSet(currentBadges);
+	}
+
+	public SortedSet<Badge> getDifferentialBadges(BadgeHistory preHistory) {
+		Set<Badge> differentialBadges = currentBadges.stream()
+			.filter(badge -> !preHistory.currentBadges.contains(badge))
+			.collect(Collectors.toSet());
+
+		return Collections.unmodifiableSortedSet(new TreeSet<>(differentialBadges));
+	}
+
+	public void check() {
+		this.isChecked = true;
 	}
 }

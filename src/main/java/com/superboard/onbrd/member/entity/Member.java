@@ -84,7 +84,7 @@ public class Member extends BaseEntity {
 	private List<Comment> comments;
 
 	@Transient
-	private SortedSet<Badge> preBadges;
+	private SortedSet<Badge> preBadges = badges;
 
 	public static Member from(SignUpRequest request) {
 		return new Member(
