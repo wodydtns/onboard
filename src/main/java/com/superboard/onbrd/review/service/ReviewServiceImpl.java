@@ -47,153 +47,161 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
-	private final ReviewRepository reviewRepository;
-	private final MemberService memberService;
-	private final BoardGameService boardGameService;
-	private final OciObjectStorageUtil ociObjectStorageUtil;
+    private final ReviewRepository reviewRepository;
+    private final MemberService memberService;
+    private final BoardGameService boardGameService;
+    private final OciObjectStorageUtil ociObjectStorageUtil;
 
-	@Override
-	@Transactional(readOnly = true)
-	public OnbrdSliceResponse<AdminReviewDetail> getAdminReviews(OnbrdSliceRequest params) {
-		return reviewRepository.getAdminReviews(params);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public OnbrdSliceResponse<AdminReviewDetail> getAdminReviews(OnbrdSliceRequest params) {
+        return reviewRepository.getAdminReviews(params);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public OnbrdSliceResponse<ReviewByBoardgameDetail> getReviewsByBoardgameId(ReviewGetParameterDto params) {
-		return reviewRepository.searchReviewsByBoardgameId(params);
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public OnbrdSliceResponse<ReviewByBoardgameDetail> getReviewsByBoardgameId(ReviewGetParameterDto params) {
+        return reviewRepository.searchReviewsByBoardgameId(params);
+    }
 
-	@Override
-	public Review crewateReview(ReviewCreateDto dto, List<String> images) {
-		if (!images.isEmpty()) {
-			List<String> imageList = processImages(images);
-			dto.setImages(imageList);
-		}
+    @Override
+    public Review crewateReview(ReviewCreateDto dto, List<String> images) {
+        if (!images.isEmpty()) {
+            List<String> imageList = processImages(images);
+            dto.setImages(imageList);
+        }
 
-		Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
-		BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
+        Member writer = memberService.findVerifiedOneByEmail(dto.getEmail());
+        BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
 
-		Review created = Review.builder()
-			.writer(writer)
-			.boardgame(boardgame)
-			.grade(dto.getGrade())
-			.content(dto.getContent())
-			.images(dto.getImages())
-			.build();
+        Review created = Review.builder()
+                .writer(writer)
+                .boardgame(boardgame)
+                .grade(dto.getGrade())
+                .content(dto.getContent())
+                .images(dto.getImages())
+                .build();
 
-		writer.writeReview(created);
+        writer.writeReview(created);
 
-		return reviewRepository.save(created);
-	}
+        return reviewRepository.save(created);
+    }
 
-	@Override
-	public Review updateReview(ReviewUpdateDto dto, List<String> images) {
-		Review updated = findVerifiedOneById(dto.getReviewId());
-		if (!images.isEmpty()) {
-			List<String> imageList = processImages(images);
-			dto.setImages(imageList);
-		}
-		updated.updateGrade(dto.getGrade());
-		updated.updateContent(dto.getContent());
-		updated.updateImages(dto.getImages());
+    @Override
+    public Review updateReview(ReviewUpdateDto dto, List<String> images) {
+        Review updated = findVerifiedOneById(dto.getReviewId());
+        if (!images.isEmpty()) {
+            List<String> imageList = processImages(images);
+            dto.setImages(imageList);
+        }
+        updated.updateGrade(dto.getGrade());
+        updated.updateContent(dto.getContent());
+        updated.updateImages(dto.getImages());
 
-		return updated;
-	}
+        return updated;
+    }
 
-	private List<String> processImages(List<String> images) {
-		List<String> imageList = new ArrayList<>();
-		String fileName = "[]";
-		if (!images.isEmpty()) {
-			for (String encodedImageName : images) {
-				if(encodedImageName != null ){
-					byte[] decodedImageName = decodeImage(encodedImageName);
-					fileName = "review/" +  saveImage(decodedImageName);
-					imageList.add(fileName);
-				}
-			}
-		}
-		return imageList;
-	}
+    private List<String> processImages(List<String> images) {
+        List<String> imageList = new ArrayList<>();
+        String fileName = "[]";
+        if (!images.isEmpty()) {
+            for (String encodedImageName : images) {
+                if (encodedImageName != null) {
+                    byte[] decodedImageName = decodeImage(encodedImageName);
+                    fileName = "review/" + saveImage(decodedImageName);
+                    imageList.add(fileName);
+                }
+            }
+        }
+        return imageList;
+    }
 
-	private byte[] decodeImage(String encodedImageName) {
-		if (encodedImageName.startsWith("data:")) {
-			int base64Index = encodedImageName.indexOf("base64,");
-			if (base64Index != -1) {
-				encodedImageName = encodedImageName.substring(base64Index + "base64,".length());
-			}
-		}
-		return Base64.getDecoder().decode(encodedImageName);
-	}
+    private byte[] decodeImage(String encodedImageName) {
+        if (encodedImageName.startsWith("data:")) {
+            int base64Index = encodedImageName.indexOf("base64,");
+            if (base64Index != -1) {
+                encodedImageName = encodedImageName.substring(base64Index + "base64,".length());
+            }
+        }
+        return Base64.getDecoder().decode(encodedImageName);
+    }
 
-	private String saveImage(byte[] decodedImageName) {
-		String fileName = UUID.randomUUID().toString();
-		String fileExtension = "png";
-		String filePath = "review/";
+    private String saveImage(byte[] decodedImageName) {
+        String fileName = UUID.randomUUID().toString();
+        String fileExtension = "png";
+        String filePath = "review/";
 
-		try {
-			Path tempFile = Files.createTempFile(fileName, "." + fileExtension);
-			FileUtils.writeByteArrayToFile(tempFile.toFile(), decodedImageName);
-			MultipartFile multipartFile = createMultipartFile(tempFile);
-			fileName = multipartFile.getOriginalFilename();
-			ociObjectStorageUtil.UploadObject(multipartFile, filePath);
-			tempFile.toFile().deleteOnExit();
+        try {
+            Path tempFile = Files.createTempFile(fileName, "." + fileExtension);
+            FileUtils.writeByteArrayToFile(tempFile.toFile(), decodedImageName);
+            MultipartFile multipartFile = createMultipartFile(tempFile);
+            fileName = multipartFile.getOriginalFilename();
+            ociObjectStorageUtil.UploadObject(multipartFile, filePath);
+            tempFile.toFile().deleteOnExit();
 
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return fileName;
-	}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return fileName;
+    }
 
-	private MultipartFile createMultipartFile(Path tempFile) throws IOException {
-		File file = tempFile.toFile();
-		String fileName = file.getName();
-		String contentType = Files.probeContentType(tempFile);
-		DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int)file.length(),
-			file.getParentFile());
-		InputStream input = new FileInputStream(file);
-		OutputStream os = fileItem.getOutputStream();
-		IOUtils.copy(input, os);
+    private MultipartFile createMultipartFile(Path tempFile) throws IOException {
+        File file = tempFile.toFile();
+        String fileName = file.getName();
+        String contentType = Files.probeContentType(tempFile);
+        DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(),
+                file.getParentFile());
+        InputStream input = new FileInputStream(file);
+        OutputStream os = fileItem.getOutputStream();
+        IOUtils.copy(input, os);
 
-		return new CommonsMultipartFile(fileItem);
-	}
+        return new CommonsMultipartFile(fileItem);
+    }
 
-	@Override
-	public Review hideReview(Long id) {
-		Review review = findVerifiedOneById(id);
-		review.hide();
+    @Override
+    public Review hideReview(Long id) {
+        Review review = findVerifiedOneById(id);
+        review.hide();
 
-		return review;
-	}
+        return review;
+    }
 
-	@Override
-	public void deleteReviewById(Long id) {
-		Review deleted = findVerifiedOneById(id);
-		List<String> imageList = deleted.getImages();
-		if (!CollectionUtils.isEmpty(imageList) ) {
-			String filePath = "review/";
-			try {
-				ociObjectStorageUtil.deleteObject(imageList, filePath);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new BusinessLogicException(REVIEW_NOT_FOUND);
-			}
-		}
-		reviewRepository.delete(deleted);
-	}
+    @Override
+    public void deleteReviewById(Long id) {
+        Review deleted = findVerifiedOneById(id);
+        List<String> imageList = deleted.getImages();
+        if (!CollectionUtils.isEmpty(imageList)) {
+            String filePath = "";
+            try {
+                for (String image : imageList) {
+                    boolean isObjectExists = ociObjectStorageUtil.getObjectOne(image, filePath);
+                    if(isObjectExists){
+                        ociObjectStorageUtil.deleteObject(imageList, filePath);
+                    }
+                }
+            } catch (Exception e) {
+                if (e.getMessage().contains("ObjectNotFound")) {
+                    reviewRepository.delete(deleted);
+                } else {
+                    throw new BusinessLogicException(FILE_NOT_FOUND);
+                }
+            }
+        }
+        reviewRepository.delete(deleted);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Review findVerifiedOneById(Long id) {
-		Optional<Review> reviewOptional = reviewRepository.findById(id);
+    @Override
+    @Transactional(readOnly = true)
+    public Review findVerifiedOneById(Long id) {
+        Optional<Review> reviewOptional = reviewRepository.findById(id);
 
-		return reviewOptional.orElseThrow(() -> {
-			throw new BusinessLogicException(REVIEW_NOT_FOUND);
-		});
-	}
+        return reviewOptional.orElseThrow(() -> {
+            throw new BusinessLogicException(REVIEW_NOT_FOUND);
+        });
+    }
 
-	@Override
-	public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(OnbrdSliceRequest request) {
-		return reviewRepository.selectRecommandReviewList(request);
-	}
+    @Override
+    public OnbrdSliceResponse<ReviewByFavoriteCountDetail> selectRecommandReviewList(OnbrdSliceRequest request) {
+        return reviewRepository.selectRecommandReviewList(request);
+    }
 }
