@@ -13,6 +13,7 @@ public class ReviewByFavoriteCountDetail {
 	private float grade;
 	private String writerNickname;
 	private MemberLevel writerLevel;
+	private Long boardGameId;
 	private String boardGameTitle;
 	private String boardgameImage;
 	private long likeCount;

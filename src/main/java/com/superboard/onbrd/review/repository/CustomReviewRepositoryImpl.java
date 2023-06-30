@@ -119,6 +119,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 				review.likeCount,
 				review.writer.nickname.as("writerNickname"),
 				review.writer.level.as("writerLevel"),
+				review.boardgame.id.as("boardGameId"),
 				review.boardgame.name.as("boardGameTitle"),
 				review.boardgame.image.as("boardgameImage"),
 				member.profileCharacter
