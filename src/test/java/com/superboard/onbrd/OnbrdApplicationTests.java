@@ -1,6 +1,8 @@
 package com.superboard.onbrd;
 
+import com.superboard.onbrd.global.util.FCMUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.BufferedReader;
@@ -10,32 +12,16 @@ import java.io.InputStreamReader;
 @SpringBootTest
 class OnbrdApplicationTests {
 
+    @Autowired
+    private FCMUtil fcmUtil;
     @Test
     void contextLoads() throws Exception {
-        // Create process builder for the python command
-        ProcessBuilder pb = new ProcessBuilder("python", "D:\\hello.py");
+        String registrationToken = "fph6EGd9QcitzfL0kp8n2N:APA91bG_ZwzMerjlolwjSCZGcw59JcsZj-9eOS0kcsCbgP4RHt5DrsBd6ZniKcl6jsQXYhNIZkOFwkVagnuSxuvSW0tZNH1o60nX2xNPU1TvWN6rCUtuEtLmIfob9xlkgxoaK3hRKF_9";
+        String title = "Test Notification";
+        String body = "This is a test notification.";
 
-        // Start the process
-        Process process = null;
-        try {
-            process = pb.start();
-            // Read the output from the process
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            StringBuilder result = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                result.append(line);
-                result.append("\n");
-            }
-            process.waitFor();
-            System.out.println(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(process != null){
-                process.destroy();
-            }
-        }
+//        String response = fcmUtil.sendAndroidMessage(registrationToken,title,body);
+//        System.out.println(response.toString());
     }
 
 }

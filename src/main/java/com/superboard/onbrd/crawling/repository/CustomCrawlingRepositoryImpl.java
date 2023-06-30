@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.superboard.onbrd.crawling.entity.CrawlingTranslationDto;
+import com.superboard.onbrd.global.entity.FCMMessage;
 import com.superboard.onbrd.global.util.FCMUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -60,29 +61,26 @@ public class CustomCrawlingRepositoryImpl implements CustomCrawlingRepository{
 
     /*
     * TODO 
-    *  1. tag id로 favorite 추가한 사람에게 푸시 메시지 보내기
+    *  1.favorite tag 리스트 필요 
     *  2.
-    * 수행 순서
-    * 1. BOARDGAME_TAG 저장 -> TAG_ID 가져옴
-    * 2. FAVORITE_TAG에 IN 조건으로 SELECT
-    * 3. MEMBER의 Refresh token 받아서 push
-    *
-    * */
+    * 
+    */
     @Override
     public void selectOauthIdForPushMessageByFavorite(HashSet<Long> categoriesTagList) {
 
-        List<Long> memberId = queryFactory.select(member.id).from(favoriteTag)
-                .join(favoriteTag.member, member).where(favoriteTag.id.in(categoriesTagList)).groupBy(member.id).fetch();
-        List<String> refreshTokens = queryFactory.select(token.refreshToken).from(token).where(token.id.in(memberId)).fetch();
-
         try {
-            for (String refreshToken : refreshTokens){
-                fcmUtil.sendAndroidMessage(refreshToken,"FCM title","fcm Body");
+            for (Long categoryTag:categoriesTagList) {
+                List<Long> memberIdList = queryFactory.select(member.id).from(favoriteTag)
+                        .join(favoriteTag.member, member).where(favoriteTag.id.eq(categoryTag)).groupBy(member.id).fetch();
+                for (Long memberId : memberIdList) {
+                    String androidPushToken = queryFactory.select(token.androidPushToken).from(token).where(token.id.eq(memberId)).fetchOne();
+                    String message = "에 새로운 게임이 추가되었어요!";
+                    FCMMessage fcmMessage = FCMMessage.builder().registrationToken(androidPushToken).title("title").message("[#"+ categoryTag +  "]" + message).eventType("NEW_BOARDGAME").boardgameId("14").build();
+                    fcmUtil.sendAndroidMessage(fcmMessage);
+                }
             }
         } catch (FirebaseMessagingException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 }

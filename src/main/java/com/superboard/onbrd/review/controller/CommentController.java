@@ -68,8 +68,9 @@ public class CommentController {
 
 		// Run the method asynchronously
 		CompletableFuture.runAsync(() -> {
-			customCommentService.selectOauthIdForPushMessage(createdId);
+
 		});
+		customCommentService.selectOauthIdForPushMessage(createdId);
 		return ResponseEntity.status(CREATED).body(createdId);
 	}
 
