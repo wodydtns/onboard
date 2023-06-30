@@ -1,5 +1,6 @@
 package com.superboard.onbrd.global.util;
 
+import com.superboard.onbrd.global.entity.FCMMessage;
 import org.springframework.stereotype.Component;
 
 import com.google.firebase.messaging.AndroidConfig;
@@ -22,8 +23,7 @@ public class FCMUtil {
  * 			  setDirectBootOk - direct boot mode 시 device에 메시지 전달
 	 * 
 	 */
-	public String sendAndroidMessage( String registrationToken,String title, String body) throws FirebaseMessagingException{
-	//	public String sendAndroidMessage(int requestId, String registrationToken,String title, String body) throws FirebaseMessagingException{
+	public String sendAndroidMessage(FCMMessage fcmMessage) throws FirebaseMessagingException{
 		Message message = Message.builder()
 				.setAndroidConfig(AndroidConfig.builder()
 				.setTtl(3600)
@@ -31,12 +31,15 @@ public class FCMUtil {
 				.setRestrictedPackageName("com.superboard.onbrd")
 				.setDirectBootOk(true)
 				.setNotification(AndroidNotification.builder() 
-				.setTitle(title)
-				.setBody(body)
 				.setIcon("@drawable/bling")
+				.setTitle(fcmMessage.getTitle())
+				.setBody(fcmMessage.getMessage())
 				.build()).build())
-				//.putData("requestId", Integer.toString(requestId)).setToken(registrationToken).build();
-				.setToken(registrationToken).build();
+				.putData("eventType",fcmMessage.getEventType())
+				.putData("boardgameId",fcmMessage.getBoardgameId())
+				.putData("title",fcmMessage.getTitle())
+				.putData("message",fcmMessage.getMessage())
+				.setToken(fcmMessage.getRegistrationToken()).build();
 		String response = FirebaseMessaging.getInstance().send(message);
 		
 		return response;

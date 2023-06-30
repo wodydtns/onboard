@@ -66,8 +66,9 @@ public class PushToggleController {
 		@ApiResponse(code = 500, message = "토큰 생성 실패")
 	})
 	public ResponseEntity<Void> createPushToken(@RequestBody PushTokenPostRequest pushTokenPostRequest, @AuthenticationPrincipal MemberDetails memberDetails) {
-		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
-		pushTokenPostRequest.setMemberId(member.get().getId());
+		Member member = memberService.findByEmail(memberDetails.getEmail())
+				.orElseThrow(() -> new RuntimeException("Member not found"));
+		pushTokenPostRequest.setMemberId(member.getId());
 		Token pushToken = Token.validateToken(pushTokenPostRequest);
 		tokenService.createToken(pushToken);
 		return ResponseEntity.ok().build();

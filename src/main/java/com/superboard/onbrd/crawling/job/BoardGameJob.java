@@ -92,11 +92,11 @@ public class BoardGameJob {
 
     /*
      * FIXME
-     *  1. category size가 20
-
+     *  1. 2 page 안됨 : For input string: "20–60"
+     *  2. 3~5 page 안됨 :  Expected BEGIN_ARRAY but was STRING at line 1 column 1 path $
      * */
 
-    @Scheduled(cron = "0/10 * * * * *")
+    //@Scheduled(cron = "0/10 * * * * *")
     @Transactional
     public void insertCrawlingData() {
         // 파일 경로 수정 필요
@@ -163,7 +163,7 @@ public class BoardGameJob {
     }
 
 
-    //@Scheduled(cron = "0/10 * * * * *")
+//    @Scheduled(cron = "0 0 23 * * *")
     public void translationBoardgameDesc() {
 
         List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardgameDescription();
