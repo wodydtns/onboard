@@ -1,7 +1,6 @@
 package com.superboard.onbrd.member.service;
 
 import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.springframework.stereotype.Service;
@@ -17,13 +16,6 @@ public class MemberEntityListener {
 	@PostLoad
 	public void postLoad(Member member) {
 		member.loadPreBadges();
-	}
-
-	@PrePersist
-	public void prePersist(Member member) {
-		if (member.checkBadgeGain()) {
-			saveBadgeHistory(member);
-		}
 	}
 
 	@PreUpdate

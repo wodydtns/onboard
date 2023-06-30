@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/members/mypage/badges")
 @RequiredArgsConstructor
 public class BadgeHistoryController {
-	private BadgeHistoryService badgeHistoryService;
+	private final BadgeHistoryService badgeHistoryService;
 
 	@GetMapping
 	public ResponseEntity<MypageBadgeResponse> getBadges(@AuthenticationPrincipal MemberDetails memberDetails) {

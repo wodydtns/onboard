@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +31,7 @@ import com.superboard.onbrd.global.converter.MemberRoleConverter;
 import com.superboard.onbrd.global.converter.MemberStatusConverter;
 import com.superboard.onbrd.global.entity.BaseEntity;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
+import com.superboard.onbrd.member.service.MemberEntityListener;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
 import com.superboard.onbrd.review.entity.Comment;
 import com.superboard.onbrd.review.entity.Review;
@@ -41,6 +43,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(MemberEntityListener.class)
 public class Member extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

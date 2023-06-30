@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CustomBadgeHistoryRepositoryImpl implements CustomBadgeHistoryRepository {
-	private JPAQueryFactory queryFactory;
+	private final JPAQueryFactory queryFactory;
 
 	@Override
 	public BadgeHistory findLastBadgeHistory(String email) {
@@ -30,17 +30,14 @@ public class CustomBadgeHistoryRepositoryImpl implements CustomBadgeHistoryRepos
 	}
 
 	@Override
-	public BadgeHistory findLastCheckedBadgeHistory(String email) {
+	public Optional<BadgeHistory> findLastCheckedBadgeHistory(String email) {
 
-		Optional<BadgeHistory> found = Optional.ofNullable(
+		return Optional.ofNullable(
 			queryFactory
 				.select(badgeHistory)
 				.from(badgeHistory)
 				.where(badgeHistory.member.email.eq(email), badgeHistory.isChecked.isTrue())
 				.orderBy(badgeHistory.id.desc())
 				.fetchFirst());
-
-		return found
-			.orElseGet(() -> findLastCheckedBadgeHistory(email));
 	}
 }

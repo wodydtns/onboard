@@ -19,8 +19,8 @@ import com.superboard.onbrd.auth.entity.MemberDetails;
 import com.superboard.onbrd.member.dto.member.MemberInfoResponse;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.service.BadgeHistoryService;
 import com.superboard.onbrd.member.service.MemberService;
-import com.superboard.onbrd.tag.service.FavoriteTagService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class MemberController {
 	private final MemberService memberService;
-	private final FavoriteTagService favoriteTagService;
+	private final BadgeHistoryService badgeHistoryService;
 
 	@Tag(name = "Member")
 	@ApiOperation(value = "회원가입")
@@ -44,6 +44,7 @@ public class MemberController {
 	@PostMapping("/sign-up")
 	public ResponseEntity<Long> signUp(@RequestBody SignUpRequest request) {
 		Member created = memberService.signUp(request);
+		badgeHistoryService.createFrom(created);
 
 		return ResponseEntity.status(CREATED).body(created.getId());
 	}
