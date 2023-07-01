@@ -2,6 +2,7 @@ package com.superboard.onbrd.home.controller;
 
 import com.superboard.onbrd.crawling.repository.CustomCrawlingRepository;
 import com.superboard.onbrd.review.repository.CustomCommentRepository;
+import com.superboard.onbrd.review.service.CustomCommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +21,15 @@ public class FCMPushTokenTestController {
 
     private final CustomCrawlingRepository customCrawlingRepository;
 
-    private final CustomCommentRepository customCommentRepository;
+    private final CustomCommentService customCommentService;
     @ApiOperation(value = "관심있는 태그의 게임 추가 시 FCM message push")
     @PostMapping("/PushMessageByFavorite")
     public void PushMessageByFavorite(HashSet<Long> categoriesTagList){
         customCrawlingRepository.selectOauthIdForPushMessageByFavorite(categoriesTagList);
     }
     @ApiOperation(value = "자신이 작성한 리뷰에 댓글 추가 시 FCM message push")
-    @PostMapping("/PushMessageByFavorite")
+    @PostMapping("/PushMessageByComment")
     public void PushMessageByComment(long createdId){
-        customCommentRepository.selectOauthIdForPushMessage(createdId);
+        customCommentService.selectOauthIdForPushMessage(createdId);
     }
 }
