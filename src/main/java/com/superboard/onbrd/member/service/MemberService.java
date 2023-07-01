@@ -1,9 +1,11 @@
 package com.superboard.onbrd.member.service;
 
 import java.util.Optional;
+import java.util.Set;
 
 import com.superboard.onbrd.admin.dto.AdminMemberDetail;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
+import com.superboard.onbrd.member.entity.Badge;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.oauth2.dto.OauthSignUpRequest;
 
@@ -35,4 +37,6 @@ public interface MemberService {
 	AdminMemberDetail getAdminMemberDetail(Long id);
 
 	Member grantAdminAuthority(String email);
+
+	Member grantBadges(Long id, Set<Badge> badges);
 }

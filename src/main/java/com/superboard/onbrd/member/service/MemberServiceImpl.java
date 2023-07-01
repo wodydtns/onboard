@@ -3,6 +3,7 @@ package com.superboard.onbrd.member.service;
 import static com.superboard.onbrd.global.exception.ExceptionCode.*;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.OnbrdAssert;
 import com.superboard.onbrd.member.dto.member.SignUpRequest;
 import com.superboard.onbrd.member.dto.password.PasswordCreateCommand;
+import com.superboard.onbrd.member.entity.Badge;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberRole;
 import com.superboard.onbrd.member.entity.MemberStatus;
@@ -156,6 +158,14 @@ public class MemberServiceImpl implements MemberService {
 	public Member grantAdminAuthority(String email) {
 		Member member = findVerifiedOneByEmail(email);
 		member.gainAuthority(MemberRole.ROLE_ADMIN);
+
+		return member;
+	}
+
+	@Override
+	public Member grantBadges(Long id, Set<Badge> badges) {
+		Member member = findVerifiedOneById(id);
+		member.gainBadges(badges);
 
 		return member;
 	}

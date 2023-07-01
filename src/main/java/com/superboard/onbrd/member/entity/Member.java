@@ -239,6 +239,10 @@ public class Member extends BaseEntity {
 		this.badges.add(badge);
 	}
 
+	public void gainBadges(Set<Badge> badges) {
+		this.badges.addAll(badges);
+	}
+
 	public void withdraw() {
 		this.status = WITHDRAWN;
 	}
