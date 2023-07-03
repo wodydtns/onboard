@@ -16,8 +16,7 @@ public class FCMConfig {
 	public void initialize() throws IOException {
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
-				.setCredentials(
-						GoogleCredentials.fromStream(new ClassPathResource("serviceAccountKey.json").getInputStream()))
+				.setCredentials(GoogleCredentials.fromStream(new ClassPathResource("serviceAccountKey.json").getInputStream()))
 				.setProjectId("on-the-board-14183").build();
 		FirebaseApp.initializeApp(options);
 

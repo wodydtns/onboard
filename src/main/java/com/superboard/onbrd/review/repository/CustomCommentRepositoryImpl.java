@@ -3,14 +3,13 @@ package com.superboard.onbrd.review.repository;
 import static com.superboard.onbrd.auth.entity.QToken.*;
 import static com.superboard.onbrd.global.entity.OrderBy.*;
 import static com.superboard.onbrd.global.util.PagingUtil.*;
-import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
-import com.superboard.onbrd.global.entity.FCMMessage;
+import com.superboard.onbrd.global.entity.FCMMessageDto;
 import com.superboard.onbrd.review.dto.comment.CommentPushMessage;
 import org.springframework.stereotype.Repository;
 
@@ -100,12 +99,12 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
                 .from(token)
                 .where(token.id.eq(commentPushMessage.getWriterId()))
                 .fetchOne();
-
+        String title = "title";
+        String body = "내가 작성한 리뷰에 댓글이 달렸어요!";
         try {
-            FCMMessage fcmMessage = FCMMessage.builder().registrationToken(androidPushToken).title("title").message("내가 작성한 리뷰에 댓글이 달렸어요!")
-                    .eventType("NEW_COMMENT").boardgameId(String.valueOf(commentPushMessage.getBoardGameId())).build();
-            fcmUtil.sendAndroidMessage(fcmMessage);
-        } catch (FirebaseMessagingException e) {
+            String response = fcmUtil.sendMessageTo(androidPushToken,title,body,"NEW_COMMENT", String.valueOf(commentPushMessage.getBoardgameId()));
+            System.out.println("Successfully sent message: " + response);
+        } catch ( IOException e) {
             throw new RuntimeException(e);
         }
     }

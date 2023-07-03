@@ -9,6 +9,6 @@ public class CommentPushMessage {
 
     private Long writerId;
 
-    private Long boardGameId;
+    private Long boardgameId;
 
 }
