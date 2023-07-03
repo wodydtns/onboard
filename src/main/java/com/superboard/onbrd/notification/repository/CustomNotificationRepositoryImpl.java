@@ -28,10 +28,10 @@ public class CustomNotificationRepositoryImpl implements CustomNotificationRepos
 		List<NotificationGetResponse> content = queryFactory
 			.select(Projections.fields(NotificationGetResponse.class,
 				notification.id,
-				notification.type,
+				notification.notificationType,
 				notification.payload,
 				notification.isChecked,
-				notification.publishedAt
+				notification.pushedAt
 			))
 			.from(notification)
 			.where(notification.receiver.email.eq(query.getEmail()))

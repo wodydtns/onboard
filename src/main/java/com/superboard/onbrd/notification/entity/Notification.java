@@ -28,13 +28,13 @@ public class Notification {
 	private Long id;
 	@Column(nullable = false)
 	@Convert(converter = NotificationTypeConverter.class)
-	private NotificationType type;
+	private NotificationType notificationType;
 	@Column(nullable = false)
 	private String payload;
 	@Column(nullable = false)
 	private boolean isChecked = false;
 	@Column(nullable = false)
-	private LocalDateTime publishedAt;
+	private LocalDateTime pushedAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "receiver_id")
