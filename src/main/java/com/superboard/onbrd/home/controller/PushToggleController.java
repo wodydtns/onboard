@@ -1,8 +1,10 @@
 package com.superboard.onbrd.home.controller;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.home.entity.PushToggle;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
+import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +22,6 @@ import com.superboard.onbrd.home.dto.PushToggleDto;
 import com.superboard.onbrd.home.dto.PushTogglePatchRequest;
 import com.superboard.onbrd.home.service.PushToggleService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -40,19 +38,23 @@ public class PushToggleController {
 
 	@GetMapping
 	@ApiOperation(value = "사용자 푸시 알림 사용 여부")
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	public ResponseEntity<PushToggleDto> getPushToggle(@AuthenticationPrincipal MemberDetails memberDetails) {
-		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
-		PushToggleDto response = pushToggleService.getPushToggle(member.get().getId());
+		Member member = memberService.findByEmail(memberDetails.getEmail())
+				.orElseThrow(() -> new RuntimeException("Member not found"));
+
+		PushToggleDto response = pushToggleService.getPushToggle(member.getId());
 
 		return ResponseEntity.ok(response);
 	}
 
+	// FIXME : token이 없는 것으로 나옴 -> member와 push toogle을 조인함 -> fix 필요
 	@PatchMapping
 	@ApiOperation(value = "사용자 푸시 알림 사용 여부 업데이트")
-	public ResponseEntity<Long> patchPushToggle(@RequestPart PushTogglePatchRequest request,@AuthenticationPrincipal MemberDetails memberDetails) {
-		Optional<Member> member = memberService.findByEmail(memberDetails.getEmail());
-		PushToggleDto params = PushToggleDto.of(request, member.get().getId());
-		Long updateId = pushToggleService.updatePushToggle(params);
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+	public ResponseEntity<Long> patchPushToggle(@RequestBody PushTogglePatchRequest request,@AuthenticationPrincipal MemberDetails memberDetails) {
+		Member member = memberService.findByEmail(memberDetails.getEmail()).orElseThrow(() -> new RuntimeException("Member not found"));
+		Long updateId = pushToggleService.updatePushToggle(PushToggle.of(member,request));
 
 		return ResponseEntity.ok(updateId);
 	}
@@ -65,11 +67,11 @@ public class PushToggleController {
 		@ApiResponse(code = 200, message = "토큰 생성 성공"),
 		@ApiResponse(code = 500, message = "토큰 생성 실패")
 	})
+	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
 	public ResponseEntity<Void> createPushToken(@RequestBody PushTokenPostRequest pushTokenPostRequest, @AuthenticationPrincipal MemberDetails memberDetails) {
 		Member member = memberService.findByEmail(memberDetails.getEmail())
 				.orElseThrow(() -> new RuntimeException("Member not found"));
-		pushTokenPostRequest.setMemberId(member.getId());
-		Token pushToken = Token.validateToken(pushTokenPostRequest);
+		Token pushToken = Token.validateToken(pushTokenPostRequest, memberDetails.getId());
 		tokenService.createToken(pushToken);
 		return ResponseEntity.ok().build();
 	}

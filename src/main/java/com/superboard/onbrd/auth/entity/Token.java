@@ -47,9 +47,9 @@ public class Token {
         return token;
     }
 
-    public static Token validateToken(PushTokenPostRequest pushTokenPostRequest) {
+    public static Token validateToken(PushTokenPostRequest pushTokenPostRequest, Long memberId) {
         Token token = new Token();
-        token.setId(pushTokenPostRequest.getMemberId());
+        token.setId(memberId);
         token.setAndroidPushToken(pushTokenPostRequest.getPushTokenValue());
         return token;
 

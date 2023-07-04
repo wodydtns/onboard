@@ -10,8 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PushTokenPostRequest {
 
-    private Long memberId;
-
     private String pushTokenValue;
 
 }

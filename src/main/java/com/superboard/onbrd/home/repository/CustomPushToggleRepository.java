@@ -6,5 +6,4 @@ public interface CustomPushToggleRepository {
 
     public PushToggleDto getPushToggle(long id);
 
-    public Long updatePushToggle(PushToggleDto dto);
 }
