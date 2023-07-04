@@ -23,12 +23,5 @@ public class PushToggleDto {
         this.favoriteTagYn=favoriteTagYn;
     }
 
-    public static PushToggleDto of(PushTogglePatchRequest request, long memberId){
-        PushToggleDto dto = new PushToggleDto();
-        dto.id = request.getId();
-        dto.memberId = memberId;
-        dto.commentYn=request.getCommentYn();
-        dto.favoriteTagYn=request.getFavoriteTagYn();
-        return dto;
-    }
+
 }

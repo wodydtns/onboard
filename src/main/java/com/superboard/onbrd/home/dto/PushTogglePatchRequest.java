@@ -9,8 +9,6 @@ import javax.validation.Valid;
 @NoArgsConstructor
 public class PushTogglePatchRequest {
 
-    private Long id;
-
     private String commentYn;
 
     private String favoriteTagYn;
