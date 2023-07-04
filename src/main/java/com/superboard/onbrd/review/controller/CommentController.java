@@ -2,6 +2,10 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
+import com.superboard.onbrd.global.exception.BusinessLogicException;
+import com.superboard.onbrd.global.exception.ExceptionCode;
+import com.superboard.onbrd.member.entity.Member;
+import com.superboard.onbrd.member.repository.MemberRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -49,6 +53,8 @@ public class CommentController {
 
 	private final CustomCommentService customCommentService;
 
+	private final MemberRepository memberRepository;
+
 	@Tag(name = "Comment")
 	@ApiOperation(value = "댓글 작성")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
@@ -68,7 +74,9 @@ public class CommentController {
 
 		// Run the method asynchronously
 		CompletableFuture.runAsync(() -> {
-			customCommentService.selectOauthIdForPushMessage(createdId);
+			String payload = customCommentService.selectOauthIdForPushMessage(createdId);
+			Member member = memberRepository.findByEmail(memberDetails.getEmail()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));;
+			customCommentService.createNotification(member,payload);
 		});
 		return ResponseEntity.status(CREATED).body(createdId);
 	}

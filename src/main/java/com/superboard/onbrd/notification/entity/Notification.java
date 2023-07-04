@@ -23,18 +23,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@Column(nullable = false)
 	@Convert(converter = NotificationTypeConverter.class)
 	private NotificationType notificationType;
+	// eventType, boardgameId -> json을 string으로
 	@Column(nullable = false)
 	private String payload;
 	@Column(nullable = false)
 	private boolean isChecked = false;
 	@Column(nullable = false)
-	private LocalDateTime pushedAt;
+	private LocalDateTime pushedAt = LocalDateTime.now();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "receiver_id")
@@ -42,5 +44,17 @@ public class Notification {
 
 	public void check() {
 		this.isChecked = true;
+	}
+
+	public void gainnotificationType(NotificationType notificationType){
+		this.notificationType = notificationType;
+	}
+
+	public static Notification from(Member member,NotificationType notificationType, String payload ){
+		Notification notification = new Notification();
+		notification.notificationType = notificationType;
+		notification.receiver = member;
+		notification.payload = payload;
+		return notification;
 	}
 }

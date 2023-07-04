@@ -10,5 +10,5 @@ public interface CustomCommentRepository {
 
 	OnbrdSliceResponse<CommentDetail> getCommentsByReviewId(Long reviewId, OnbrdSliceRequest request);
 
-	void selectOauthIdForPushMessage(long createdId);
+	String selectOauthIdForPushMessage(long createdId);
 }
