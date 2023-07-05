@@ -72,6 +72,7 @@ public class PushToggleController {
 		Member member = memberService.findByEmail(memberDetails.getEmail())
 				.orElseThrow(() -> new RuntimeException("Member not found"));
 		Token pushToken = Token.validateToken(pushTokenPostRequest, memberDetails.getId());
+		pushToken.setMember(member);
 		tokenService.createToken(pushToken);
 		return ResponseEntity.ok().build();
 	}
