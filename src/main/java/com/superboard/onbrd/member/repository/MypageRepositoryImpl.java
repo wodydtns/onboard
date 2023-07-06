@@ -60,7 +60,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 			))
 			.from(review)
 			.join(review.boardgame, boardGame)
-			.where(review.writer.email.eq(params.getEmail()))
+			.where(review.writer.email.eq(params.getEmail()), review.isHidden.isFalse())
 			.orderBy(review.id.desc())
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
@@ -128,7 +128,7 @@ public class MypageRepositoryImpl implements MypageRepository {
 			))
 			.from(review)
 			.join(review.boardgame, boardGame)
-			.where(review.writer.email.eq(email))
+			.where(review.writer.email.eq(email), review.isHidden.isFalse())
 			.orderBy(review.id.desc())
 			.limit(reviewCount)
 			.fetch();
