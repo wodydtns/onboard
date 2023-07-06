@@ -6,10 +6,10 @@ import static com.superboard.onbrd.global.util.PagingUtil.*;
 import static com.superboard.onbrd.review.entity.QComment.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.notification.entity.NotificationType;
 import com.superboard.onbrd.review.dto.comment.CommentPushMessage;
 import org.springframework.stereotype.Repository;
@@ -30,10 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    private final FCMUtil fcmUtil;
-
-    private final ObjectMapper objectMapper;
 
     @Override
     public OnbrdSliceResponse<AdminCommentDetail> getAdminComments(OnbrdSliceRequest params) {
@@ -86,7 +82,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
     }
 
     @Override
-    public String selectOauthIdForPushMessage(long createdId) {
+    public PushMessageResponse selectOauthIdForPushMessage(long createdId) {
         CommentPushMessage commentPushMessage = queryFactory
                 .select(Projections.fields(CommentPushMessage.class,
                         review.writer.id.as("writerId"),
@@ -103,13 +99,14 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
                 .fetchOne();
         String title = "title";
         String body = "내가 작성한 리뷰에 댓글이 달렸어요!";
-        try {
-            // push 시점에 notification 추가
-            fcmUtil.sendMessageTo(androidPushToken,title,body,"NEW_COMMENT", String.valueOf(commentPushMessage.getBoardgameId()));
-            return String.format("{\"eventType\":\"%s\", \"boardgameId\":\"%s\",  \"writerId\":\"%s\"}", "NEW_COMMENT", commentPushMessage.getBoardgameId(), commentPushMessage.getWriterId());
-        } catch ( IOException e) {
-            throw new RuntimeException(e);
-        }
+        PushMessageResponse pushMessageResponse = new PushMessageResponse();
+        pushMessageResponse.setTargetToken(androidPushToken);
+        pushMessageResponse.setBody(body);
+        pushMessageResponse.setTitle(title);
+        pushMessageResponse.setEventType(String.valueOf(NotificationType.NEW_COMMENT));
+        pushMessageResponse.setBoardgameId(String.valueOf(commentPushMessage.getBoardgameId()));
+        pushMessageResponse.setWriterId(commentPushMessage.getWriterId());
+        return pushMessageResponse;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.superboard.onbrd.review.service;
 
-import com.superboard.onbrd.global.entity.FCMMessageDto;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.notification.entity.NotificationType;
 import com.superboard.onbrd.notification.repository.NotificationRepository;
@@ -21,14 +21,15 @@ public class CustomCommentServiceImpl implements CustomCommentService {
 	private final NotificationRepository notificationRepository;
 
 	@Override
-	public String selectOauthIdForPushMessage(long createdId) {
+	public PushMessageResponse selectOauthIdForPushMessage(long createdId) {
 		return commentRepository.selectOauthIdForPushMessage(createdId);
 	}
 
 	@Override
-	public void createNotification(Member member, String payload) {
+	public Long createNotification(Member member, PushMessageResponse payload) {
 		Notification notification = Notification.from(member, NotificationType.NEW_COMMENT,payload);
-		notificationRepository.save(notification);
+		Notification NotificationResult = notificationRepository.save(notification);
+		return NotificationResult.getId();
 	}
 
 

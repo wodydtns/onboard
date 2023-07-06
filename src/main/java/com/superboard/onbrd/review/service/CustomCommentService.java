@@ -1,9 +1,10 @@
 package com.superboard.onbrd.review.service;
 
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.member.entity.Member;
 
 public interface CustomCommentService {
-    public String selectOauthIdForPushMessage(long createdId);
+    public PushMessageResponse selectOauthIdForPushMessage(long createdId);
 
-    void createNotification(Member member, String payload) ;
+    Long createNotification(Member member, PushMessageResponse payload) ;
 }
