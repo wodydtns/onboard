@@ -2,6 +2,9 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.ExceptionCode;
 import com.superboard.onbrd.member.entity.Member;
@@ -55,6 +58,8 @@ public class CommentController {
 
 	private final MemberRepository memberRepository;
 
+	private final ObjectMapper objectMapper;
+
 	@Tag(name = "Comment")
 	@ApiOperation(value = "댓글 작성")
 	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
@@ -75,8 +80,17 @@ public class CommentController {
 		// Run the method asynchronously
 		CompletableFuture.runAsync(() -> {
 			String payload = customCommentService.selectOauthIdForPushMessage(createdId);
-			Member member = memberRepository.findByEmail(memberDetails.getEmail()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));;
-			customCommentService.createNotification(member,payload);
+			String writerId = "";
+			JsonNode rootNode = null;
+			try {
+				rootNode = objectMapper.readTree(payload);
+				writerId = rootNode.path("writerId").asText();
+				Member member = memberRepository.findById(Long.valueOf(writerId)).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));;
+				customCommentService.createNotification(member,payload);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+
 		});
 		return ResponseEntity.status(CREATED).body(createdId);
 	}

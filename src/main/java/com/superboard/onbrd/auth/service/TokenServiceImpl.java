@@ -72,7 +72,16 @@ public class TokenServiceImpl implements TokenService {
 
 	@Override
 	public void createToken(Token token) {
-		tokenRepository.save(token);
+		Optional<Token> tokenOptional = tokenRepository.findById(token.getMember().getId());
+		if(tokenOptional.isPresent()){
+			Token updateToken = tokenOptional.get();
+			updateToken.setMember(token.getMember());
+			updateToken.setAndroidPushToken(token.getAndroidPushToken());
+			updateToken.setApplePushToken(token.getApplePushToken());
+			tokenRepository.save(updateToken);
+		}else{
+			tokenRepository.save(token);
+		}
 	}
 
 	@Override
