@@ -3,6 +3,7 @@ package com.superboard.onbrd.review.repository;
 import com.superboard.onbrd.admin.dto.AdminCommentDetail;
 import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.review.dto.comment.CommentDetail;
 
 public interface CustomCommentRepository {
@@ -10,5 +11,5 @@ public interface CustomCommentRepository {
 
 	OnbrdSliceResponse<CommentDetail> getCommentsByReviewId(Long reviewId, OnbrdSliceRequest request);
 
-	String selectOauthIdForPushMessage(long createdId);
+	PushMessageResponse selectOauthIdForPushMessage(long createdId);
 }

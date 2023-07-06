@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.superboard.onbrd.global.converter.NotificationTypeConverter;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.member.entity.Member;
 
 import lombok.AccessLevel;
@@ -50,11 +51,11 @@ public class Notification {
 		this.notificationType = notificationType;
 	}
 
-	public static Notification from(Member member,NotificationType notificationType, String payload ){
+	public static Notification from(Member member,NotificationType notificationType, PushMessageResponse payload ){
 		Notification notification = new Notification();
 		notification.notificationType = notificationType;
 		notification.receiver = member;
-		notification.payload = payload;
+		notification.payload = String.format("{\"eventType\":\"%s\", \"boardgameId\":\"%s\",  \"writerId\":\"%s\"}", notificationType, payload.getBoardgameId(), payload.getWriterId());
 		return notification;
 	}
 }

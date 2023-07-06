@@ -3,10 +3,8 @@ package com.superboard.onbrd.global.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
 import com.superboard.onbrd.global.entity.FCMMessageDto;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.apache.http.HttpHeaders;
@@ -45,13 +43,15 @@ public class FCMUtil {
 
     }
 
-    public String makeMessage(String targetToken, String title, String body, String eventType, String boardgameId) throws JsonProcessingException {
+    public String makeMessage(PushMessageResponse pushMessageResponse) throws JsonProcessingException {
         FCMMessageDto fcmMessage = FCMMessageDto.builder()
                 .message(FCMMessageDto.Message.builder()
-                        .token(targetToken)
+                        .token(pushMessageResponse.getTargetToken())
                         .notification(
-                                FCMMessageDto.Notification.builder().title(title).body(body).build())
-                        .data(FCMMessageDto.Data.builder().eventType(eventType).boardgameId(boardgameId).build())
+                                FCMMessageDto.Notification.builder().title(pushMessageResponse.getTitle()).body(pushMessageResponse.getBody()).build())
+                        .data(FCMMessageDto.Data.builder().eventType(pushMessageResponse.getEventType()).boardgameId(pushMessageResponse.getBoardgameId())
+                                .notificationId(pushMessageResponse.getNotificationId())
+                                .build())
                         .build()
                 )
                 .validateOnly(false)
@@ -61,8 +61,8 @@ public class FCMUtil {
 
     }
 
-    public String sendMessageTo(String targetToken, String title, String body, String eventType, String boardgameId) throws IOException {
-        String message = makeMessage(targetToken, title, body, eventType, boardgameId);
+    public String sendMessageTo(PushMessageResponse pushMessageResponse) throws IOException {
+        String message = makeMessage(pushMessageResponse);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));

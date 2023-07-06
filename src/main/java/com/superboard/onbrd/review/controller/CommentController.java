@@ -2,11 +2,11 @@ package com.superboard.onbrd.review.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.exception.ExceptionCode;
+import com.superboard.onbrd.global.util.FCMUtil;
+import com.superboard.onbrd.home.dto.PushMessageResponse;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.repository.MemberRepository;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +44,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Comment")
@@ -52,95 +53,95 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Validated
 public class CommentController {
-	private final CommentService commentService;
+    private final CommentService commentService;
 
-	private final CustomCommentService customCommentService;
+    private final CustomCommentService customCommentService;
 
-	private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-	private final ObjectMapper objectMapper;
+    private final FCMUtil fcmUtil;
 
-	@Tag(name = "Comment")
-	@ApiOperation(value = "댓글 작성")
-	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "201", description = "생성 댓글 ID 응답",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
-		@ApiResponse(responseCode = "404")
-	})
-	@ResponseStatus(CREATED)
-	@PostMapping
-	public ResponseEntity<Long> postComment(@AuthenticationPrincipal MemberDetails memberDetails,
-		@PathVariable Long reviewId, @RequestBody CommentPostRequest request) {
-		CommentCreateDto dto = CommentCreateDto.of(memberDetails.getEmail(), reviewId, request);
+    @Tag(name = "Comment")
+    @ApiOperation(value = "댓글 작성")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "생성 댓글 ID 응답",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
+            @ApiResponse(responseCode = "404")
+    })
+    @ResponseStatus(CREATED)
+    @PostMapping
+    public ResponseEntity<Long> postComment(@AuthenticationPrincipal MemberDetails memberDetails,
+                                            @PathVariable Long reviewId, @RequestBody CommentPostRequest request) {
+        CommentCreateDto dto = CommentCreateDto.of(memberDetails.getEmail(), reviewId, request);
 
-		Long createdId = commentService.createComment(dto).getId();
+        Long createdId = commentService.createComment(dto).getId();
 
-		// Run the method asynchronously
-		CompletableFuture.runAsync(() -> {
-			String payload = customCommentService.selectOauthIdForPushMessage(createdId);
-			String writerId = "";
-			JsonNode rootNode = null;
-			try {
-				rootNode = objectMapper.readTree(payload);
-				writerId = rootNode.path("writerId").asText();
-				Member member = memberRepository.findById(Long.valueOf(writerId)).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));;
-				customCommentService.createNotification(member,payload);
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
+        // Run the method asynchronously
+//        CompletableFuture.runAsync(() -> {
+            PushMessageResponse payload = customCommentService.selectOauthIdForPushMessage(createdId);
+            Member member = memberRepository.findById(payload.getWriterId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+            long createNotificaionId = customCommentService.createNotification(member, payload);
+            payload.setNotificationId(String.valueOf(createNotificaionId));
 
-		});
-		return ResponseEntity.status(CREATED).body(createdId);
-	}
+            try {
+                System.out.println(payload.toString());
+                String response = fcmUtil.sendMessageTo(payload);
+                System.out.println(response);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+//        });
+        return ResponseEntity.status(CREATED).body(createdId);
+    }
 
-	@Tag(name = "Comment")
-	@ApiOperation(value = "댓글 수정")
-	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "수정 댓글 ID 응답",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
-		@ApiResponse(responseCode = "404")
-	})
-	@PatchMapping("/{commentId}")
-	public ResponseEntity<Long> patchComment(@PathVariable Long commentId, @RequestBody CommentPatchRequest request) {
-		CommentUpdateDto dto = CommentUpdateDto.of(commentId, request);
+    @Tag(name = "Comment")
+    @ApiOperation(value = "댓글 수정")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 댓글 ID 응답",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Long.class), examples = {@ExampleObject(value = "1")})),
+            @ApiResponse(responseCode = "404")
+    })
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<Long> patchComment(@PathVariable Long commentId, @RequestBody CommentPatchRequest request) {
+        CommentUpdateDto dto = CommentUpdateDto.of(commentId, request);
 
-		Long updatedId = commentService.updateComment(dto).getId();
+        Long updatedId = commentService.updateComment(dto).getId();
 
-		return ResponseEntity.ok(updatedId);
-	}
+        return ResponseEntity.ok(updatedId);
+    }
 
-	@Tag(name = "Comment")
-	@ApiOperation(value = "댓글 삭제")
-	@ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "204", description = "댓글 삭제"),
-		@ApiResponse(responseCode = "404")
-	})
-	@ResponseStatus(NO_CONTENT)
-	@DeleteMapping("/{commentId}")
-	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-		commentService.deleteCommentById(commentId);
+    @Tag(name = "Comment")
+    @ApiOperation(value = "댓글 삭제")
+    @ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "댓글 삭제"),
+            @ApiResponse(responseCode = "404")
+    })
+    @ResponseStatus(NO_CONTENT)
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteCommentById(commentId);
 
-		return ResponseEntity.noContent().build();
-	}
+        return ResponseEntity.noContent().build();
+    }
 
-	@Tag(name = "Comment")
-	@ApiOperation(value = "리뷰별 댓글 목록 조회")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200"),
-		@ApiResponse(responseCode = "404")
-	})
-	@GetMapping
-	public ResponseEntity<OnbrdSliceResponse<CommentDetail>> getCommentsByReviewId(
-		@PathVariable Long reviewId, @ModelAttribute OnbrdSliceRequest request) {
-		request.rebaseToZero();
+    @Tag(name = "Comment")
+    @ApiOperation(value = "리뷰별 댓글 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "404")
+    })
+    @GetMapping
+    public ResponseEntity<OnbrdSliceResponse<CommentDetail>> getCommentsByReviewId(
+            @PathVariable Long reviewId, @ModelAttribute OnbrdSliceRequest request) {
+        request.rebaseToZero();
 
-		OnbrdSliceResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId, request);
+        OnbrdSliceResponse<CommentDetail> response = commentService.getCommentsByReviewId(reviewId, request);
 
-		return ResponseEntity.ok(response);
-	}
+        return ResponseEntity.ok(response);
+    }
 }

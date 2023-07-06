@@ -32,6 +32,7 @@ public class FCMMessageDto {
     public static class Data{
         private String    eventType;
         private String    boardgameId;
+        private String notificationId;
     }
 
 }
