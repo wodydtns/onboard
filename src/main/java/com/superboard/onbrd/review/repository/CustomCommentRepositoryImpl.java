@@ -106,7 +106,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
         try {
             // push 시점에 notification 추가
             fcmUtil.sendMessageTo(androidPushToken,title,body,"NEW_COMMENT", String.valueOf(commentPushMessage.getBoardgameId()));
-            return String.format("{\"eventType\":\"%s\", \"boardgameId\":\"%s\"}", "NEW_COMMENT", commentPushMessage.getBoardgameId());
+            return String.format("{\"eventType\":\"%s\", \"boardgameId\":\"%s\",  \"writerId\":\"%s\"}", "NEW_COMMENT", commentPushMessage.getBoardgameId(), commentPushMessage.getWriterId());
         } catch ( IOException e) {
             throw new RuntimeException(e);
         }
