@@ -46,8 +46,6 @@ import lombok.RequiredArgsConstructor;
 public class BoardgameController {
 	private final BoardGameService boardGameService;
 
-	private final FavoriteBoardGameService favoriteBoardGameService;
-
 	private final MemberRepository memberRepository;
 
 	private final BoardgameLikeService boardgameLikeService;
@@ -140,13 +138,12 @@ public class BoardgameController {
 	@PatchMapping("/{boardGameId}/updateFavoriteBoardgameLikes")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "boardGameId", value = "보드게임 id", required = false, dataType = "Long", paramType = "query"),
-		@ApiImplicitParam(name = "favoriteBoardGameLikesYn", value = "보드게임 좋아요 toggle", required = false, dataType = "String", paramType = "query"),
 	})
 	public ResponseEntity<Void> updateFavoriteBoardgameLikes(@PathVariable Long boardGameId,
 		@RequestParam String favoriteBoardGameLikesYn,
 		@AuthenticationPrincipal MemberDetails memberDetails) {
 		Optional<Member> member = memberRepository.findByEmail(memberDetails.getEmail());
-		boardGameService.updateFavoriteBoardgameLikes(
+		boardGameService.createFavoriteBoardgameLikeOfDeleteIfExist(
 			FavoriteBoardGameUpdateCommand.of(member.get().getId(), boardGameId, favoriteBoardGameLikesYn));
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

@@ -1,6 +1,7 @@
 package com.superboard.onbrd.boardgame.controller;
 
 import com.superboard.onbrd.auth.entity.MemberDetails;
+import com.superboard.onbrd.boardgame.service.BoardGameService;
 import com.superboard.onbrd.boardgame.service.BoardgameLikeService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +25,8 @@ public class BoardgameLikeController {
 
     // TODO : 테스트 필요 & 버그 픽스
     private final BoardgameLikeService boardgameLikeService;
+
+    private final BoardGameService boardGameService;
     @ApiOperation(value = "보드게임 좋아요/좋아요 취소")
     @ApiImplicitParam(paramType = "header", name = "Authorization", value = "Bearer ...", required = true, dataTypeClass = String.class)
     @ApiResponses(value = {

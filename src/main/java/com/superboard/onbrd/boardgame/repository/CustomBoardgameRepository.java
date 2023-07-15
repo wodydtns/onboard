@@ -17,7 +17,9 @@ public interface CustomBoardgameRepository {
 
 	public List<TopBoardgameDto> selectTop10BoardgameList();
 
-	public Long updateFavoriteCount(Long id);
+	public Long updateFavoriteCountPlus(Long id);
+
+	public Long updateFavoriteCountMius(Long id);
 
 	public void updateClickCount(Long id);
 

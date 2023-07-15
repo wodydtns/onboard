@@ -21,5 +21,5 @@ public interface BoardGameService {
 
 	Long updateFavoriteCount(Long id);
 
-	public Long updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand command);
+	public Long createFavoriteBoardgameLikeOfDeleteIfExist(FavoriteBoardGameUpdateCommand command);
 }
