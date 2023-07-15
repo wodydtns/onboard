@@ -96,7 +96,7 @@ public class BoardGameJob {
      *  2. 3~5 page 안됨 :  Expected BEGIN_ARRAY but was STRING at line 1 column 1 path $
      * */
 
-    //@Scheduled(cron = "0/10 * * * * *")
+//    @Scheduled(cron = "* 18 1 * * *")
     @Transactional
     public void insertCrawlingData() {
         // 파일 경로 수정 필요
@@ -127,15 +127,18 @@ public class BoardGameJob {
                 String description = (String) result.get("description");
                 String imageUrl = (String) result.get("image_url");
                 BoardGame boardgame = new BoardGame(boardgameName, description, imageUrl);
-                String categories = (String) result.get("categories");
+//                String categories = (String) result.get("categories");
+                List<String> categorieList = (List<String>) result.get("categories");
                 String age = (String) result.get("age");
                 String playing_time = (String) result.get("playing_time");
                 String best_player = (String) result.get("best_player");
-                tagHashSet.add(Long.parseLong(categories));
+                for (String categories : categorieList ) {
+                    tagHashSet.add(Long.valueOf(categories));
+                    categoriesTagList.add(Long.valueOf(categories));
+                }
                 tagHashSet.add(Long.parseLong(age));
                 tagHashSet.add(Long.parseLong(playing_time));
                 tagHashSet.add(Long.parseLong(best_player));
-                categoriesTagList.add(Long.parseLong(categories));
                 categoriesTagList.add(Long.parseLong(age));
                 categoriesTagList.add(Long.parseLong(playing_time));
                 categoriesTagList.add(Long.parseLong(best_player));
@@ -154,6 +157,7 @@ public class BoardGameJob {
                     BoardGameTag boardgameTag = BoardGameTag.builder().boardGame(boardgame).tag(tag).build();
                     boardgameTagRepository.saveAndFlush(boardgameTag);
                 }
+                tagNum++;
             }
             customCrawlingRepository.selectOauthIdForPushMessageByFavorite(tagHashSet);
         } catch (IOException e) {
@@ -163,7 +167,7 @@ public class BoardGameJob {
     }
 
 
-//    @Scheduled(cron = "0 0 23 * * *")
+//    @Scheduled(cron = "0/10 * * * * *")
     public void translationBoardgameDesc() {
 
         List<CrawlingTranslationDto> BoardgameDescriptionList = customCrawlingRepository.selectAllBoardgameDescription();
