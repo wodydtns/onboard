@@ -140,7 +140,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 	public OnbrdSliceResponse<BoardGameSearchDetail> selectRecommandBoardgameList(
 		BoardgameSearchByTagRequest boardgameSearchByTagRequest) {
 
-		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
+//		BooleanExpression tagExpr = tagIsIn(boardgameSearchByTagRequest.getTagIds());
 		BooleanExpression nameExpr = boardgameNameLike(boardgameSearchByTagRequest.getName());
 
 
@@ -157,7 +157,7 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 			.leftJoin(boardGame.boardGameTags, boardGameTag)
 			.leftJoin(boardGameTag.tag, tag)
 			.groupBy(boardGame.id, boardGame.name, boardGame.image)
-			.where(nonSearchClickLog.clickAt.after(startDate), tagExpr,nameExpr)
+			.where(nonSearchClickLog.clickAt.after(startDate), nameExpr, boardGameTag.tag.id.in(boardgameSearchByTagRequest.getTagIds()))
 			//.orderBy(boardGame.clickCount.desc())
 			.offset(boardgameSearchByTagRequest.getOffset())
 			.limit(boardgameSearchByTagRequest.getLimit() + 1)
