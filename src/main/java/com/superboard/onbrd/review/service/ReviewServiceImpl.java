@@ -33,6 +33,8 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.global.util.OciObjectStorageUtil;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.report.entity.ReportType;
+import com.superboard.onbrd.report.service.ReportService;
 import com.superboard.onbrd.review.dto.review.ReviewByBoardgameDetail;
 import com.superboard.onbrd.review.dto.review.ReviewByFavoriteCountDetail;
 import com.superboard.onbrd.review.dto.review.ReviewCreateDto;
@@ -49,6 +51,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberService memberService;
+    private final ReportService reportService;
     private final BoardGameService boardGameService;
     private final OciObjectStorageUtil ociObjectStorageUtil;
 
@@ -75,12 +78,12 @@ public class ReviewServiceImpl implements ReviewService {
         BoardGame boardgame = boardGameService.findVerifiedOneById(dto.getBoardgameId());
 
         Review created = Review.builder()
-                .writer(writer)
-                .boardgame(boardgame)
-                .grade(dto.getGrade())
-                .content(dto.getContent())
-                .images(dto.getImages())
-                .build();
+            .writer(writer)
+            .boardgame(boardgame)
+            .grade(dto.getGrade())
+            .content(dto.getContent())
+            .images(dto.getImages())
+            .build();
 
         writer.writeReview(created);
 
@@ -149,8 +152,8 @@ public class ReviewServiceImpl implements ReviewService {
         File file = tempFile.toFile();
         String fileName = file.getName();
         String contentType = Files.probeContentType(tempFile);
-        DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int) file.length(),
-                file.getParentFile());
+        DiskFileItem fileItem = new DiskFileItem(fileName, contentType, false, fileName, (int)file.length(),
+            file.getParentFile());
         InputStream input = new FileInputStream(file);
         OutputStream os = fileItem.getOutputStream();
         IOUtils.copy(input, os);
@@ -175,7 +178,7 @@ public class ReviewServiceImpl implements ReviewService {
             try {
                 for (String image : imageList) {
                     boolean isObjectExists = ociObjectStorageUtil.getObjectOne(image, filePath);
-                    if(isObjectExists){
+                    if (isObjectExists) {
                         ociObjectStorageUtil.deleteObject(imageList, filePath);
                     }
                 }
@@ -187,6 +190,7 @@ public class ReviewServiceImpl implements ReviewService {
                 }
             }
         }
+        reportService.deleteIfExist(ReportType.REVIEW, id);
         reviewRepository.delete(deleted);
     }
 

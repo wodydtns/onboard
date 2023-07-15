@@ -15,6 +15,8 @@ import com.superboard.onbrd.global.exception.BusinessLogicException;
 import com.superboard.onbrd.member.entity.Member;
 import com.superboard.onbrd.member.entity.MemberLevel;
 import com.superboard.onbrd.member.service.MemberService;
+import com.superboard.onbrd.report.entity.ReportType;
+import com.superboard.onbrd.report.service.ReportService;
 import com.superboard.onbrd.review.dto.comment.CommentCreateDto;
 import com.superboard.onbrd.review.dto.comment.CommentDetail;
 import com.superboard.onbrd.review.dto.comment.CommentUpdateDto;
@@ -31,6 +33,7 @@ public class CommentServiceImpl implements CommentService {
 	private final CommentRepository commentRepository;
 	private final MemberService memberService;
 	private final ReviewService reviewService;
+	private final ReportService reportService;
 
 	@Override
 	public OnbrdSliceResponse<AdminCommentDetail> getAdminComment(OnbrdSliceRequest params) {
@@ -75,6 +78,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void deleteCommentById(Long id) {
 		Comment deleted = findVerifiedOneById(id);
+		reportService.deleteIfExist(ReportType.COMMENT, id);
 		commentRepository.delete(deleted);
 	}
 

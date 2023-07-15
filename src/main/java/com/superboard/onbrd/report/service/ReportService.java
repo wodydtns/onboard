@@ -5,6 +5,7 @@ import com.superboard.onbrd.global.dto.OnbrdSliceRequest;
 import com.superboard.onbrd.global.dto.OnbrdSliceResponse;
 import com.superboard.onbrd.report.dto.ReportCreateCommand;
 import com.superboard.onbrd.report.entity.Report;
+import com.superboard.onbrd.report.entity.ReportType;
 
 public interface ReportService {
 	OnbrdSliceResponse<AdminReportDetail> getAdminReports(OnbrdSliceRequest params);
@@ -14,4 +15,6 @@ public interface ReportService {
 	Report resolveReport(Long id, String email);
 
 	Report findVerifiedOneById(Long id);
+
+	void deleteIfExist(ReportType type, Long postId);
 }
