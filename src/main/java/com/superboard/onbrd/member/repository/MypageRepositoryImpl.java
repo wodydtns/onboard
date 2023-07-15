@@ -7,9 +7,11 @@ import static com.superboard.onbrd.member.entity.QMember.*;
 import static com.superboard.onbrd.review.entity.QReview.*;
 import static com.superboard.onbrd.tag.entity.QFavoriteTag.*;
 import static com.superboard.onbrd.tag.entity.QTag.*;
+import static com.superboard.onbrd.boardgame.entity.QBoardgameLike.*;
 
 import java.util.List;
 
+import com.superboard.onbrd.boardgame.entity.BoardgameLike;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +73,8 @@ public class MypageRepositoryImpl implements MypageRepository {
 		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
+	// favoriteBoardgame -> boardgameLike 변경
+	// 사유 : 보드게임 좋아요 리스트를 쌓는 table을 boardgameLike로 변경
 	@Override
 	public OnbrdSliceResponse<MypageMoreBoardGameDetail> getMoreFavoriteBoardgames(MypageGetMoreDto params) {
 		List<MypageMoreBoardGameDetail> content = queryFactory
@@ -79,16 +83,15 @@ public class MypageRepositoryImpl implements MypageRepository {
 				boardGame.name,
 				boardGame.image
 			))
-			.from(favoriteBoardgame)
-			.join(favoriteBoardgame.boardgame, boardGame)
-			.where(favoriteBoardgame.member.email.eq(params.getEmail()))
-			.orderBy(favoriteBoardgame.id.desc())
+			.from(boardgameLike)
+			.join(boardgameLike.boardGame, boardGame)
+			.where(boardgameLike.member.email.eq(params.getEmail()))
+			.orderBy(boardgameLike.id.desc())
 			.offset(params.getOffset())
 			.limit(params.getLimit() + 1)
 			.fetch();
 
 		OnbrdSliceInfo pageInfo = getSliceInfo(content, params.getLimit());
-
 		return new OnbrdSliceResponse<>(pageInfo, content);
 	}
 
