@@ -87,7 +87,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 
 	@Override
 	public Long updateFavoriteCount(Long id) {
-		return boardgameRepository.updateFavoriteCount(id);
+		return boardgameRepository.updateFavoriteCountPlus(id);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class BoardgameServiceImpl implements BoardGameService {
 	}
 
 	@Override
-	public Long updateFavoriteBoardgameLikes(FavoriteBoardGameUpdateCommand command) {
+	public Long createFavoriteBoardgameLikeOfDeleteIfExist(FavoriteBoardGameUpdateCommand command) {
 		return boardgameRepository.updateFavoriteBoardgameLikes(command);
 	}
 }

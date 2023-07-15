@@ -129,10 +129,23 @@ public class CustomBoardgameRepositoryImpl implements CustomBoardgameRepository 
 
 	@Override
 	@Transactional(readOnly = true)
-	public Long updateFavoriteCount(Long id) {
+	public Long updateFavoriteCountPlus(Long id) {
 		long count = queryFactory.update(boardGame)
 			.where(boardGame.id.eq(id))
 			.set(boardGame.favoriteCount, boardGame.favoriteCount.add(1)).execute();
+		return count;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long updateFavoriteCountMius(Long id) {
+		Long favoriteCount =queryFactory.select(boardGame.favoriteCount).from(boardGame).where(boardGame.id.eq(id)).fetchOne();
+		long count = 0L;
+		if (favoriteCount > 0){
+			 count = queryFactory.update(boardGame)
+					.where(boardGame.id.eq(id))
+					.set(boardGame.favoriteCount, boardGame.favoriteCount.add(-1)).execute();
+		}
 		return count;
 	}
 
